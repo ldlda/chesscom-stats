@@ -1,12 +1,10 @@
 ---
-
 name: "Pull Request"
 about: "This pull request is about this"
 title: "[FEATURE] "
 ref: "main"
-assignees: ["ldlda"]
+assignees: [ "ldlda" ]
 labels:
-
 ---
 
 ## Description
