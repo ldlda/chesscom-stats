@@ -59,7 +59,7 @@ object ChessApi {
 
     // ok
     fun <T> getAsync(get: suspend ChessApiService.() -> T): CompletableFuture<T> {
-        val f = CompletableFuture<T>();
+        val f = CompletableFuture<T>()
         CoroutineScope(Dispatchers.Default).launch {
             getResult(get).let {
                 it.onSuccess { r -> f.complete(r) }.onFailure { r -> f.completeExceptionally(r) }
@@ -96,7 +96,7 @@ interface ChessApiService {
     suspend fun getPlayerStats(@Path("username") username: String): PlayerStats
 }
 
-// what??????
+// Sealed class hierarchy for Chess.com API exceptions.
 sealed class ChessApiException(message: String?, cause: Throwable?) : Throwable(message, cause) {
     class NotFound(message: String?, cause: HttpException) : ChessApiException(message, cause)
     class Gone(message: String?, cause: HttpException) : ChessApiException(message, cause)
