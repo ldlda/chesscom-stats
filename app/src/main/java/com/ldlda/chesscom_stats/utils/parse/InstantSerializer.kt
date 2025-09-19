@@ -21,7 +21,7 @@ object InstantSerializer : KSerializer<Instant> {
     }
 
     override fun deserialize(decoder: Decoder): Instant {
-        val ms = try {
+        val s = try {
             decoder.decodeLong()
         } catch (e: SerializationException) {
             throw SerializationException(
@@ -30,9 +30,9 @@ object InstantSerializer : KSerializer<Instant> {
             )
         }
         return try {
-            Instant.ofEpochSecond(ms)
+            Instant.ofEpochSecond(s)
         } catch (e: DateTimeException) {
-            throw SerializationException("Invalid epoch millis: $ms", e)
+            throw SerializationException("Invalid epoch: $s", e)
         }
     }
 

@@ -60,3 +60,8 @@ enum class TitleEnum {
     GM, WGM, IM, WIM, FM, WFM, NM, WNM, CM, WCM
 }
 
+
+data class Country(
+    val name: String,
+    val code: String // Locale.IsoCountryCode + random shit
+)

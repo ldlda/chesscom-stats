@@ -47,6 +47,7 @@ kotlin {
 
 dependencies {
     implementation(libs.desugar.jdk.libs)
+    implementation(libs.converter.kotlinx.serialization)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.androidx.core.ktx)
