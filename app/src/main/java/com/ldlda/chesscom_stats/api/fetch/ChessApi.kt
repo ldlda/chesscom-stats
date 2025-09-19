@@ -2,6 +2,9 @@ package com.ldlda.chesscom_stats.api.fetch
 
 import com.ldlda.chesscom_stats.api.data.Player
 import com.ldlda.chesscom_stats.api.data.PlayerStats
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.HttpException
@@ -10,6 +13,7 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import java.io.IOException
+import java.util.concurrent.CompletableFuture
 
 object ChessApi {
     private const val BASE_URL = "https://api.chess.com/"
@@ -48,8 +52,21 @@ object ChessApi {
         } catch (e: Exception) {
             Result.failure(ChessApiException.Other(e.message, e))
         }
+    }
 
-    //        TODO("what the hell do i do here")
+    // thank you gemini AGAIN
+    fun getPlayerAsync(username: String): CompletableFuture<Player> {
+        val f = CompletableFuture<Player>();
+        CoroutineScope(Dispatchers.Default).launch {
+            getPlayer(username).let {
+                if (it.isSuccess) {
+                    f.complete(it.getOrNull())
+                } else {
+                    f.completeExceptionally(it.exceptionOrNull())
+                }
+            }
+        }
+        return f
     }
 }
 
@@ -66,9 +83,16 @@ interface ChessApiService {
 sealed class ChessApiException(message: String?, cause: Throwable?) : Throwable(message, cause) {
     class NotFound(message: String?, cause: HttpException) : ChessApiException(message, cause)
     class Gone(message: String?, cause: HttpException) : ChessApiException(message, cause)
-    class TooManyRequests(message: String?, cause: HttpException) : ChessApiException(message, cause)
+    class TooManyRequests(message: String?, cause: HttpException) :
+        ChessApiException(message, cause)
+
     class Redirected(message: String?, cause: HttpException) : ChessApiException(message, cause)
-    data class Internal(val code: Int, override val message: String?, override val cause: HttpException) : ChessApiException(message, cause)
+    data class Internal(
+        val code: Int,
+        override val message: String?,
+        override val cause: HttpException
+    ) : ChessApiException(message, cause)
+
     class Network(message: String?, cause: IOException) : ChessApiException(message, cause)
     class Other(message: String?, cause: Throwable?) : ChessApiException(message, cause)
 }
