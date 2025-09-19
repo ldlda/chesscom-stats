@@ -2,9 +2,11 @@ package com.ldlda.chesscom_stats;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.ldlda.chesscom_stats.api.data.Player;
+import com.ldlda.chesscom_stats.api.data.PlayerStats;
 import com.ldlda.chesscom_stats.api.data.TitleEnum;
 
 import org.intellij.lang.annotations.Language;
@@ -15,6 +17,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Objects;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -71,6 +74,21 @@ public class ChessDataclassesUnitTest {
         assertEquals("Hikaru Nakamura", hikaru.getName());
         /// https://www.timestamp-converter.com/ // "2014-01-06T21:20:58Z"
         assertEquals(1389043258, hikaru.getJoined().getEpochSecond());
+    }
+    @Test
+    public void testStats() {
+        @Language(value = "json")
+        String jsonstr;
+        try {
+            jsonstr = NetworkRequestExample.fetchData("https://api.chess.com/pub/player/hikaru/stats");
+        } catch (Exception e) {
+            fail(e.getMessage());
+            return;
+        }
+        PlayerStats hikaruStats = PlayerStats.fromJSON(jsonstr);
+        assertTrue(123 <= Objects.requireNonNull(hikaruStats.getPuzzleRush()).getBest().getScore());
+        assertTrue(hikaruStats.getFide() > 2700); // i hope he dont fall off
+        /// https://www.timestamp-converter.com/ // "2014-01-06T21:20:58Z"
     }
 
 
