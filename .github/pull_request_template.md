@@ -1,12 +1,3 @@
----
-name: "Pull Request"
-about: "This pull request is about this"
-title: "[FEATURE] "
-ref: "main"
-assignees: [ "ldlda" ]
-labels:
----
-
 ## Description
 
 what this do
