@@ -8,6 +8,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.ldlda.chesscom_stats.adapter.ScreenSlidePagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
+    //Available tabs
     private final String[] tabTitles = {"Home", "Favorites", "Hall of Fame", "Lessons"};
 
     @Override
