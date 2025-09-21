@@ -17,6 +17,8 @@ import java.io.IOException
 import java.util.concurrent.CompletableFuture
 import kotlin.jvm.Throws
 
+val retrofit2: Any
+
 object ChessApi {
     private const val BASE_URL = "https://api.chess.com/"
 

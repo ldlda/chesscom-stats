@@ -54,6 +54,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.volley)
+    implementation("com.squareup.picasso:picasso:2.8")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 
