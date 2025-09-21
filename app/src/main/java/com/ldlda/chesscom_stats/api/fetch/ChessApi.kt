@@ -18,27 +18,27 @@ import retrofit2.http.Path
 import java.io.IOException
 import java.util.concurrent.CompletableFuture
 
-object ChessApi {
-    private const val BASE_URL = "https://api.chess.com/"
+open class ChessApiClient(
+    private val service: ChessApiService = run {
+        val baseUrl = "https://api.chess.com/"
+        val json = Json { ignoreUnknownKeys = true }
 
-    private val json = Json {
-        ignoreUnknownKeys = true
+        val contentType = "application/json".toMediaType()
+
+        val retrofit: Retrofit by lazy {
+            Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(json.asConverterFactory(contentType))
+                .build()
+        }
+
+        val service: ChessApiService by lazy {
+            retrofit.create(ChessApiService::class.java)
+        }
+        return service
     }
-
-    private val contentType = "application/json".toMediaType()
-
-    private val retrofit: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(json.asConverterFactory(contentType))
-            .build()
-    }
-
-    val service: ChessApiService by lazy {
-        retrofit.create(ChessApiService::class.java)
-    }
-
-    private suspend fun <T> execute(get: suspend ChessApiService.() -> T): T {
+) {
+    suspend fun <T> execute(get: suspend ChessApiService.() -> T): T {
         try {
             return service.get()
         } catch (e: HttpException) {
@@ -77,14 +77,14 @@ object ChessApi {
         runBlocking { execute(get) }
 
     // Public synchronous functions for Java
-    @JvmStatic
+
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getPlayer(username: String): Player {
         return getSync { getPlayer(username) }
     }
 
-    @JvmStatic
+
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getPlayerStats(username: String): PlayerStats {
@@ -92,15 +92,17 @@ object ChessApi {
     }
 
     // Java-friendly async wrappers (recommended for UI)
-    @JvmStatic
+
     fun getPlayerAsync(username: String): CompletableFuture<Player> =
         getAsync { getPlayer(username) }
 
-    @JvmStatic
+
     fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
         getAsync { getPlayerStats(username) }
+
 }
 
+object ChessApi : ChessApiClient()
 
 interface ChessApiService {
     @GET("pub/player/{username}")

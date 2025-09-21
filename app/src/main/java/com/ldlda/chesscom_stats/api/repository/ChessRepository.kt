@@ -1,0 +1,9 @@
+package com.ldlda.chesscom_stats.api.repository
+
+import com.ldlda.chesscom_stats.api.data.Player
+import com.ldlda.chesscom_stats.api.data.PlayerStats
+
+interface ChessRepository {
+    suspend fun getPlayer(username: String): Player
+    suspend fun getPlayerStats(username: String): PlayerStats
+}
