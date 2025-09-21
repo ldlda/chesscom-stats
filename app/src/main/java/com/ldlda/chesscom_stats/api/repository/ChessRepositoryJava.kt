@@ -22,46 +22,70 @@ import java.util.concurrent.CompletableFuture
  * - get*Async: CompletableFuture for Java async tests/UI.
  */
 class ChessRepositoryJava @JvmOverloads constructor(
-    private val repo: ChessRepository = ChessRepositoryImpl()
+    private val repo: ChessRepository = ChessRepositoryImpl(),
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    private fun <T> runBlocking(task: suspend CoroutineScope.() -> T) =
+        runBlocking(scope.coroutineContext, task)
+
+    private fun <T> runAsync(task: suspend CoroutineScope.() -> T) =
+        scope.future(block = task)
 
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getPlayerBlocking(username: String): Player =
-        runBlocking(Dispatchers.IO) { repo.getPlayer(username) }
+        runBlocking { repo.getPlayer(username) }
 
     fun getPlayerAsync(username: String): CompletableFuture<Player> =
-        scope.future { repo.getPlayer(username) }
+        runAsync { repo.getPlayer(username) }
 
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getPlayerStatsBlocking(username: String): PlayerStats =
-        runBlocking(Dispatchers.IO) { repo.getPlayerStats(username) }
+        runBlocking { repo.getPlayerStats(username) }
 
     fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
-        scope.future { repo.getPlayerStats(username) }
+        runAsync { repo.getPlayerStats(username) }
 
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getLeaderboardsBlocking(): Leaderboards =
-        runBlocking(Dispatchers.IO) { repo.getLeaderboards() }
+        runBlocking { repo.getLeaderboards() }
 
     fun getLeaderboardsAsync(): CompletableFuture<Leaderboards> =
-        scope.future { repo.getLeaderboards() }
+        runAsync { repo.getLeaderboards() }
 
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getCountryByUrlBlocking(url: URI): CountryInfo =
-        runBlocking(Dispatchers.IO) { repo.getCountry(url) }
+        runBlocking { repo.getCountry(url) }
 
     fun getCountryByUrlAsync(url: URI): CompletableFuture<CountryInfo> =
-        scope.future { repo.getCountry(url) }
+        runAsync { repo.getCountry(url) }
+
+
+
+    @WorkerThread
+    @Throws(ChessApiException::class)
+    fun runPlayerFetchCountryBlocking(player: Player): CountryInfo =
+        runBlocking { player.fetchCountryInfo(repo) }
+
+    /** convenience functions */
+    fun runPlayerFetchCountryAsync(player: Player): CompletableFuture<CountryInfo> =
+        runAsync { player.fetchCountryInfo(repo) }
+
+    /** convenience function */
+    fun playerUpdateCountryAsync(player: Player): CompletableFuture<Player> =
+        runAsync { player.fetchCountryInfo(repo); player }
 
 
     /** Call in test teardown if needed to stop any in-flight work. */
     fun close() {
         scope.cancel()
     }
-    companion object DefaultChessRepositoryJava
+
+    companion object {
+        val default = ChessRepositoryJava()
+    }
 }

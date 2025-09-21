@@ -1,6 +1,6 @@
 package com.ldlda.chesscom_stats.api.data
 
-import com.ldlda.chesscom_stats.utils.parse.InstantSerializer
+import com.ldlda.chesscom_stats.utils.serialize.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -31,9 +31,11 @@ data class PlayerStats(
         private val jsonFormat = Json { ignoreUnknownKeys = true }
 
         @JvmStatic
-        fun fromJSON(jsonString: String): PlayerStats =
+        fun fromJSON(jsonString: String) =
             jsonFormat.decodeFromString(serializer(), jsonString)
     }
+
+    fun toJSON() = jsonFormat.encodeToString(this)
 }
 
 @Serializable

@@ -4,6 +4,7 @@ import com.ldlda.chesscom_stats.api.data.CountryInfo
 import com.ldlda.chesscom_stats.api.data.Leaderboards
 import com.ldlda.chesscom_stats.api.data.Player
 import com.ldlda.chesscom_stats.api.data.PlayerStats
+import java.net.URI
 
 interface ChessRepository {
     suspend fun getPlayer(username: String): Player
@@ -11,5 +12,5 @@ interface ChessRepository {
 
     suspend fun getLeaderboards(): Leaderboards
 
-    suspend fun getCountry(countryUrl: java.net.URI): CountryInfo
+    suspend fun getCountry(countryUrl: URI): CountryInfo
 }

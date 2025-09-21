@@ -2,7 +2,7 @@
 
 package com.ldlda.chesscom_stats.api.data
 
-import com.ldlda.chesscom_stats.utils.parse.URISerializer
+import com.ldlda.chesscom_stats.utils.serialize.URISerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
