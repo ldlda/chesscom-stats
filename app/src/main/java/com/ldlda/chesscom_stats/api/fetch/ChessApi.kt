@@ -1,11 +1,13 @@
 package com.ldlda.chesscom_stats.api.fetch
 
+import androidx.annotation.WorkerThread
 import com.ldlda.chesscom_stats.api.data.Player
 import com.ldlda.chesscom_stats.api.data.PlayerStats
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.HttpException
@@ -15,7 +17,6 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import java.io.IOException
 import java.util.concurrent.CompletableFuture
-import kotlin.jvm.Throws
 
 object ChessApi {
     private const val BASE_URL = "https://api.chess.com/"
@@ -37,54 +38,67 @@ object ChessApi {
         retrofit.create(ChessApiService::class.java)
     }
 
-    suspend fun <T> getResult(get: suspend ChessApiService.() -> T): Result<T> {
-        return try {
-            val res = service.get()
-            Result.success(res)
+    private suspend fun <T> execute(get: suspend ChessApiService.() -> T): T {
+        try {
+            return service.get()
         } catch (e: HttpException) {
-            println(e.response()?.errorBody()?.string())
-            when (e.code()) {
-                404 -> Result.failure(ChessApiException.NotFound(e.message, e))
-                410 -> Result.failure(ChessApiException.Gone(e.message, e))
-                429 -> Result.failure(ChessApiException.TooManyRequests(e.message, e))
-                in 300..399 -> Result.failure(ChessApiException.Redirected(e.message, e))
-                else -> Result.failure(ChessApiException.Internal(e.code(), e.message, e))
+            throw when (e.code()) {
+                404 -> ChessApiException.NotFound(e.message(), e)
+                410 -> ChessApiException.Gone(e.message(), e)
+                429 -> ChessApiException.TooManyRequests(e.message(), e)
+                in 300..399 -> ChessApiException.Redirected(e.message(), e)
+                else -> ChessApiException.Internal(e.code(), e.message(), e)
             }
         } catch (e: IOException) {
-            Result.failure(ChessApiException.Network(e.message, e))
+            throw (ChessApiException.Network(e.message, e))
+        } catch (e: SerializationException) {
+            // this happens when type T doesn't work with what [get] got
+            throw ChessApiException.Serialization(e.message, e)
         } catch (e: Exception) {
-            Result.failure(ChessApiException.Other(e.message, e))
+            throw (ChessApiException.Other(e.message, e))
         }
     }
 
     // ok
     fun <T> getAsync(get: suspend ChessApiService.() -> T): CompletableFuture<T> {
         val f = CompletableFuture<T>()
-        CoroutineScope(Dispatchers.Default).launch {
-            getResult(get).let {
-                it.onSuccess { r -> f.complete(r) }.onFailure { r -> f.completeExceptionally(r) }
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                f.complete(execute(get))
+            } catch (t: Throwable) {
+                f.completeExceptionally(t)
             }
         }
         return f
     }
 
-
+    @WorkerThread
     fun <T> getSync(get: suspend ChessApiService.() -> T): T =
-        runBlocking { getResult(get).getOrThrow() }
+        runBlocking { execute(get) }
 
-    // Public synchronous function for Java
+    // Public synchronous functions for Java
     @JvmStatic
+    @WorkerThread
     @Throws(ChessApiException::class)
     fun getPlayer(username: String): Player {
         return getSync { getPlayer(username) }
     }
 
-    // Public synchronous function for Java
     @JvmStatic
+    @WorkerThread
     @Throws(ChessApiException::class)
     fun getPlayerStats(username: String): PlayerStats {
         return getSync { getPlayerStats(username) }
     }
+
+    // Java-friendly async wrappers (recommended for UI)
+    @JvmStatic
+    fun getPlayerAsync(username: String): CompletableFuture<Player> =
+        getAsync { getPlayer(username) }
+
+    @JvmStatic
+    fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
+        getAsync { getPlayerStats(username) }
 }
 
 
@@ -97,7 +111,7 @@ interface ChessApiService {
 }
 
 // Sealed class hierarchy for Chess.com API exceptions.
-sealed class ChessApiException(message: String?, cause: Throwable?) : Throwable(message, cause) {
+sealed class ChessApiException(message: String?, cause: Throwable?) : Exception(message, cause) {
     class NotFound(message: String?, cause: HttpException) : ChessApiException(message, cause)
     class Gone(message: String?, cause: HttpException) : ChessApiException(message, cause)
     class TooManyRequests(message: String?, cause: HttpException) :
@@ -111,5 +125,8 @@ sealed class ChessApiException(message: String?, cause: Throwable?) : Throwable(
     ) : ChessApiException(message, cause)
 
     class Network(message: String?, cause: IOException) : ChessApiException(message, cause)
+    class Serialization(message: String?, cause: SerializationException) :
+        ChessApiException(message, cause)
+
     class Other(message: String?, cause: Throwable?) : ChessApiException(message, cause)
 }

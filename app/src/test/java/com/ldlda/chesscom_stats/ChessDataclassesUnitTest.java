@@ -7,7 +7,7 @@ import static org.junit.Assert.fail;
 
 import com.ldlda.chesscom_stats.api.data.Player;
 import com.ldlda.chesscom_stats.api.data.PlayerStats;
-import com.ldlda.chesscom_stats.api.data.TitleEnum;
+import com.ldlda.chesscom_stats.api.fetch.ChessApi;
 
 import org.intellij.lang.annotations.Language;
 import org.junit.Test;
@@ -20,6 +20,8 @@ import java.net.URL;
 import java.util.Objects;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import kotlinx.serialization.json.Json;
 
 public class ChessDataclassesUnitTest {
     @Test
@@ -70,7 +72,7 @@ public class ChessDataclassesUnitTest {
             return;
         }
         Player hikaru = Player.fromJSON(jsonstr);
-        assertEquals(TitleEnum.GM, hikaru.getTitle());
+        assertEquals("GM", hikaru.getTitle());
         assertEquals("Hikaru Nakamura", hikaru.getName());
         /// https://www.timestamp-converter.com/ // "2014-01-06T21:20:58Z"
         assertEquals(1389043258, hikaru.getJoined().getEpochSecond());

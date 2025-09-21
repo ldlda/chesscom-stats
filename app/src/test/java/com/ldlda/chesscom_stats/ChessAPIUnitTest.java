@@ -40,7 +40,7 @@ public class ChessAPIUnitTest {
             Player fhsjkfhskjdhf = ChessApi.getPlayer("usaghfklawgfkwahf");
             System.out.println("player does exist OK: " + fhsjkfhskjdhf);
         } catch (ChessApiException e) {
-            Response r = null;
+            Response r;
             if (e.getCause() instanceof HttpException) {
                 r = ((HttpException) e.getCause()).response();
                 if (r == null) return;

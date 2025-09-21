@@ -1,5 +1,7 @@
 package com.ldlda.chesscom_stats.api.data
 
+import com.ldlda.chesscom_stats.api.fetch.ChessApi
+import com.ldlda.chesscom_stats.api.fetch.ChessApiException
 import com.ldlda.chesscom_stats.utils.parse.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -39,7 +41,7 @@ data class PlayerStats(
 @Serializable
 data class SimpleStat(
     val last: RatingDate,
-    val best: RatingDate,
+    val best: RatingDate? = null,
     val record: GameRecord,
 )
 
