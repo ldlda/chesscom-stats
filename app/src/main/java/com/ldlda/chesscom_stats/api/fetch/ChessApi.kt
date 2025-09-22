@@ -21,16 +21,14 @@ import java.io.IOException
 import java.util.concurrent.CompletableFuture
 
 open class ChessApiClient(
-    private val service: ChessApiService = run {
+    val service: ChessApiService = run {
         val baseUrl = "https://api.chess.com/"
         val json = Json { ignoreUnknownKeys = true }
 
         val contentType = "application/json".toMediaType()
 
-        Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .addConverterFactory(json.asConverterFactory(contentType))
-            .build()
+        Retrofit.Builder().baseUrl(baseUrl)
+            .addConverterFactory(json.asConverterFactory(contentType)).build()
             .create(ChessApiService::class.java)
     }
 ) {
@@ -68,37 +66,44 @@ open class ChessApiClient(
         runBlocking(Dispatchers.IO) { execute(get) }
 
     // Public synchronous functions for Java
-    companion object
-        {
-            @WorkerThread
-            @Throws(ChessApiException::class)
-            @JvmStatic
-            fun getPlayer(username: String): Player {
-                return ChessApi.getSync { getPlayer(username) }
-            }
+
+    @WorkerThread
+    @Throws(ChessApiException::class)
+    fun getPlayer(username: String): Player {
+        return getSync { getPlayer(username) }
+    }
 
 
-            @WorkerThread
-            @Throws(ChessApiException::class)
-            @JvmStatic
-            fun getPlayerStats(username: String): PlayerStats {
-                return ChessApi.getSync { getPlayerStats(username) }
-            }
+    @WorkerThread
+    @Throws(ChessApiException::class)
+    fun getPlayerStats(username: String): PlayerStats {
+        return getSync { getPlayerStats(username) }
+    }
 
-            // Java-friendly async wrappers (recommended for UI)
+    // Java-friendly async wrappers (recommended for UI)
 
-            @JvmStatic
-            fun getPlayerAsync(username: String): CompletableFuture<Player> =
-                ChessApi.getAsync { getPlayer(username) }
+    fun getPlayerAsync(username: String): CompletableFuture<Player> =
+        getAsync { getPlayer(username) }
 
 
-            @JvmStatic
-            fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
-                ChessApi.getAsync { getPlayerStats(username) }
-        }
+    fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
+        getAsync { getPlayerStats(username) }
+
+
+    constructor(baseUrl: String) : this(
+        kotlin.run {
+            val json = Json { ignoreUnknownKeys = true }
+
+            val contentType = "application/json".toMediaType()
+
+            Retrofit.Builder().baseUrl(baseUrl)
+                .addConverterFactory(json.asConverterFactory(contentType)).build()
+                .create(ChessApiService::class.java)
+        })
 }
 
-object ChessApi : ChessApiClient()
+
+object DefaultChessApi : ChessApiClient()
 
 interface ChessApiService {
     @GET("pub/player/{username}")
@@ -117,9 +122,7 @@ sealed class ChessApiException(message: String?, cause: Throwable?) : Exception(
 
     class Redirected(message: String?, cause: HttpException) : ChessApiException(message, cause)
     data class Internal(
-        val code: Int,
-        override val message: String?,
-        override val cause: HttpException
+        val code: Int, override val message: String?, override val cause: HttpException
     ) : ChessApiException(message, cause)
 
     class Network(message: String?, cause: IOException) : ChessApiException(message, cause)

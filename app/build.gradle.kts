@@ -47,6 +47,8 @@ kotlin {
 
 dependencies {
     implementation(libs.converter.kotlinx.serialization)
+    implementation(libs.mockwebserver)
+    implementation(libs.logging.interceptor)
 //    implementation(libs.desugar.jdk.libs)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 

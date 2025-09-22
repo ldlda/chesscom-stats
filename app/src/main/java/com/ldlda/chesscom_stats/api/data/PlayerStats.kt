@@ -1,7 +1,5 @@
 package com.ldlda.chesscom_stats.api.data
 
-import com.ldlda.chesscom_stats.api.fetch.ChessApi
-import com.ldlda.chesscom_stats.api.fetch.ChessApiException
 import com.ldlda.chesscom_stats.utils.parse.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

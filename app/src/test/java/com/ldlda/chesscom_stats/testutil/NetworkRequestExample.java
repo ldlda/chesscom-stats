@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.utils;
+package com.ldlda.chesscom_stats.testutil;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
