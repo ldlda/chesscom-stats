@@ -1,6 +1,7 @@
 package com.ldlda.chesscom_stats.api.repository
 
 import androidx.annotation.WorkerThread
+import com.ldlda.chesscom_stats.api.data.CountryInfo
 import com.ldlda.chesscom_stats.api.data.Leaderboards
 import com.ldlda.chesscom_stats.api.data.Player
 import com.ldlda.chesscom_stats.api.data.PlayerStats
@@ -11,6 +12,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.runBlocking
+import java.net.URI
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -48,8 +50,18 @@ class ChessRepositoryJava @JvmOverloads constructor(
     fun getLeaderboardsAsync(): CompletableFuture<Leaderboards> =
         scope.future { repo.getLeaderboards() }
 
+    @WorkerThread
+    @Throws(ChessApiException::class)
+    fun getCountryByUrlBlocking(url: URI): CountryInfo =
+        runBlocking(Dispatchers.IO) { repo.getCountry(url) }
+
+    fun getCountryByUrlAsync(url: URI): CompletableFuture<CountryInfo> =
+        scope.future { repo.getCountry(url) }
+
+
     /** Call in test teardown if needed to stop any in-flight work. */
     fun close() {
         scope.cancel()
     }
+    companion object DefaultChessRepositoryJava
 }

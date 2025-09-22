@@ -75,7 +75,7 @@ data class LeaderboardEntry(
     val status: String? = null,
     val title: String? = null,
     val name: String? = null,
-    @SerialName("avatar") val avatarUrl: URI = URI("https://www.chess.com/bundles/web/images/noavatar_l.84a92436.gif"),
+    @SerialName("avatar") val avatarUrl: URI? = null, // URI("https://www.chess.com/bundles/web/images/noavatar_l.84a92436.gif"),
 ) {
     val elo = score
     val gameRecord

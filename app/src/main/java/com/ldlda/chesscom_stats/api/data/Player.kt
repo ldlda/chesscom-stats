@@ -46,8 +46,11 @@ data class Player(
     /** name as in government name*/
     val name: String? = null,
 ) {
+    val profilePictureResource = avatarUrl
+
     suspend fun fetchPlayerStats(repo: ChessRepository) =
         repo.getPlayerStats(username)
+
     companion object {
         private val jsonFormat = Json { ignoreUnknownKeys = true }
 
@@ -58,7 +61,7 @@ data class Player(
 }
 
 @Serializable
-data class Country(
+data class CountryInfo(
     val name: String,
     val code: String // Locale.IsoCountryCode + random shit
 )

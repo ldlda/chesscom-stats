@@ -9,6 +9,7 @@ import com.ldlda.chesscom_stats.api.data.Player;
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient;
 import com.ldlda.chesscom_stats.api.fetch.ChessApiException;
 
+import org.intellij.lang.annotations.Language;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +41,7 @@ public class ChessApiClientJavaTest {
 
     @Test
     public void player_success_sync() throws Exception {
+        @Language("json")
         String body = """
                 {
                   "player_id": 15448422,
@@ -49,7 +51,7 @@ public class ChessApiClientJavaTest {
                   "joined": 1500000000,
                   "last_online": 1700000000,
                   "status": "premium",
-                  "followers": 999
+                  "followers": 1000000
                 }
                 """;
         server.enqueue(new MockResponse().setResponseCode(200).setBody(body));
