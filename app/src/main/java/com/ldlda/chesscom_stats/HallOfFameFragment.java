@@ -8,17 +8,14 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import java.util.ArrayList;
-import java.util.List;
 import com.ldlda.chesscom_stats.adapter.HallofFameAdapter;
 import com.ldlda.chesscom_stats.PlayerDetailActivity;
+import com.ldlda.chesscom_stats.api.fetch.ChessApi;
+import com.ldlda.chesscom_stats.api.data.LeaderboardResponse;
+import com.ldlda.chesscom_stats.api.data.PlayerLeaderboardEntry;
+import android.os.AsyncTask;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HallOfFameFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -42,30 +39,37 @@ public class HallOfFameFragment extends Fragment {
     }
 
     private void fetchTopPlayers() {
-        String url = "https://api.chess.com/pub/leaderboards";
-        RequestQueue queue = Volley.newRequestQueue(requireContext());
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
-                response -> {
-                    try {
-                        JSONArray blitz = response.getJSONArray("live_blitz");
-                        playerList.clear();
-                        for (int i = 0; i < Math.min(10, blitz.length()); i++) {
-                            JSONObject playerObj = blitz.getJSONObject(i);
-                            String username = playerObj.getString("username");
-                            String avatar = playerObj.optString("avatar", "https://www.chess.com/bundles/web/images/noavatar_l.84a92436.gif");
-                            int rating = playerObj.getInt("score");
-                            playerList.add(new HallofFameAdapter.Player(username, avatar, rating));
-                        }
-                        adapter.updatePlayers(playerList);
-                    } catch (JSONException e) {
-                        Toast.makeText(getContext(), "Failed to parse leaderboard", Toast.LENGTH_SHORT).show();
+        new AsyncTask<Void, Void, List<HallofFameAdapter.Player>>() {
+            private Exception error;
+            @Override
+            protected List<HallofFameAdapter.Player> doInBackground(Void... voids) {
+                List<HallofFameAdapter.Player> result = new ArrayList<>();
+                try {
+                    LeaderboardResponse leaderboard = ChessApi.getLeaderboards();
+                    List<PlayerLeaderboardEntry> blitz = leaderboard.getLiveBlitz();
+                    for (int i = 0; i < Math.min(10, blitz.size()); i++) {
+                        PlayerLeaderboardEntry entry = blitz.get(i);
+                        String username = entry.getUsername();
+                        String avatar = entry.getAvatar() != null ? entry.getAvatar() : "https://www.chess.com/bundles/web/images/noavatar_l.84a92436.gif";
+                        int rating = entry.getScore();
+                        result.add(new HallofFameAdapter.Player(username, avatar, rating));
                     }
-                },
-                error -> {
-                    Toast.makeText(getContext(), "Failed to fetch leaderboard", Toast.LENGTH_SHORT).show();
-                    android.util.Log.e("HallOfFameFragment", "Volley error: " + error.toString());
+                } catch (Exception e) {
+                    error = e;
                 }
-        );
-        queue.add(request);
+                return result;
+            }
+            @Override
+            protected void onPostExecute(List<HallofFameAdapter.Player> players) {
+                if (error != null) {
+                    Toast.makeText(getContext(), "Failed to fetch leaderboard", Toast.LENGTH_SHORT).show();
+                    android.util.Log.e("HallOfFameFragment", "API error: " + error.toString());
+                } else {
+                    playerList.clear();
+                    playerList.addAll(players);
+                    adapter.updatePlayers(playerList);
+                }
+            }
+        }.execute();
     }
 }

@@ -17,7 +17,6 @@ import java.io.IOException
 import java.util.concurrent.CompletableFuture
 import kotlin.jvm.Throws
 
-val retrofit2: Any
 
 object ChessApi {
     private const val BASE_URL = "https://api.chess.com/"
@@ -87,6 +86,13 @@ object ChessApi {
     fun getPlayerStats(username: String): PlayerStats {
         return getSync { getPlayerStats(username) }
     }
+
+    // Public synchronous function for Java
+    @JvmStatic
+    @Throws(ChessApiException::class)
+    fun getLeaderboards(): com.ldlda.chesscom_stats.api.data.LeaderboardResponse {
+        return getSync { getLeaderboards() }
+    }
 }
 
 
@@ -96,10 +102,13 @@ interface ChessApiService {
 
     @GET("pub/player/{username}/stats")
     suspend fun getPlayerStats(@Path("username") username: String): PlayerStats
+
+    @GET("pub/leaderboards")
+    suspend fun getLeaderboards(): com.ldlda.chesscom_stats.api.data.LeaderboardResponse
 }
 
 // Sealed class hierarchy for Chess.com API exceptions.
-sealed class ChessApiException(message: String?, cause: Throwable?) : Throwable(message, cause) {
+sealed class ChessApiException(message: String?, cause: Throwable?) : Exception(message, cause) {
     class NotFound(message: String?, cause: HttpException) : ChessApiException(message, cause)
     class Gone(message: String?, cause: HttpException) : ChessApiException(message, cause)
     class TooManyRequests(message: String?, cause: HttpException) :

@@ -61,6 +61,7 @@ public class HallofFameAdapter extends RecyclerView.Adapter<HallofFameAdapter.Pl
             rating = itemView.findViewById(R.id.player_rating);
         }
     }
+    //For future feature etc: swiping up the screen to refresh the list
     public void updatePlayers(List<Player> newPlayers) {
         this.players = newPlayers;
         notifyDataSetChanged();
