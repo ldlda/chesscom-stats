@@ -7,27 +7,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.squareup.picasso.Picasso;
+
+import com.ldlda.chesscom_stats.api.data.LeaderboardEntry;
+
 import java.util.List;
 import com.ldlda.chesscom_stats.R;
 
 public class HallofFameAdapter extends RecyclerView.Adapter<HallofFameAdapter.PlayerViewHolder> {
     public interface OnPlayerClickListener {
-        void onPlayerClick(Player player);
+        void onPlayerClick(LeaderboardEntry player);
     }
-    public static class Player {
-        public String username;
-        public String avatarUrl;
-        public int rating;
-        public Player(String username, String avatarUrl, int rating) {
-            this.username = username;
-            this.avatarUrl = avatarUrl;
-            this.rating = rating;
-        }
-    }
-    private List<Player> players;
+    private List<LeaderboardEntry> players;
     private OnPlayerClickListener listener;
-    public HallofFameAdapter(List<Player> players, OnPlayerClickListener listener) {
+    public HallofFameAdapter(List<LeaderboardEntry> players, OnPlayerClickListener listener) {
         this.players = players;
         this.listener = listener;
     }
@@ -39,11 +31,11 @@ public class HallofFameAdapter extends RecyclerView.Adapter<HallofFameAdapter.Pl
     }
     @Override
     public void onBindViewHolder(@NonNull PlayerViewHolder holder, int position) {
-        Player player = players.get(position);
-        holder.username.setText(player.username);
-        holder.rank.setText("#" + (position + 1));
-        holder.rating.setText(String.valueOf(player.rating));
-        com.squareup.picasso.Picasso.get().load(player.avatarUrl).placeholder(R.drawable.ic_person).into(holder.avatar);
+        LeaderboardEntry player = players.get(position);
+        holder.username.setText(player.getUsername());
+        holder.rank.setText("# " + player.getRank());
+        holder.rating.setText(String.valueOf(player.getElo()));
+        com.squareup.picasso.Picasso.get().load(player.getAvatarUrl().toString()).placeholder(R.drawable.ic_person).into(holder.avatar);
         holder.itemView.setOnClickListener(v -> listener.onPlayerClick(player));
     }
     @Override
@@ -62,7 +54,7 @@ public class HallofFameAdapter extends RecyclerView.Adapter<HallofFameAdapter.Pl
         }
     }
     //For future feature etc: swiping up the screen to refresh the list
-    public void updatePlayers(List<Player> newPlayers) {
+    public void updatePlayers(List<LeaderboardEntry> newPlayers) {
         this.players = newPlayers;
         notifyDataSetChanged();
     }

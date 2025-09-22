@@ -61,8 +61,7 @@ data class LeaderboardEntry(
     @SerialName("player_id")
     val playerId: Long,
 
-    @SerialName("score")
-    val elo: Int = 0,
+    val score: Int = 0,
 
     val rank: Int = 0,
 
@@ -71,13 +70,14 @@ data class LeaderboardEntry(
     @SerialName("draw_count") val drawCount: Int? = null,
 
 
-    @SerialName("url") val profilePage: URI? = null,
+    @SerialName("url") val profilePage: URI,
     @SerialName("country") val countryUrl: URI? = null,
     val status: String? = null,
     val title: String? = null,
     val name: String? = null,
-    @SerialName("avatar") val avatarUrl: URI? = null,
+    @SerialName("avatar") val avatarUrl: URI = URI("https://www.chess.com/bundles/web/images/noavatar_l.84a92436.gif"),
 ) {
+    val elo = score
     val gameRecord
         get() =
             (winCount ?: drawCount ?: lossCount)
