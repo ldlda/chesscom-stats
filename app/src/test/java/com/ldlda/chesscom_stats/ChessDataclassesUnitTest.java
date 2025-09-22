@@ -49,7 +49,7 @@ public class ChessDataclassesUnitTest {
         assertEquals(174596871, player.getPlayerId());
 
         assertEquals(playerProfilePage, player.getProfilePage());
-        assertNull(player.getProfilePictureResource());
+        assertNull(player.getAvatarUrl());
     }
 
 

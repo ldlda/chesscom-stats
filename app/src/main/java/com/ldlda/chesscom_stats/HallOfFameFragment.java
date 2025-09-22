@@ -9,10 +9,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.ldlda.chesscom_stats.adapter.HallofFameAdapter;
-import com.ldlda.chesscom_stats.PlayerDetailActivity;
-import com.ldlda.chesscom_stats.api.fetch.ChessApi;
-import com.ldlda.chesscom_stats.api.data.LeaderboardResponse;
-import com.ldlda.chesscom_stats.api.data.PlayerLeaderboardEntry;
+import com.ldlda.chesscom_stats.api.data.LeaderboardEntry;
+import com.ldlda.chesscom_stats.api.data.Leaderboards;
+import com.ldlda.chesscom_stats.api.fetch.DefaultChessApi;
+
 import android.os.AsyncTask;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
 public class HallOfFameFragment extends Fragment {
     private RecyclerView recyclerView;
     private HallofFameAdapter adapter;
-    private final List<HallofFameAdapter.Player> playerList = new ArrayList<>();
+    private final List<LeaderboardEntry> playerList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,46 +30,43 @@ public class HallOfFameFragment extends Fragment {
         adapter = new HallofFameAdapter(playerList, player -> {
             // Launch PlayerDetailActivity with the selected username
             android.content.Intent intent = new android.content.Intent(getContext(), PlayerDetailActivity.class);
-            intent.putExtra("username", player.username);
+            intent.putExtra("username", player.getUsername());
             startActivity(intent);
         });
         recyclerView.setAdapter(adapter);
         fetchTopPlayers();
         return view;
     }
-
+    private final AsyncTask<Void, Void, List<LeaderboardEntry>> asyncTask = new AsyncTask<Void, Void, List<LeaderboardEntry>>() {
+        private Exception error;
+        @Override
+        protected List<LeaderboardEntry> doInBackground(Void... voids) {
+            List<LeaderboardEntry> result = new ArrayList<>();
+            try {
+                Leaderboards leaderboard = DefaultChessApi.INSTANCE.getLeaderboardsSync();
+                List<LeaderboardEntry> blitz = leaderboard.getBlitz();
+                for (int i = 0; i < Math.min(10, blitz.size()); i++) {
+                    LeaderboardEntry entry = blitz.get(i);
+                    result.add(entry);
+                }
+            } catch (Exception e) {
+                error = e;
+            }
+            return result;
+        }
+        @Override
+        protected void onPostExecute(List<LeaderboardEntry> players) {
+            if (error != null) {
+                Toast.makeText(getContext(), "Failed to fetch leaderboard", Toast.LENGTH_SHORT).show();
+                android.util.Log.e("HallOfFameFragment", "API error: " + error.toString());
+            } else {
+                playerList.clear();
+                playerList.addAll(players);
+                adapter.updatePlayers(playerList);
+            }
+        }
+    };
     private void fetchTopPlayers() {
-        new AsyncTask<Void, Void, List<HallofFameAdapter.Player>>() {
-            private Exception error;
-            @Override
-            protected List<HallofFameAdapter.Player> doInBackground(Void... voids) {
-                List<HallofFameAdapter.Player> result = new ArrayList<>();
-                try {
-                    LeaderboardResponse leaderboard = ChessApi.getLeaderboards();
-                    List<PlayerLeaderboardEntry> blitz = leaderboard.getLiveBlitz();
-                    for (int i = 0; i < Math.min(10, blitz.size()); i++) {
-                        PlayerLeaderboardEntry entry = blitz.get(i);
-                        String username = entry.getUsername();
-                        String avatar = entry.getAvatar() != null ? entry.getAvatar() : "https://www.chess.com/bundles/web/images/noavatar_l.84a92436.gif";
-                        int rating = entry.getScore();
-                        result.add(new HallofFameAdapter.Player(username, avatar, rating));
-                    }
-                } catch (Exception e) {
-                    error = e;
-                }
-                return result;
-            }
-            @Override
-            protected void onPostExecute(List<HallofFameAdapter.Player> players) {
-                if (error != null) {
-                    Toast.makeText(getContext(), "Failed to fetch leaderboard", Toast.LENGTH_SHORT).show();
-                    android.util.Log.e("HallOfFameFragment", "API error: " + error.toString());
-                } else {
-                    playerList.clear();
-                    playerList.addAll(players);
-                    adapter.updatePlayers(playerList);
-                }
-            }
-        }.execute();
+        asyncTask.execute();
     }
 }
