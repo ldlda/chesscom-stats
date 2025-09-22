@@ -49,13 +49,15 @@ dependencies {
     implementation(libs.converter.kotlinx.serialization)
     implementation(libs.mockwebserver)
     implementation(libs.logging.interceptor)
-//    implementation(libs.desugar.jdk.libs)
+    implementation(libs.picasso)
+    implementation(libs.volley)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.volley)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 

@@ -1,6 +1,7 @@
 package com.ldlda.chesscom_stats.api.fetch
 
 import androidx.annotation.WorkerThread
+import com.ldlda.chesscom_stats.api.data.CountryInfo
 import com.ldlda.chesscom_stats.api.data.Leaderboards
 import com.ldlda.chesscom_stats.api.data.Player
 import com.ldlda.chesscom_stats.api.data.PlayerStats
@@ -16,8 +17,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Path
 import java.io.IOException
 import java.util.concurrent.CompletableFuture
 
@@ -71,81 +70,87 @@ open class ChessApiClient(
     suspend fun getLeaderboards(): Leaderboards = execute { getLeaderboards() }
     suspend fun getPlayer(username: String): Player = execute { getPlayer(username) }
     suspend fun getPlayerStats(username: String): PlayerStats = execute { getPlayerStats(username) }
-
+    suspend fun getCountry(code: String): CountryInfo = execute { getCountry(code) }
+    suspend fun getCountryByUrl(url: String): CountryInfo = execute { getCountryByUrl(url) }
 
 
     // Public synchronous functions for Java
 
+    @Deprecated(
+        "use ChessRepository instead",
+    )
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getPlayerSync(username: String): Player {
         return getSync { getPlayer(username) }
     }
 
+    @Deprecated(
+        "use ChessRepository instead",
+    )
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getPlayerStatsSync(username: String): PlayerStats {
         return getSync { getPlayerStats(username) }
     }
+
+    @Deprecated(
+        "use ChessRepository instead",
+    )
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getLeaderboardsSync(): Leaderboards {
         return getSync { getLeaderboards() }
     }
 
+    @Deprecated(
+        "use ChessRepository instead",
+    )
+    @WorkerThread
+    @Throws(ChessApiException::class)
+    fun getCountryByUrlSync(url: String): CountryInfo = getSync { getCountryByUrl(url) }
+
+    @Deprecated(
+        "use ChessRepository instead also why do you do this",
+    )
+    @WorkerThread
+    @Throws(ChessApiException::class)
+    fun getCountrySync(code: String): CountryInfo = getSync { getCountry(code) }
+
     // Java-friendly async wrappers (recommended for UI)
 
+    @Deprecated(
+        "use ChessRepository instead",
+    )
     fun getPlayerAsync(username: String): CompletableFuture<Player> =
         getAsync { getPlayer(username) }
 
+    @Deprecated(
+        "use ChessRepository instead",
+    )
     fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
         getAsync { getPlayerStats(username) }
 
-    fun getLeaderboardsAsync(): CompletableFuture<Leaderboards> =
-        getAsync { getLeaderboards() }
+    @Deprecated(
+        "use ChessRepository instead",
+    )
+    fun getLeaderboardsAsync(): CompletableFuture<Leaderboards> = getAsync { getLeaderboards() }
+
+    @Deprecated(
+        "use ChessRepository instead",
+    )
+    fun getCountryByUrlAsync(url: String): CompletableFuture<CountryInfo> =
+        getAsync { getCountryByUrl(url) }
 
 
+    constructor(baseUrl: String) : this(kotlin.run {
+        val json = Json { ignoreUnknownKeys = true }
 
-    constructor(baseUrl: String) : this(
-        kotlin.run {
-            val json = Json { ignoreUnknownKeys = true }
+        val contentType = "application/json".toMediaType()
 
-            val contentType = "application/json".toMediaType()
-
-            Retrofit.Builder().baseUrl(baseUrl)
-                .addConverterFactory(json.asConverterFactory(contentType)).build()
-                .create(ChessApiService::class.java)
-        })
+        Retrofit.Builder().baseUrl(baseUrl)
+            .addConverterFactory(json.asConverterFactory(contentType)).build()
+            .create(ChessApiService::class.java)
+    })
 }
-
-
-object DefaultChessApi : ChessApiClient()
-
-interface ChessApiService {
-    @GET("pub/player/{username}")
-    suspend fun getPlayer(@Path("username") username: String): Player
-
-    @GET("pub/player/{username}/stats")
-    suspend fun getPlayerStats(@Path("username") username: String): PlayerStats
-    @GET("pub/leaderboards")
-    suspend fun getLeaderboards(): Leaderboards
-}
-
-// Sealed class hierarchy for Chess.com API exceptions.
-sealed class ChessApiException(message: String?, cause: Throwable?) : Exception(message, cause) {
-    class NotFound(message: String?, cause: HttpException) : ChessApiException(message, cause)
-    class Gone(message: String?, cause: HttpException) : ChessApiException(message, cause)
-    class TooManyRequests(message: String?, cause: HttpException) :
-        ChessApiException(message, cause)
-
-    class Redirected(message: String?, cause: HttpException) : ChessApiException(message, cause)
-    data class Internal(
-        val code: Int, override val message: String?, override val cause: HttpException
-    ) : ChessApiException(message, cause)
-
-    class Network(message: String?, cause: IOException) : ChessApiException(message, cause)
-    class Serialization(message: String?, cause: SerializationException) :
-        ChessApiException(message, cause)
-
-    class Other(message: String?, cause: Throwable?) : ChessApiException(message, cause)
-}
+object DefaultChessApi: ChessApiClient()
