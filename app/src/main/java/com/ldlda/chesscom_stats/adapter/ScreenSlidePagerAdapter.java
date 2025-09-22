@@ -17,18 +17,13 @@ public class ScreenSlidePagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        switch (position) {
-            case 0:
-                return new HomeFragment();
-            case 1:
-                return new FavoritesFragment();
-            case 2:
-                return new HallOfFameFragment();
-            case 3:
-                return new LessonsFragment();
-            default:
-                return new HomeFragment();
-        }
+        return switch (position) {
+//            case 0 -> new HomeFragment();
+            case 1 -> new FavoritesFragment();
+            case 2 -> new HallOfFameFragment();
+            case 3 -> new LessonsFragment();
+            default -> new HomeFragment();
+        };
     }
 
     @Override

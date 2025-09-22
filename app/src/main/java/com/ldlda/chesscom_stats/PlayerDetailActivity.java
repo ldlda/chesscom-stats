@@ -1,34 +1,33 @@
 package com.ldlda.chesscom_stats;
 
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.ldlda.chesscom_stats.api.repository.ChessRepositoryJava;
 import com.squareup.picasso.Picasso;
-import org.json.JSONObject;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+
+import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.Executors;
+import java.util.concurrent.CompletableFuture;
 
 public class PlayerDetailActivity extends AppCompatActivity {
-    private String convertTimestamp(String timestamp) {
-        try {
-            long epochSeconds = Long.parseLong(timestamp);
-            Date date = new Date(epochSeconds * 1000L); // Convert to milliseconds
-            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
-            return formatter.format(date);
-        } catch (NumberFormatException e) {
-            return timestamp; // Return original if parsing fails
-        }
+    private ChessRepositoryJava repo;
+    private CompletableFuture<Void> inFlight;
+
+    private String formatInstant(java.time.Instant instant) {
+        if (instant == null) return "";
+        Date date = Date.from(instant);
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
+        return formatter.format(date);
     }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,45 +40,90 @@ public class PlayerDetailActivity extends AppCompatActivity {
         TextView statsView = findViewById(R.id.player_detail_stats);
 
         String username = getIntent().getStringExtra("username");
+        assert username != null;
+
         usernameView.setText(username);
 
-        // Fetch player data from chess.com API
-        Executors.newSingleThreadExecutor().execute(() -> {
-            try {
-                URL url = new URL("https://api.chess.com/pub/player/" + username);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder response = new StringBuilder();
-                String line;
-                while ((line = in.readLine()) != null) {
-                    response.append(line);
-                }
-                in.close();
-                JSONObject obj = new JSONObject(response.toString());
-                String avatarUrl = obj.optString("avatar", null);
-                String name = obj.optString("name", "");
-                String title = obj.optString("title", "");
-                String country = obj.optString("country", "");
-                String joined = convertTimestamp(obj.optString("joined", ""));
-                String lastOnline = convertTimestamp(obj.optString("last_online", ""));
-                String status = obj.optString("status", "");
-                runOnUiThread(() -> {
-                    if (avatarUrl != null && !avatarUrl.isEmpty()) {
-                        Picasso.get().load(avatarUrl).placeholder(R.mipmap.ic_launcher).into(avatar);
-                    }
-                    nameView.setText(name.isEmpty() ? "No name provided" : name);
-                    StringBuilder stats = new StringBuilder();
-                    if (!title.isEmpty()) stats.append("Title: ").append(title).append("\n");
-                    if (!country.isEmpty()) stats.append("Country: ").append(country).append("\n");
-                    if (!joined.isEmpty()) stats.append("Joined: ").append(joined).append("\n");
-                    if (!lastOnline.isEmpty()) stats.append("Last Online: ").append(lastOnline).append("\n");
-                    if (!status.isEmpty()) stats.append("Status: ").append(status).append("\n");
-                    statsView.setText(stats.toString());
+        // Fetch player data via repository (async, lifecycle-friendly)
+        repo = new ChessRepositoryJava();
+        inFlight = repo.getPlayerAsync(username)
+                .thenAccept(player -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    runOnUiThread(() -> {
+                        // Avatar (null/placeholder-safe)
+                        URI avatarUri = player.getProfilePictureResource();
+                        if (avatarUri != null) {
+                            Picasso.get()
+                                    .load(avatarUri.toString())
+                                    .placeholder(R.drawable.ic_person)
+                                    .error(R.drawable.ic_person)
+                                    .into(avatar);
+                        } else {
+                            avatar.setImageResource(R.drawable.ic_person);
+                        }
+
+                        // Name
+                        String name = player.getName();
+                        if (name != null && !name.isEmpty())
+                            nameView.setText(name);
+
+                        // Stats text (title, country URL, joined, last online, status)
+                        StringBuilder stats = new StringBuilder();
+
+                        String title = player.getTitle();
+                        if (title != null && !title.isEmpty())
+                            stats.append("Title: ").append(title).append("\n");
+
+                        // Build and set the base stats first
+                        stats.append("Country: ").append("Loading…").append("\n");
+                        statsView.setText(stats.toString());
+
+                        {// Then kick off the async fetch
+                            URI countryUri = player.getCountryUrl();
+                            repo.getCountryByUrlAsync(countryUri) // returns CompletableFuture<CountryInfo>
+                                    .thenAccept(info -> {
+                                        if (isFinishing() || isDestroyed()) return;
+                                        runOnUiThread(() -> {
+                                            // Rebuild or patch the text; simplest: replace the placeholder
+                                            String updated = statsView.getText().toString()
+                                                    .replace("Country: Loading…", "Country: " + info.getName());
+                                            statsView.setText(updated);
+                                        });
+                                    })
+                                    .exceptionally(ex -> {
+                                        // Optional: fallback to code-based Locale name if API fails
+                                        runOnUiThread(() -> {
+                                            String fallback = statsView.getText().toString()
+                                                    .replace("Country: Loading…", "Country: Unknown");
+                                            statsView.setText(fallback);
+                                        });
+                                        return null;
+                                    });
+                        }
+
+                        Instant joined = player.getJoined();
+                        stats.append("Joined: ").append(formatInstant(joined)).append("\n");
+
+                        Instant lastOnline = player.getLastOnline();
+                        stats.append("Last Online: ").append(formatInstant(lastOnline)).append("\n");
+
+                        String status = player.getStatus();
+                        if (!status.isEmpty()) stats.append("Status: ").append(status).append("\n");
+
+                        statsView.setText(stats.toString());
+                    });
+                })
+                .exceptionally(ex -> {
+                    if (isFinishing() || isDestroyed()) return null;
+                    runOnUiThread(() -> statsView.setText(R.string.failed_to_load_player_data));
+                    return null;
                 });
-            } catch (Exception e) {
-                runOnUiThread(() -> statsView.setText("Failed to load player data."));
-            }
-        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (inFlight != null) inFlight.cancel(true);
+        if (repo != null) repo.close();
     }
 }
