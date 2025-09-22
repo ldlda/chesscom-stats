@@ -1,6 +1,7 @@
 package com.ldlda.chesscom_stats.api.fetch
 
 import androidx.annotation.WorkerThread
+import com.ldlda.chesscom_stats.api.data.Leaderboards
 import com.ldlda.chesscom_stats.api.data.Player
 import com.ldlda.chesscom_stats.api.data.PlayerStats
 import kotlinx.coroutines.CoroutineScope
@@ -57,27 +58,39 @@ open class ChessApiClient(
     fun close() = scope.cancel()
 
     // ok
-    fun <T> getAsync(get: suspend ChessApiService.() -> T): CompletableFuture<T> =
+    private fun <T> getAsync(get: suspend ChessApiService.() -> T): CompletableFuture<T> =
         scope.future { execute(get) }
 
 
     @WorkerThread
-    fun <T> getSync(get: suspend ChessApiService.() -> T): T =
+    private fun <T> getSync(get: suspend ChessApiService.() -> T): T =
         runBlocking(Dispatchers.IO) { execute(get) }
+
+    // kotlin interface
+
+    suspend fun getLeaderboards(): Leaderboards = execute { getLeaderboards() }
+    suspend fun getPlayer(username: String): Player = execute { getPlayer(username) }
+    suspend fun getPlayerStats(username: String): PlayerStats = execute { getPlayerStats(username) }
+
+
 
     // Public synchronous functions for Java
 
     @WorkerThread
     @Throws(ChessApiException::class)
-    fun getPlayer(username: String): Player {
+    fun getPlayerSync(username: String): Player {
         return getSync { getPlayer(username) }
     }
 
-
     @WorkerThread
     @Throws(ChessApiException::class)
-    fun getPlayerStats(username: String): PlayerStats {
+    fun getPlayerStatsSync(username: String): PlayerStats {
         return getSync { getPlayerStats(username) }
+    }
+    @WorkerThread
+    @Throws(ChessApiException::class)
+    fun getLeaderboardsSync(): Leaderboards {
+        return getSync { getLeaderboards() }
     }
 
     // Java-friendly async wrappers (recommended for UI)
@@ -85,9 +98,12 @@ open class ChessApiClient(
     fun getPlayerAsync(username: String): CompletableFuture<Player> =
         getAsync { getPlayer(username) }
 
-
     fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
         getAsync { getPlayerStats(username) }
+
+    fun getLeaderboardsAsync(): CompletableFuture<Leaderboards> =
+        getAsync { getLeaderboards() }
+
 
 
     constructor(baseUrl: String) : this(
@@ -111,6 +127,8 @@ interface ChessApiService {
 
     @GET("pub/player/{username}/stats")
     suspend fun getPlayerStats(@Path("username") username: String): PlayerStats
+    @GET("pub/leaderboards")
+    suspend fun getLeaderboards(): Leaderboards
 }
 
 // Sealed class hierarchy for Chess.com API exceptions.

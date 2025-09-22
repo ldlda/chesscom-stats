@@ -2,6 +2,7 @@
 
 package com.ldlda.chesscom_stats.api.data
 
+import com.ldlda.chesscom_stats.api.repository.ChessRepository
 import com.ldlda.chesscom_stats.utils.parse.InstantSerializer
 import com.ldlda.chesscom_stats.utils.parse.URISerializer
 import kotlinx.serialization.SerialName
@@ -38,13 +39,15 @@ data class Player(
     val followers: Int,
 
     @SerialName("avatar")
-    val profilePictureResource: URI? = null,
+    val avatarUrl: URI? = null,
 
     val title: String? = null,
 
     /** name as in government name*/
     val name: String? = null,
 ) {
+    suspend fun fetchPlayerStats(repo: ChessRepository) =
+        repo.getPlayerStats(username)
     companion object {
         private val jsonFormat = Json { ignoreUnknownKeys = true }
 

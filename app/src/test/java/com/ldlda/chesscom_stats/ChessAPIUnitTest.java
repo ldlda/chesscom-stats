@@ -24,13 +24,13 @@ public class ChessAPIUnitTest {
         String t = "https://api.chess.com/pub/player/imrosen";
         String u = "imrosen";
 
-        Player imRosen = instance.getPlayer(u);
+        Player imRosen = instance.getPlayerSync(u);
         Player imAlsoRosen = Player.fromJSON(NetworkRequestExample.fetchData(t));
 
         assertEquals(imAlsoRosen, imRosen);
         String t2 = "https://api.chess.com/pub/player/imrosen/stats";
 
-        PlayerStats rosenStats = instance.getPlayerStats(u);
+        PlayerStats rosenStats = instance.getPlayerStatsSync(u);
         PlayerStats alsoRosenStats = PlayerStats.fromJSON(NetworkRequestExample.fetchData(t2));
 
         assertEquals(alsoRosenStats, rosenStats);
@@ -39,7 +39,7 @@ public class ChessAPIUnitTest {
     @Test
     public void testFetchThrows() {
         try {
-            Player fhsjkfhskjdhf = instance.getPlayer("usaghfklawgfkwahf");
+            Player fhsjkfhskjdhf = instance.getPlayerSync("usaghfklawgfkwahf");
             System.out.println("player does exist OK: " + fhsjkfhskjdhf);
         } catch (ChessApiException e) {
             Response r;

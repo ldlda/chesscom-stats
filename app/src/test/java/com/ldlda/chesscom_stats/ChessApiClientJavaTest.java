@@ -50,10 +50,11 @@ public class ChessApiClientJavaTest {
                   "last_online": 1700000000,
                   "status": "premium",
                   "followers": 999
-                }""";
+                }
+                """;
         server.enqueue(new MockResponse().setResponseCode(200).setBody(body));
 
-        Player p = client.getPlayer("hikaru");
+        Player p = client.getPlayerSync("hikaru");
         assertNotNull(p);
         assertEquals(15448422L, p.getPlayerId());
 
@@ -70,7 +71,7 @@ public class ChessApiClientJavaTest {
                 """));
 
         try {
-            client.getPlayer("does-not-exist");
+            client.getPlayerSync("does-not-exist");
             fail("Expected ChessApiException.NotFound");
         } catch (ChessApiException e) {
             assertTrue(e instanceof ChessApiException.NotFound);
@@ -91,7 +92,7 @@ public class ChessApiClientJavaTest {
         server.enqueue(new MockResponse().setResponseCode(200).setBody(bad));
 
         try {
-            client.getPlayer("someone");
+            client.getPlayerSync("someone");
             fail("Expected ChessApiException.Serialization");
         } catch (ChessApiException e) {
             assertTrue(e instanceof ChessApiException.Serialization);
