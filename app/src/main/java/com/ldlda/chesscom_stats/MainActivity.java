@@ -14,7 +14,6 @@ import com.ldlda.chesscom_stats.adapter.ScreenSlidePagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
     //Available tabs
-    private final String[] tabTitles = {"Home", "Favorites", "Hall of Fame", "Lessons"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +26,13 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        //private final String[] tabTitles = {"Home", "Favorites", "Hall of Fame", "Lessons"};
+        final String[] tabTitles = {
+                getString(R.string.home),
+                getString(R.string.fav),
+                getString(R.string.hall_fame),
+                getString(R.string.lesson)
+        };
         ViewPager2 viewPager = findViewById(R.id.view_pager);
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         viewPager.setAdapter(new ScreenSlidePagerAdapter(this));
