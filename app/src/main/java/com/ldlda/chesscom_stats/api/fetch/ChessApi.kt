@@ -5,7 +5,9 @@ import com.ldlda.chesscom_stats.api.data.Player
 import com.ldlda.chesscom_stats.api.data.PlayerStats
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.future.future
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -25,17 +27,11 @@ open class ChessApiClient(
 
         val contentType = "application/json".toMediaType()
 
-        val retrofit: Retrofit by lazy {
-            Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(json.asConverterFactory(contentType))
-                .build()
-        }
-
-        val service: ChessApiService by lazy {
-            retrofit.create(ChessApiService::class.java)
-        }
-        return service
+        Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .build()
+            .create(ChessApiService::class.java)
     }
 ) {
     suspend fun <T> execute(get: suspend ChessApiService.() -> T): T {
@@ -59,47 +55,47 @@ open class ChessApiClient(
         }
     }
 
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    fun close() = scope.cancel()
+
     // ok
-    fun <T> getAsync(get: suspend ChessApiService.() -> T): CompletableFuture<T> {
-        val f = CompletableFuture<T>()
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                f.complete(execute(get))
-            } catch (t: Throwable) {
-                f.completeExceptionally(t)
-            }
-        }
-        return f
-    }
+    fun <T> getAsync(get: suspend ChessApiService.() -> T): CompletableFuture<T> =
+        scope.future { execute(get) }
+
 
     @WorkerThread
     fun <T> getSync(get: suspend ChessApiService.() -> T): T =
-        runBlocking { execute(get) }
+        runBlocking(Dispatchers.IO) { execute(get) }
 
     // Public synchronous functions for Java
-
-    @WorkerThread
-    @Throws(ChessApiException::class)
-    fun getPlayer(username: String): Player {
-        return getSync { getPlayer(username) }
-    }
-
-
-    @WorkerThread
-    @Throws(ChessApiException::class)
-    fun getPlayerStats(username: String): PlayerStats {
-        return getSync { getPlayerStats(username) }
-    }
-
-    // Java-friendly async wrappers (recommended for UI)
-
-    fun getPlayerAsync(username: String): CompletableFuture<Player> =
-        getAsync { getPlayer(username) }
+    companion object
+        {
+            @WorkerThread
+            @Throws(ChessApiException::class)
+            @JvmStatic
+            fun getPlayer(username: String): Player {
+                return ChessApi.getSync { getPlayer(username) }
+            }
 
 
-    fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
-        getAsync { getPlayerStats(username) }
+            @WorkerThread
+            @Throws(ChessApiException::class)
+            @JvmStatic
+            fun getPlayerStats(username: String): PlayerStats {
+                return ChessApi.getSync { getPlayerStats(username) }
+            }
 
+            // Java-friendly async wrappers (recommended for UI)
+
+            @JvmStatic
+            fun getPlayerAsync(username: String): CompletableFuture<Player> =
+                ChessApi.getAsync { getPlayer(username) }
+
+
+            @JvmStatic
+            fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
+                ChessApi.getAsync { getPlayerStats(username) }
+        }
 }
 
 object ChessApi : ChessApiClient()

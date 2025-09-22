@@ -6,6 +6,7 @@ import com.ldlda.chesscom_stats.api.data.Player;
 import com.ldlda.chesscom_stats.api.data.PlayerStats;
 import com.ldlda.chesscom_stats.api.fetch.ChessApi;
 import com.ldlda.chesscom_stats.api.fetch.ChessApiException;
+import com.ldlda.chesscom_stats.utils.NetworkRequestExample;
 
 import org.junit.Test;
 

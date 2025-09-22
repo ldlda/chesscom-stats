@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats;
+package com.ldlda.chesscom_stats.utils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -7,7 +7,7 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 
 /// thank you google search gemini
-class NetworkRequestExample {
+public class NetworkRequestExample {
     public static String fetchData(String urlString) throws Exception {
         URL url = new URL(urlString);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();

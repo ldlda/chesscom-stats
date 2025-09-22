@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 
 import com.ldlda.chesscom_stats.api.data.Player;
 import com.ldlda.chesscom_stats.api.data.PlayerStats;
+import com.ldlda.chesscom_stats.utils.NetworkRequestExample;
 
 import org.intellij.lang.annotations.Language;
 import org.junit.Test;
