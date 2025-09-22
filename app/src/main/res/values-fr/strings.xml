@@ -1,16 +1,16 @@
 <resources>
     <string name="app_name">Stats for chess.com</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Paramètres</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <string name="next">Suivant</string>
+    <string name="previous">Précédent</string>
 
-    <string name="home">Home</string>
-    <string name="fav">Favorites</string>
-    <string name="hall_fame">Hall of Fame</string>
-    <string name="lesson">Lessons</string>
+    <string name="home">Accueil</string>
+    <string name="fav">Favoris</string>
+    <string name="hall_fame">Temple de la renommée</string>
+    <string name="lesson">Leçons</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
