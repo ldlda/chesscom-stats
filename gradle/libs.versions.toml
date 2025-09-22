@@ -1,5 +1,5 @@
 [versions]
-agp = "8.12.0"
+agp = "8.13.0"
 desugar_jdk_libs = "2.1.5"
 kotlin = "2.2.20"
 coreKtx = "1.17.0"
@@ -16,6 +16,8 @@ kotlinx-serialization-json = "1.9.0"
 kotlinx-serialization-core = "1.9.0"
 converterKotlinxSerialization = "3.0.0"
 volley = "1.2.1"
+mockwebserver = "5.1.0"
+loggingInterceptor = "5.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,9 +34,12 @@ volley = { group = "com.android.volley", name = "volley", version.ref = "volley"
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinx-serialization-core" }
 converter-kotlinx-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "converterKotlinxSerialization" }
+mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "mockwebserver" }
+logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "loggingInterceptor" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinx-serialization" }
+

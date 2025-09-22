@@ -39,7 +39,7 @@ data class PlayerStats(
 @Serializable
 data class SimpleStat(
     val last: RatingDate,
-    val best: RatingDate,
+    val best: RatingDate? = null,
     val record: GameRecord,
 )
 
