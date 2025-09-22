@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Stats de chess.com</string>
+    <string name="action_settings">Paramètres</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Suivant</string>
+    <string name="previous">Précédent</string>
+
+    <string name="home">Accueil</string>
+    <string name="fav">Favoris</string>
+    <string name="hall_fame">Temple de la renommée</string>
+    <string name="lesson">Leçons</string>
+
+    <string name="home_txt">Bienvenue sur la page</string>
+</resources>
