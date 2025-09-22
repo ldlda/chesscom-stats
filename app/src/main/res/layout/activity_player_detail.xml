@@ -14,14 +14,14 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:src="@mipmap/ic_launcher"
-            android:contentDescription="Player avatar"
+            android:contentDescription="@string/player_avatar_desc"
             android:layout_gravity="center_horizontal"/>
 
         <TextView
             android:id="@+id/player_detail_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Username"
+            android:text="@string/player_username"
             android:textStyle="bold"
             android:textSize="22sp"
             android:layout_marginTop="12dp"/>
@@ -30,7 +30,7 @@
             android:id="@+id/player_detail_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name"
+            android:text="@string/player_name"
             android:textSize="18sp"
             android:layout_marginTop="8dp"/>
 
