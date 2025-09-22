@@ -40,7 +40,9 @@ public class PlayerDetailActivity extends AppCompatActivity {
         TextView statsView = findViewById(R.id.player_detail_stats);
 
         String username = getIntent().getStringExtra("username");
-        assert username != null;
+        if (username == null) {
+            throw new IllegalArgumentException("Intent extra 'username' must not be null");
+        }
 
         usernameView.setText(username);
 

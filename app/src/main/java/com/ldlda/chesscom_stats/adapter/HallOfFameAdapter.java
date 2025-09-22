@@ -56,7 +56,6 @@ public class HallOfFameAdapter extends ListAdapter<LeaderboardEntry, HallOfFameA
         holder.rank.setText("# " + player.getRank());
         holder.rating.setText(String.valueOf(player.getElo()));
 
-        player.getAvatarUrl();
         String avatar = player.getAvatarUrl() != null ? player.getAvatarUrl().toString() : null;
         if (avatar != null && !avatar.isEmpty()) {
             Picasso.get()
