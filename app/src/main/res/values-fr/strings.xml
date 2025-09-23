@@ -12,5 +12,7 @@
     <string name="hall_fame">Temple de la renommée</string>
     <string name="lesson">Leçons</string>
 
+    <string name="about">De nous</string>
+
     <string name="home_txt">Bienvenue sur la page</string>
 </resources>
