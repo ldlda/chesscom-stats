@@ -20,5 +20,8 @@
     <string name="hall_fame">Hall of Fame</string>
     <string name="lesson">Lessons</string>
 
+    <!--Menu stuff -->
+    <string name="about">About us</string>
+
     <string name="home_txt">Welcome Home</string>
 </resources>

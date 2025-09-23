@@ -1,6 +1,5 @@
 package com.ldlda.chesscom_stats;
 
-import android.annotation.SuppressLint;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.Menu;
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         ).attach();
 
         // Adding the menu toolbar
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
         // Music
