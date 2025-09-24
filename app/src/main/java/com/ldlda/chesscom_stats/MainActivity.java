@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        //Availabe tabs
+        //Available tabs
         final String[] tabTitles = {
                 getString(R.string.home),
                 getString(R.string.fav),
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        // For some reason switch giving an error of constant expression required, so beta virgin
+        // Using if-else instead of switch due to resource ID compilation constraints (switch requires constant expressions)
         if (id == R.id.menu_about_us) {
             Toast.makeText(this, "Group 14 on topic 25: chess.com stats", Toast.LENGTH_SHORT).show();
             return true;
