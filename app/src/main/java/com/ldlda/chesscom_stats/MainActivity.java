@@ -54,7 +54,17 @@ public class MainActivity extends AppCompatActivity {
 
         // Music
         bg_song = MediaPlayer.create(this,R.raw.open_sky);
+        bg_song.setLooping(true);
         bg_song.start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bg_song != null) {
+            bg_song.release();
+            bg_song = null;
+        }
     }
 
     @Override
