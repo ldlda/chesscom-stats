@@ -3,10 +3,11 @@
 package com.ldlda.chesscom_stats.api.data
 
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
-import com.ldlda.chesscom_stats.utils.parse.URISerializer
+import com.ldlda.chesscom_stats.utils.serialize.URISerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
+import kotlinx.serialization.json.Json
 import java.net.URI
 
 @Serializable
@@ -92,4 +93,14 @@ data class LeaderboardEntry(
     // Optional: when you need the full Player from a leaderboard row
     suspend fun fetchPlayer(repo: ChessRepository) =
         repo.getPlayer(username)
+
+    companion object {
+        private val jsonFormat = Json { ignoreUnknownKeys = true }
+
+        @JvmStatic
+        fun fromJSON(jsonString: String) =
+            jsonFormat.decodeFromString(serializer(), jsonString)
+    }
+
+    fun toJSON() = jsonFormat.encodeToString(this)
 }

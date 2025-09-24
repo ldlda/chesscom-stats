@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class TimedCache<T>(private val ttlMillis: Long) {
     private data class Entry<T>(val value: T, val expiresAt: Long)
+
     private val map = ConcurrentHashMap<String, Entry<T>>()
 
     fun get(key: String): T? {
