@@ -73,10 +73,11 @@ data class Player(
 
     suspend fun fetchPlayerStats(repo: ChessRepository): PlayerStats {
         val newPlayerStats = repo.getPlayerStats(username)
-        playerStats.takeIf { this == newPlayerStats }?.let { return it }
+        playerStats?.takeIf { it == newPlayerStats }?.let { return it }
         _playerStats = newPlayerStats
         return newPlayerStats
     }
+
     suspend fun fetchCountryInfo(repo: ChessRepository): CountryInfo {
         country?.let { return it }
         val countryInfo = repo.getCountry(countryUrl)
@@ -85,7 +86,6 @@ data class Player(
     }
 
     companion object {
-        @Transient
         private val jsonFormat = Json { ignoreUnknownKeys = true; prettyPrint = true }
 
         @JvmStatic
