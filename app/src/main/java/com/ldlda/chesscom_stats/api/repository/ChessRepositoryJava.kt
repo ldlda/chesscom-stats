@@ -9,6 +9,8 @@ import com.ldlda.chesscom_stats.api.fetch.ChessApiException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.runBlocking
@@ -26,59 +28,70 @@ class ChessRepositoryJava @JvmOverloads constructor(
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) {
 
-    private fun <T> runBlocking(task: suspend CoroutineScope.() -> T) =
+    private fun <T> runBlockingLda(task: suspend CoroutineScope.() -> T) =
         runBlocking(scope.coroutineContext, task)
 
-    private fun <T> runAsync(task: suspend CoroutineScope.() -> T) =
+    private fun <T> runAsyncLda(task: suspend CoroutineScope.() -> T) =
         scope.future(block = task)
 
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getPlayerBlocking(username: String): Player =
-        runBlocking { repo.getPlayer(username) }
+        runBlockingLda { repo.getPlayer(username) }
 
     fun getPlayerAsync(username: String): CompletableFuture<Player> =
-        runAsync { repo.getPlayer(username) }
+        runAsyncLda { repo.getPlayer(username) }
 
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getPlayerStatsBlocking(username: String): PlayerStats =
-        runBlocking { repo.getPlayerStats(username) }
+        runBlockingLda { repo.getPlayerStats(username) }
 
     fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
-        runAsync { repo.getPlayerStats(username) }
+        runAsyncLda { repo.getPlayerStats(username) }
 
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getLeaderboardsBlocking(): Leaderboards =
-        runBlocking { repo.getLeaderboards() }
+        runBlockingLda { repo.getLeaderboards() }
 
     fun getLeaderboardsAsync(): CompletableFuture<Leaderboards> =
-        runAsync { repo.getLeaderboards() }
+        runAsyncLda { repo.getLeaderboards() }
 
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getCountryByUrlBlocking(url: URI): CountryInfo =
-        runBlocking { repo.getCountry(url) }
+        runBlockingLda { repo.getCountry(url) }
 
     fun getCountryByUrlAsync(url: URI): CompletableFuture<CountryInfo> =
-        runAsync { repo.getCountry(url) }
+        runAsyncLda { repo.getCountry(url) }
 
 
-
+    /* convenience functions */
     @WorkerThread
     @Throws(ChessApiException::class)
     fun runPlayerFetchCountryBlocking(player: Player): CountryInfo =
-        runBlocking { player.fetchCountryInfo(repo) }
+        runBlockingLda { player.fetchCountryInfo(repo) }
 
-    /** convenience functions */
     fun runPlayerFetchCountryAsync(player: Player): CompletableFuture<CountryInfo> =
-        runAsync { player.fetchCountryInfo(repo) }
+        runAsyncLda { player.fetchCountryInfo(repo) }
 
-    /** convenience function */
     fun playerUpdateCountryAsync(player: Player): CompletableFuture<Player> =
-        runAsync { player.fetchCountryInfo(repo); player }
+        runAsyncLda { player.fetchCountryInfo(repo); player }
 
+    fun playerUpdateStatsAsync(player: Player): CompletableFuture<Player> =
+        runAsyncLda { player.fetchPlayerStats(repo); player }
+
+    // insanely convenient
+    fun getCompletePlayerAsync(username: String): CompletableFuture<Player> =
+        runAsyncLda {
+            val player = repo.getPlayer(username)
+            awaitAll(
+                async { player.fetchCountryInfo(repo) },
+                async { player.fetchPlayerStats(repo) }
+            )
+            player
+        }
 
     /** Call in test teardown if needed to stop any in-flight work. */
     fun close() {

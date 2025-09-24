@@ -85,48 +85,44 @@ open class ChessApiClient(
         return getSync { getPlayer(username) }
     }
 
-    @Deprecated(
-        "use ChessRepository instead"
-    )
+    @Deprecated("use ChessRepository instead")
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getPlayerStatsSync(username: String): PlayerStats {
         return getSync { getPlayerStats(username) }
     }
 
-    @Deprecated(
-        "use ChessRepository instead"
-    )
+    @Deprecated("use ChessRepository instead")
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getLeaderboardsSync(): Leaderboards {
         return getSync { getLeaderboards() }
     }
 
-    @Deprecated(        "use ChessRepository instead"    )
+    @Deprecated("use ChessRepository instead")
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getCountryByUrlSync(url: String): CountryInfo = getSync { getCountryByUrl(url) }
 
-    @Deprecated(        "use ChessRepository instead. Direct country fetching by code is discouraged."    )
+    @Deprecated("use ChessRepository instead. Direct country fetching by code is discouraged.")
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getCountrySync(code: String): CountryInfo = getSync { getCountry(code) }
 
     // Java-friendly async wrappers (recommended for UI)
 
-    @Deprecated(        "use ChessRepository instead"    )
+    @Deprecated("use ChessRepository instead")
     fun getPlayerAsync(username: String): CompletableFuture<Player> =
         getAsync { getPlayer(username) }
 
-    @Deprecated(        "use ChessRepository instead"    )
+    @Deprecated("use ChessRepository instead")
     fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
         getAsync { getPlayerStats(username) }
 
-    @Deprecated(        "use ChessRepository instead"    )
+    @Deprecated("use ChessRepository instead")
     fun getLeaderboardsAsync(): CompletableFuture<Leaderboards> = getAsync { getLeaderboards() }
 
-    @Deprecated(        "use ChessRepository instead"    )
+    @Deprecated("use ChessRepository instead")
     fun getCountryByUrlAsync(url: String): CompletableFuture<CountryInfo> =
         getAsync { getCountryByUrl(url) }
 
