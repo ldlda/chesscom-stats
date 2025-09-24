@@ -53,7 +53,7 @@ data class Tactics(
 
 @Serializable
 data class PuzzleRush(
-    val best: PuzzleRushScore
+    val best: PuzzleRushScore? = null
 )
 
 @Serializable
