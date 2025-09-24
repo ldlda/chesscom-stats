@@ -60,18 +60,27 @@ data class Player(
     @Transient
     val profilePictureResource = avatarUrl
 
-    val country: CountryInfo? get() = countryInfo
+
+    val country: CountryInfo? get() = _countryInfo
 
     @Transient
-    private var countryInfo: CountryInfo? = null
+    private var _countryInfo: CountryInfo? = null
 
-    suspend fun fetchPlayerStats(repo: ChessRepository) =
-        repo.getPlayerStats(username)
+    val playerStats: PlayerStats? get() = _playerStats
 
+    @Transient
+    private var _playerStats: PlayerStats? = null
+
+    suspend fun fetchPlayerStats(repo: ChessRepository): PlayerStats {
+        val newPlayerStats = repo.getPlayerStats(username)
+        playerStats.takeIf { this == newPlayerStats }?.let { return it }
+        _playerStats = newPlayerStats
+        return newPlayerStats
+    }
     suspend fun fetchCountryInfo(repo: ChessRepository): CountryInfo {
         country?.let { return it }
         val countryInfo = repo.getCountry(countryUrl)
-        this.countryInfo = countryInfo
+        _countryInfo = countryInfo
         return countryInfo
     }
 
