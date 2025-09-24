@@ -22,7 +22,7 @@ import java.util.List;
 
 public class HallOfFameFragment extends Fragment {
     private static final String TAG = "HallOfFameFragment";
-    private static final long MIN_REFRESH_INTERVAL_MS = 5_000; // 5 seconds between forced refreshes
+    private static final long MIN_REFRESH_INTERVAL_MS = 10_000; // 10 seconds between forced refreshes
     private long lastRefreshAt = 0L;
     private HallOfFameAdapter adapter;
     private ChessRepositoryJava repo;
@@ -48,6 +48,7 @@ public class HallOfFameFragment extends Fragment {
             if (now - lastRefreshAt < MIN_REFRESH_INTERVAL_MS) {
                 // Too soon; just cancel the spinner quickly.
                 swipeRefreshLayout.setRefreshing(false);
+//                Toast.makeText(getContext(), R.string.refresh_too_soon, Toast.LENGTH_SHORT).show();
                 return;
             }
             fetchTopPlayers(swipeRefreshLayout);

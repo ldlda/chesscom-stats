@@ -15,4 +15,9 @@
     <string name="about">Về chúng tôi</string>
 
     <string name="home_txt">Chào mừng</string>
+    <string name="player_username">Tên người dùng</string>
+    <string name="player_name">Tên</string>
+    <string name="player_country">Quốc gia</string>
+    <string name="player_rank">Hạng</string>
+    <string name="player_score">Điểm</string>
 </resources>
