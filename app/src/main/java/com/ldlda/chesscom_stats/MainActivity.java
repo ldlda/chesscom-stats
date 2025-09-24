@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         if (bg_song != null) {
             bg_song.release();
             bg_song = null;
