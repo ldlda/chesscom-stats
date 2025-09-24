@@ -20,7 +20,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.ldlda.chesscom_stats.adapter.ScreenSlidePagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
-    private MediaPlayer bg_song;
+    private MediaPlayer backgroundSong;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,17 +53,17 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
         // Music
-        bg_song = MediaPlayer.create(this,R.raw.open_sky);
-        bg_song.setLooping(true);
-        bg_song.start();
+        backgroundSong = MediaPlayer.create(this,R.raw.open_sky);
+        backgroundSong.setLooping(true);
+        backgroundSong.start();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (bg_song != null) {
-            bg_song.release();
-            bg_song = null;
+        if (backgroundSong != null) {
+            backgroundSong.release();
+            backgroundSong = null;
         }
     }
 
