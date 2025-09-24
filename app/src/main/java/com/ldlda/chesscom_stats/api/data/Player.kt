@@ -44,7 +44,7 @@ data class Player(
 
     val title: String? = null,
 
-    /** name as in government name*/
+    /** name as in government name */
     val name: String? = null,
 ) {
     /**
@@ -77,7 +77,7 @@ data class Player(
 
     companion object {
         @Transient
-        private val jsonFormat = Json { ignoreUnknownKeys = true }
+        private val jsonFormat = Json { ignoreUnknownKeys = true; prettyPrint = true }
 
         @JvmStatic
         fun fromJSON(jsonString: String) =

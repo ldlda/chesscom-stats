@@ -28,7 +28,7 @@ data class PlayerStats(
     val puzzleRush: PuzzleRush? = null,
 ) {
     companion object {
-        private val jsonFormat = Json { ignoreUnknownKeys = true }
+        private val jsonFormat = Json { ignoreUnknownKeys = true; prettyPrint = true }
 
         @JvmStatic
         fun fromJSON(jsonString: String) =

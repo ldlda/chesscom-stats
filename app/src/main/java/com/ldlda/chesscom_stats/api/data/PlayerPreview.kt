@@ -30,6 +30,7 @@ fun LeaderboardEntry.toPlayerPreview(): PlayerPreview = PlayerPreview(
     name = name,
     avatarUrl = avatarUrl
 )
+
 // A minimal “preview” that mirrors what leaderboards returns about a player.
 @Serializable
 data class PlayerPreview(
