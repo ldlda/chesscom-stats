@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <item
     app:showAsAction="ifRoom"
-    android:title=""
-    android:icon="@drawable/ic_menu_baseline_foreground">
+    android:title="">
 
     <menu>
         <item

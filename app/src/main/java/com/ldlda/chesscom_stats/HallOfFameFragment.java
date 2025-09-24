@@ -1,6 +1,7 @@
 package com.ldlda.chesscom_stats;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HallOfFameFragment extends Fragment {
+    private static final String TAG = "HallOfFameFragment";
     private HallOfFameAdapter adapter;
     private ChessRepositoryJava repo;
 
@@ -47,6 +49,7 @@ public class HallOfFameFragment extends Fragment {
                     adapter.submitList(new ArrayList<>(top))
             );
         }).exceptionally(ex -> {
+            Log.e(TAG, "fetchTopPlayers: getLeaderboards failed", ex);
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() ->
                         Toast.makeText(getContext(), R.string.failed_to_fetch_leaderboard, Toast.LENGTH_SHORT).show()

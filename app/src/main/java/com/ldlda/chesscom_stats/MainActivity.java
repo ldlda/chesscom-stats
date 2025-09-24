@@ -7,21 +7,26 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.viewpager2.widget.ViewPager2;
+import androidx.fragment.app.Fragment;
 
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
-import com.ldlda.chesscom_stats.adapter.ScreenSlidePagerAdapter;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
     private MediaPlayer backgroundSong;
+
+    // Cached fragment references for show/hide pattern
+    private Fragment homeFragment;
+    private Fragment hallFragment;
+    private Fragment favoritesFragment;
+    private Fragment lessonsFragment;
+    private Fragment currentFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,35 +38,74 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        //Available tabs
-        final String[] tabTitles = {
-                getString(R.string.home),
-                getString(R.string.fav),
-                getString(R.string.hall_fame),
-                getString(R.string.lesson)
-        };
-
-        ViewPager2 viewPager = findViewById(R.id.view_pager);
-        TabLayout tabLayout = findViewById(R.id.tab_layout);
-        viewPager.setAdapter(new ScreenSlidePagerAdapter(this));
-
-        new TabLayoutMediator(tabLayout, viewPager, (tab, position) ->
-                tab.setText(tabTitles[position])
-        ).attach();
-
-        // Adding the menu toolbar
+        // Set up toolbar
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
+        // Bottom navigation handling using show/hide (create fragments once)
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        if (savedInstanceState == null) {
+            homeFragment = new HomeFragment();
+            hallFragment = new HallOfFameFragment();
+            favoritesFragment = new FavoritesFragment();
+            lessonsFragment = new LessonsFragment();
+            currentFragment = homeFragment;
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, homeFragment, "home")
+                    .add(R.id.fragment_container, hallFragment, "hall").hide(hallFragment)
+                    .add(R.id.fragment_container, favoritesFragment, "favorites").hide(favoritesFragment)
+                    .add(R.id.fragment_container, lessonsFragment, "lessons").hide(lessonsFragment)
+                    .commit();
+        } else {
+            homeFragment = getSupportFragmentManager().findFragmentByTag("home");
+            hallFragment = getSupportFragmentManager().findFragmentByTag("hall");
+            favoritesFragment = getSupportFragmentManager().findFragmentByTag("favorites");
+            lessonsFragment = getSupportFragmentManager().findFragmentByTag("lessons");
+            if (homeFragment != null && homeFragment.isVisible()) currentFragment = homeFragment;
+            else if (hallFragment != null && hallFragment.isVisible()) currentFragment = hallFragment;
+            else if (favoritesFragment != null && favoritesFragment.isVisible()) currentFragment = favoritesFragment;
+            else if (lessonsFragment != null && lessonsFragment.isVisible()) currentFragment = lessonsFragment;
+        }
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int menuId = item.getItemId();
+            Fragment target;
+            if (menuId == R.id.leaderboards) {
+                target = hallFragment;
+            } else if (menuId == R.id.favorites) {
+                target = favoritesFragment;
+            } else if (menuId == R.id.lessons) {
+                target = lessonsFragment;
+            } else {
+                target = homeFragment;
+            }
+            if (target != null && target != currentFragment) {
+                getSupportFragmentManager().beginTransaction()
+                        .hide(currentFragment)
+                        .show(target)
+                        .commit();
+                currentFragment = target;
+            }
+            return true;
+        });
+
+        // Ignore reselections for now
+        bottomNavigationView.setOnItemReselectedListener(item -> {});
+
+        if (savedInstanceState == null) {
+            bottomNavigationView.setSelectedItemId(R.id.home);
+        }
+
         // Music
-        backgroundSong = MediaPlayer.create(this,R.raw.open_sky);
+        backgroundSong = MediaPlayer.create(this, R.raw.open_sky);
         backgroundSong.setLooping(true);
         backgroundSong.start();
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         if (backgroundSong != null) {
             backgroundSong.release();
             backgroundSong = null;
@@ -77,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        // Using if-else instead of switch due to resource ID compilation constraints (switch requires constant expressions)
         if (id == R.id.menu_about_us) {
             Toast.makeText(this, "Group 14 on topic 25: chess.com stats", Toast.LENGTH_SHORT).show();
             return true;
