@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.ldlda.chesscom_stats.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
     private MediaPlayer backgroundSong;
@@ -27,23 +28,19 @@ public class MainActivity extends AppCompatActivity {
     private Fragment lessonsFragment;
     private Fragment currentFragment;
 
+    private ActivityMainBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Set up toolbar
-        Toolbar myToolbar = findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = binding.myToolbar;
         setSupportActionBar(myToolbar);
 
         // Bottom navigation handling using show/hide (create fragments once)
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigationView = binding.bottomNavigation;
 
         if (savedInstanceState == null) {
             homeFragment = new HomeFragment();
@@ -90,9 +87,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        // Ignore reselections for now
-        bottomNavigationView.setOnItemReselectedListener(item -> {});
-
         if (savedInstanceState == null) {
             bottomNavigationView.setSelectedItemId(R.id.home);
         }
@@ -110,11 +104,12 @@ public class MainActivity extends AppCompatActivity {
             backgroundSong.release();
             backgroundSong = null;
         }
+        binding = null;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_item,menu);
+        getMenuInflater().inflate(R.menu.menu_item, menu);
         return true;
     }
 

@@ -24,4 +24,5 @@
     <string name="about">About us</string>
 
     <string name="home_txt">Welcome Home</string>
+    <string name="player_rating">Rating</string>
 </resources>
