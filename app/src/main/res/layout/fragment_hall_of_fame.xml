@@ -7,8 +7,10 @@
     <SearchView
         android:id="@+id/player_search_view"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:queryHint="Search for a player"/>
+        android:layout_height="wrap_content"
+        android:queryHint="Search for a player"
+        android:background="@drawable/search_bg"
+        android:iconifiedByDefault="false"/>
     <TextView
         android:layout_gravity="center"
         android:layout_width="wrap_content"
