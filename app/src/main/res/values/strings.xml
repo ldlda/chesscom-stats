@@ -30,4 +30,5 @@
     <string name="player_joined">Joined</string>
     <string name="player_last_online">Last Online</string>
     <string name="player_status">Status</string>
+    <string name="audio_playback_attribution_label">This app plays audio</string>
 </resources>

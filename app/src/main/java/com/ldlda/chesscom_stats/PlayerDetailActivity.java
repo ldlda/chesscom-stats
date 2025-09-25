@@ -121,7 +121,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
                             stats.append(String.format("%s: %s\n", getString(R.string.player_title), title));
 
                         // Build and set the base stats first
-                        CountryInfo country = player.getCountry();
+                        CountryInfo country = player.getCountryInfo();
                         if (country != null)
 //                            Log.d(TAG, "onCreate: CountryInfo: " + country.toJSON());
                             stats.append(String.format("%s: %s\n", getString(R.string.player_country), country.getName()));

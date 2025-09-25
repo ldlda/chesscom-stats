@@ -9,7 +9,7 @@ import kotlinx.serialization.UseSerializers
 import java.net.URI
 
 // Lightweight view with the fields leaderboards actually provides
-fun Player.toPlayerPreview(): PlayerPreview = PlayerPreview(
+fun Player.toPlayerPreview() = PlayerPreview(
     playerId = playerId,
     username = username,
     profilePage = profilePage,
@@ -20,7 +20,7 @@ fun Player.toPlayerPreview(): PlayerPreview = PlayerPreview(
     avatarUrl = avatarUrl
 )
 
-fun LeaderboardEntry.toPlayerPreview(): PlayerPreview = PlayerPreview(
+fun LeaderboardEntry.toPlayerPreview() = PlayerPreview(
     playerId = playerId,
     username = username,
     profilePage = profilePage,

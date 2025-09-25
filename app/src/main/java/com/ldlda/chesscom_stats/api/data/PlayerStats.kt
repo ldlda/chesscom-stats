@@ -31,8 +31,8 @@ data class PlayerStats(
         private val jsonFormat = Json { ignoreUnknownKeys = true; prettyPrint = true }
 
         @JvmStatic
-        fun fromJSON(jsonString: String) =
-            jsonFormat.decodeFromString(serializer(), jsonString)
+        fun fromJSON(jsonString: String): PlayerStats =
+            jsonFormat.decodeFromString(jsonString)
     }
 
     fun toJSON() = jsonFormat.encodeToString(this)

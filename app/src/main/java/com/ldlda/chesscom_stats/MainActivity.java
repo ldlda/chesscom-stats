@@ -1,6 +1,8 @@
 package com.ldlda.chesscom_stats;
 
+import android.content.Context;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment homeFragment, hallFragment, favoritesFragment, lessonsFragment, currentFragment;
     private int selectedItemId = R.id.home;
 
+    private Context context;
     private ActivityMainBinding binding;
 
     @Override
@@ -72,7 +75,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Music
-        backgroundSong = MediaPlayer.create(this, R.raw.open_sky);
+        context = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) ? createAttributionContext("audioPlayback") : this;
+
+        backgroundSong = MediaPlayer.create(context, R.raw.open_sky);
         backgroundSong.setLooping(true);
     }
 
