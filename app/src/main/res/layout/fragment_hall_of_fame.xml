@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
+    <SearchView
+        android:id="@+id/player_search_view"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:queryHint="Search for a player"/>
     <TextView
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/hall_fame"
-        android:textSize="24sp"/>
+        android:textSize="24sp"
+        android:layout_centerInParent="true"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/hall_of_fame_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/player_search_view"
         android:padding="8dp"/>
 
-</FrameLayout>
+</RelativeLayout>
