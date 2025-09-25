@@ -62,6 +62,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        if (backgroundSong != null && backgroundSong.isPlaying()) {
+            backgroundSong.pause();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         if (backgroundSong != null) {
             backgroundSong.release();
             backgroundSong = null;
