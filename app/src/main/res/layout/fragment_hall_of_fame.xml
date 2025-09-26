@@ -2,9 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/white">
 
-    <SearchView
+    <androidx.appcompat.widget.SearchView
+        app:iconifiedByDefault="false"
         android:id="@+id/player_search_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,18 +14,23 @@
         android:background="@drawable/search_bg"
         android:iconifiedByDefault="false"/>
     <TextView
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="@string/hall_fame"
         android:textSize="24sp"
         android:layout_centerInParent="true"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/hall_of_fame_recycler"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/leaderboard_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/player_search_view"
-        android:padding="8dp"/>
+        android:layout_below="@id/player_search_view">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/hall_of_fame_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </RelativeLayout>

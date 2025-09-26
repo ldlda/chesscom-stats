@@ -51,12 +51,15 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.picasso)
     implementation(libs.volley)
+    implementation(libs.androidx.swiperefreshlayout)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 

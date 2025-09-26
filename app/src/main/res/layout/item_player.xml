@@ -31,7 +31,7 @@
                 android:id="@+id/player_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Username"
+                android:text="@string/player_username"
                 android:textStyle="bold"
                 android:textSize="18sp"/>
 
@@ -43,14 +43,14 @@
                     android:id="@+id/player_rank"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rank"
+                    android:text="@string/player_rank"
                     android:textStyle="bold"
                     android:layout_marginEnd="16dp"/>
                 <TextView
                     android:id="@+id/player_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rating"
+                    android:text="@string/player_rating"
                     android:textStyle="bold"/>
             </LinearLayout>
         </LinearLayout>

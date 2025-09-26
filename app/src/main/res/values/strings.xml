@@ -11,10 +11,11 @@
     <string name="player_username">Username</string>
     <string name="player_name">Name</string>
     <string name="player_country">Country</string>
-    <string name="player_rank">#1</string>
-    <string name="player_score">3000</string>
+    <string name="player_rank">Rank</string>
+    <string name="player_score">Score</string>
     <string name="failed_to_fetch_leaderboard">Failed to fetch leaderboard</string>
     <string name="failed_to_load_player_data">Failed to load player data.</string>
+    <string name="refresh_too_soon">Please wait a few seconds before refreshing again.</string>
     <string name="home">Home</string>
     <string name="fav">Favorites</string>
     <string name="hall_fame">Hall of Fame</string>
@@ -24,4 +25,9 @@
     <string name="about">About us</string>
 
     <string name="home_txt">Welcome Home</string>
+    <string name="player_rating">Rating</string>
+    <string name="player_title">Title</string>
+    <string name="player_joined">Joined</string>
+    <string name="player_last_online">Last Online</string>
+    <string name="player_status">Status</string>
 </resources>

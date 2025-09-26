@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.ldlda.chesscom_stats.api.data.CountryInfo;
 import com.ldlda.chesscom_stats.api.data.PlayerStats;
 import com.ldlda.chesscom_stats.api.repository.ChessRepositoryJava;
+import com.ldlda.chesscom_stats.databinding.ActivityPlayerDetailBinding;
 import com.squareup.picasso.Picasso;
 
 import java.net.URI;
@@ -25,6 +26,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
     private ChessRepositoryJava repo;
     private CompletableFuture<Void> inFlight;
 
+    private ActivityPlayerDetailBinding binding;
+
     private String formatInstant(java.time.Instant instant) {
         if (instant == null) return "";
         Date date = Date.from(instant);
@@ -36,12 +39,13 @@ public class PlayerDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player_detail);
+        binding = ActivityPlayerDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        ImageView avatar = findViewById(R.id.player_detail_avatar);
-        TextView usernameView = findViewById(R.id.player_detail_username);
-        TextView nameView = findViewById(R.id.player_detail_name);
-        TextView statsView = findViewById(R.id.player_detail_stats);
+        ImageView avatar = binding.playerDetailAvatar;
+        TextView usernameView = binding.playerDetailUsername;
+        TextView nameView = binding.playerDetailName;
+        TextView statsView = binding.playerDetailStats;
 
         // the biggest bullshit is that i cant export the damn leaderboard entry it already had stuff
         String username = getIntent().getStringExtra("username");
@@ -114,22 +118,23 @@ public class PlayerDetailActivity extends AppCompatActivity {
 
                         String title = player.getTitle();
                         if (title != null && !title.isEmpty())
-                            stats.append("Title: ").append(title).append("\n");
+                            stats.append(String.format("%s: %s\n", getString(R.string.player_title), title));
 
                         // Build and set the base stats first
                         CountryInfo country = player.getCountry();
                         if (country != null)
 //                            Log.d(TAG, "onCreate: CountryInfo: " + country.toJSON());
-                            stats.append("Country: ").append(country.getName()).append("\n");
+                            stats.append(String.format("%s: %s\n", getString(R.string.player_country), country.getName()));
 
                         Instant joined = player.getJoined();
-                        stats.append("Joined: ").append(formatInstant(joined)).append("\n");
+                        stats.append(String.format("%s: %s\n", getString(R.string.player_joined), formatInstant(joined)));
 
                         Instant lastOnline = player.getLastOnline();
-                        stats.append("Last Online: ").append(formatInstant(lastOnline)).append("\n");
+                        stats.append(String.format("%s: %s\n", getString(R.string.player_last_online), formatInstant(lastOnline)));
 
                         String status = player.getStatus();
-                        if (!status.isEmpty()) stats.append("Status: ").append(status).append("\n");
+                        if (!status.isEmpty())
+                            stats.append(String.format("%s: %s\n", getString(R.string.player_status), status));
 
                         // Player stats
                         PlayerStats playerStats = player.getPlayerStats();

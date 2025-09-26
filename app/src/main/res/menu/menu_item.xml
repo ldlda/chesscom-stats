@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-<item
-    app:showAsAction="ifRoom"
-    android:title=""
-    android:icon="@drawable/ic_menu_baseline_foreground">
 
-    <menu>
-        <item
-            android:id="@+id/menu_about_us"
-            android:title="@string/about"
-            app:showAsAction="ifRoom"
-            android:icon="@drawable/ic_about">
-        </item>
-    </menu>
-
-</item>
+    <item
+        android:id="@+id/menu_about_us"
+        android:icon="@drawable/ic_about"
+        android:title="@string/about"
+        app:showAsAction="collapseActionView" />
 </menu>
+
+
