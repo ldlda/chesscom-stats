@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
+        // Using if-else instead of switch due to resource ID compilation constraints (switch requires constant expressions)
         if (id == R.id.menu_about_us) {
             Toast.makeText(this, "Group 14 on topic 25: chess.com stats", Toast.LENGTH_SHORT).show();
             return true;

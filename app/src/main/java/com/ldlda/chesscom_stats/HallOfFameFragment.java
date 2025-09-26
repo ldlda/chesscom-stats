@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,8 @@ public class HallOfFameFragment extends Fragment {
     private long lastRefreshAt = 0L;
     private HallOfFameAdapter adapter;
     private ChessRepositoryJava repo;
+    private SearchView searchView;
+    private List<LeaderboardEntry> allPlayers = new ArrayList<>();
 
     private FragmentHallOfFameBinding binding;
 
@@ -57,6 +60,27 @@ public class HallOfFameFragment extends Fragment {
         // Initial load (from cache if present, otherwise network)
         fetchTopPlayers(swipeRefreshLayout);
         Log.d(TAG, "onCreateView: called fetchTopPlayers");
+
+        // SearchView handler
+        searchView = view.findViewById(R.id.player_search_view);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                List<LeaderboardEntry> filtered = new ArrayList<>();
+                for (LeaderboardEntry player : allPlayers) {
+                    if (player.getUsername().toLowerCase().contains(newText.toLowerCase())) {
+                        filtered.add(player);
+                    }
+                }
+                adapter.submitList(filtered);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+        });
         return binding.getRoot();
     }
 
@@ -68,13 +92,15 @@ public class HallOfFameFragment extends Fragment {
         repo.getLeaderboardsAsync()
                 .thenAccept(boards -> {
                     List<LeaderboardEntry> blitz = boards.getBlitz();
-                    List<LeaderboardEntry> top = blitz.subList(0, Math.min(20, blitz.size())); // top 20 out of how many
+                    //List<LeaderboardEntry> top = blitz.subList(0, Math.min(20, blitz.size())); // top 20 out of how many
+                    // A new safe copy list from the blitz list
+                    allPlayers = new ArrayList<>(blitz);
                     if (getActivity() == null) return;
                     getActivity().runOnUiThread(() ->
                             {
                                 lastRefreshAt = System.currentTimeMillis();
                                 Log.d(TAG, "fetchTopPlayers: reloaded / added to view");
-                                adapter.submitList(new ArrayList<>(top));
+                                adapter.submitList(new ArrayList<>(allPlayers));
                                 if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                             }
                     );
