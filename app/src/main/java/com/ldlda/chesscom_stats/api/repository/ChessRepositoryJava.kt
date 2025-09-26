@@ -24,7 +24,7 @@ import java.util.concurrent.CompletableFuture
  * - get*Async: CompletableFuture for Java async tests/UI.
  */
 class ChessRepositoryJava @JvmOverloads constructor(
-    private val repo: ChessRepository = ChessRepositoryImpl(),
+    private val repo: ChessRepository = ChessRepositoryTimedCache(),
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) {
 
@@ -102,3 +102,5 @@ class ChessRepositoryJava @JvmOverloads constructor(
         val default = ChessRepositoryJava()
     }
 }
+
+

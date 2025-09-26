@@ -22,21 +22,20 @@ import java.io.IOException
 import java.util.concurrent.CompletableFuture
 
 open class ChessApiClient(
-    val service: ChessApiService = run {
-        val baseUrl = "https://api.chess.com/"
+    val baseUrl: String = "https://api.chess.com/",
+    val okHttp: OkHttpClient = OkHttpClient.Builder()
+//            .addInterceptor(AddIfNoneMatchInterceptor())
+//            .addNetworkInterceptor(CaptureEtagAndServe304FromCacheInterceptor())
+        .build(),
+    val retrofit: Retrofit = run {
         val json = Json { ignoreUnknownKeys = true }
-
         val contentType = "application/json".toMediaType()
-        val okHttp = OkHttpClient.Builder()
-            .addInterceptor(AddIfNoneMatchInterceptor())
-            .addNetworkInterceptor(CaptureEtagAndServe304FromCacheInterceptor())
-            .build()
-
         Retrofit.Builder().baseUrl(baseUrl)
             .client(okHttp)
             .addConverterFactory(json.asConverterFactory(contentType)).build()
-            .create(ChessApiService::class.java)
-    }
+    },
+    val service: ChessApiService = retrofit.create(ChessApiService::class.java)
+
 ) : ChessApiBackend {
     suspend fun <T> execute(get: suspend (ChessApiService) -> T): T {
         try {

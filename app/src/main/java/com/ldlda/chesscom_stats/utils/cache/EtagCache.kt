@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.api.fetch
+package com.ldlda.chesscom_stats.utils.cache
 
 import okhttp3.HttpUrl
 import okio.ByteString

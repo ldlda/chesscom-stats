@@ -1,10 +1,8 @@
-package com.ldlda.chesscom_stats.api.fetch
+package com.ldlda.chesscom_stats.utils.cache
 
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.Protocol
 import okhttp3.Response
-import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 
 /**
