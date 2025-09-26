@@ -26,4 +26,8 @@
 
     <string name="home_txt">Welcome Home</string>
     <string name="player_rating">Rating</string>
+    <string name="player_title">Title</string>
+    <string name="player_joined">Joined</string>
+    <string name="player_last_online">Last Online</string>
+    <string name="player_status">Status</string>
 </resources>

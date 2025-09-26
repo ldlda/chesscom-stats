@@ -15,6 +15,8 @@ import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.api.data.LeaderboardEntry;
 import com.squareup.picasso.Picasso;
 
+import java.util.Locale;
+
 public class HallOfFameAdapter extends ListAdapter<LeaderboardEntry, HallOfFameAdapter.PlayerViewHolder> {
 
     public interface OnPlayerClickListener {
@@ -53,7 +55,7 @@ public class HallOfFameAdapter extends ListAdapter<LeaderboardEntry, HallOfFameA
     public void onBindViewHolder(@NonNull PlayerViewHolder holder, int position) {
         LeaderboardEntry player = getItem(position);
         holder.username.setText(player.getUsername());
-        holder.rank.setText("# " + player.getRank());
+        holder.rank.setText(String.format(Locale.ROOT, "# %d", player.getRank()));
         holder.rating.setText(String.valueOf(player.getElo()));
 
         String avatar = player.getAvatarUrl() != null ? player.getAvatarUrl().toString() : null;

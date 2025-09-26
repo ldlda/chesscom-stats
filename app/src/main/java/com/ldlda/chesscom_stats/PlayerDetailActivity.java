@@ -114,22 +114,23 @@ public class PlayerDetailActivity extends AppCompatActivity {
 
                         String title = player.getTitle();
                         if (title != null && !title.isEmpty())
-                            stats.append("Title: ").append(title).append("\n");
+                            stats.append(String.format("%s: %s\n", getString(R.string.player_title), title));
 
                         // Build and set the base stats first
                         CountryInfo country = player.getCountry();
                         if (country != null)
 //                            Log.d(TAG, "onCreate: CountryInfo: " + country.toJSON());
-                            stats.append("Country: ").append(country.getName()).append("\n");
+                            stats.append(String.format("%s: %s\n", getString(R.string.player_country), country.getName()));
 
                         Instant joined = player.getJoined();
-                        stats.append("Joined: ").append(formatInstant(joined)).append("\n");
+                        stats.append(String.format("%s: %s\n", getString(R.string.player_joined), formatInstant(joined)));
 
                         Instant lastOnline = player.getLastOnline();
-                        stats.append("Last Online: ").append(formatInstant(lastOnline)).append("\n");
+                        stats.append(String.format("%s: %s\n", getString(R.string.player_last_online), formatInstant(lastOnline)));
 
                         String status = player.getStatus();
-                        if (!status.isEmpty()) stats.append("Status: ").append(status).append("\n");
+                        if (!status.isEmpty())
+                            stats.append(String.format("%s: %s\n", getString(R.string.player_status), status));
 
                         // Player stats
                         PlayerStats playerStats = player.getPlayerStats();

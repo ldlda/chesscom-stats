@@ -53,6 +53,16 @@ open class ChessApiClient(
         }
     }
 
+    // kotlin interface
+
+    suspend fun getLeaderboards(): Leaderboards = execute { getLeaderboards() }
+    suspend fun getPlayer(username: String): Player = execute { getPlayer(username) }
+    suspend fun getPlayerStats(username: String): PlayerStats = execute { getPlayerStats(username) }
+    suspend fun getCountry(code: String): CountryInfo = execute { getCountry(code) }
+    suspend fun getCountryByUrl(url: String): CountryInfo = execute { getCountryByUrl(url) }
+
+    // deprecated
+
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     fun close() = scope.cancel()
 
@@ -64,15 +74,6 @@ open class ChessApiClient(
     @WorkerThread
     private fun <T> getSync(get: suspend ChessApiService.() -> T): T =
         runBlocking(Dispatchers.IO) { execute(get) }
-
-    // kotlin interface
-
-    suspend fun getLeaderboards(): Leaderboards = execute { getLeaderboards() }
-    suspend fun getPlayer(username: String): Player = execute { getPlayer(username) }
-    suspend fun getPlayerStats(username: String): PlayerStats = execute { getPlayerStats(username) }
-    suspend fun getCountry(code: String): CountryInfo = execute { getCountry(code) }
-    suspend fun getCountryByUrl(url: String): CountryInfo = execute { getCountryByUrl(url) }
-
 
     // Public synchronous functions for Java
 
@@ -127,7 +128,7 @@ open class ChessApiClient(
         getAsync { getCountryByUrl(url) }
 
 
-    constructor(baseUrl: String) : this(kotlin.run {
+    constructor(baseUrl: String) : this(run<ChessApiService> {
         val json = Json { ignoreUnknownKeys = true }
 
         val contentType = "application/json".toMediaType()
