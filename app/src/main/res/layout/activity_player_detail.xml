@@ -13,7 +13,7 @@
             android:id="@+id/player_detail_avatar"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@mipmap/ic_launcher"
+            android:src="@drawable/ic_person"
             android:contentDescription="@string/player_avatar_desc"
             android:layout_gravity="center_horizontal"/>
 
