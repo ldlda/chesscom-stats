@@ -49,7 +49,7 @@ public class HallOfFameFragment extends Fragment {
             if (now - lastRefreshAt < MIN_REFRESH_INTERVAL_MS) {
                 // Too soon; just cancel the spinner quickly.
                 swipeRefreshLayout.setRefreshing(false);
-//                Toast.makeText(getContext(), R.string.refresh_too_soon, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.refresh_too_soon, Toast.LENGTH_SHORT).show();
                 return;
             }
             fetchTopPlayers(swipeRefreshLayout);
