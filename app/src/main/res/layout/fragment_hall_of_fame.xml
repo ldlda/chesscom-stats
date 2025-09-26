@@ -2,9 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/white">
 
-    <SearchView
+    <androidx.appcompat.widget.SearchView
+        app:iconifiedByDefault="false"
         android:id="@+id/player_search_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,13 +24,13 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/leaderboard_swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/player_search_view">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/hall_of_fame_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/player_search_view"
             android:padding="8dp" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </RelativeLayout>
