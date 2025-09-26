@@ -7,10 +7,21 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
+    <string name="player_avatar_desc">Player avatar</string>
+    <string name="player_username">Username</string>
+    <string name="player_name">Name</string>
+    <string name="player_country">Country</string>
+    <string name="player_rank">#1</string>
+    <string name="player_score">3000</string>
+    <string name="failed_to_fetch_leaderboard">Failed to fetch leaderboard</string>
+    <string name="failed_to_load_player_data">Failed to load player data.</string>
     <string name="home">Home</string>
     <string name="fav">Favorites</string>
     <string name="hall_fame">Hall of Fame</string>
     <string name="lesson">Lessons</string>
+
+    <!--Menu stuff -->
+    <string name="about">About us</string>
 
     <string name="home_txt">Welcome Home</string>
 </resources>

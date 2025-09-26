@@ -33,7 +33,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-//        isCoreLibraryDesugaringEnabled = true
+        isCoreLibraryDesugaringEnabled = true
     }
     buildFeatures {
         viewBinding = true
@@ -47,8 +47,11 @@ kotlin {
 
 dependencies {
     implementation(libs.converter.kotlinx.serialization)
-//    implementation(libs.desugar.jdk.libs)
-//    coreLibraryDesugaring(libs.desugar.jdk.libs)
+    implementation(libs.mockwebserver)
+    implementation(libs.logging.interceptor)
+    implementation(libs.picasso)
+    implementation(libs.volley)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
