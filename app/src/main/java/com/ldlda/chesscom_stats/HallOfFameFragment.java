@@ -62,7 +62,7 @@ public class HallOfFameFragment extends Fragment {
         Log.d(TAG, "onCreateView: called fetchTopPlayers");
 
         // SearchView handler
-        searchView = view.findViewById(R.id.player_search_view);
+        searchView = binding.playerSearchView;
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {

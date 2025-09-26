@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.ldlda.chesscom_stats.api.data.CountryInfo;
 import com.ldlda.chesscom_stats.api.data.PlayerStats;
 import com.ldlda.chesscom_stats.api.repository.ChessRepositoryJava;
+import com.ldlda.chesscom_stats.databinding.ActivityPlayerDetailBinding;
 import com.squareup.picasso.Picasso;
 
 import java.net.URI;
@@ -25,6 +26,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
     private ChessRepositoryJava repo;
     private CompletableFuture<Void> inFlight;
 
+    private ActivityPlayerDetailBinding binding;
+
     private String formatInstant(java.time.Instant instant) {
         if (instant == null) return "";
         Date date = Date.from(instant);
@@ -36,12 +39,13 @@ public class PlayerDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player_detail);
+        binding = ActivityPlayerDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        ImageView avatar = findViewById(R.id.player_detail_avatar);
-        TextView usernameView = findViewById(R.id.player_detail_username);
-        TextView nameView = findViewById(R.id.player_detail_name);
-        TextView statsView = findViewById(R.id.player_detail_stats);
+        ImageView avatar = binding.playerDetailAvatar;
+        TextView usernameView = binding.playerDetailUsername;
+        TextView nameView = binding.playerDetailName;
+        TextView statsView = binding.playerDetailStats;
 
         // the biggest bullshit is that i cant export the damn leaderboard entry it already had stuff
         String username = getIntent().getStringExtra("username");
