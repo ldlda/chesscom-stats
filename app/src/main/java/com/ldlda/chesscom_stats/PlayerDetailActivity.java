@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.ldlda.chesscom_stats.api.data.CountryInfo;
 import com.ldlda.chesscom_stats.api.data.PlayerStats;
-import com.ldlda.chesscom_stats.api.repository.ChessRepositoryJava;
+import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;
 import com.ldlda.chesscom_stats.databinding.ActivityPlayerDetailBinding;
 import com.squareup.picasso.Picasso;
 
@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class PlayerDetailActivity extends AppCompatActivity {
     private final String TAG = "PlayerDetailActivity";
-    private ChessRepositoryJava repo;
+    private ChessRepoAdapterJava repo;
     private CompletableFuture<Void> inFlight;
 
     private ActivityPlayerDetailBinding binding;
@@ -90,7 +90,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         usernameView.setText(username);
 
         // Fetch player data via repository
-        repo = new ChessRepositoryJava();
+        repo = new ChessRepoAdapterJava();
         inFlight = repo.getCompletePlayerAsync(username)
                 .thenAccept(player -> {
 //                    Log.d(TAG, "onCreate: Constructed Player: " + player.toJSON());

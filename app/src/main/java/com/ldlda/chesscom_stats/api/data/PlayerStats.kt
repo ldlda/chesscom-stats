@@ -1,6 +1,6 @@
 package com.ldlda.chesscom_stats.api.data
 
-import com.ldlda.chesscom_stats.utils.serialize.InstantSerializer
+import com.ldlda.chesscom_stats.utils.serialize.InstantEpochSecondSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -66,7 +66,7 @@ data class PuzzleRushScore(
 @Serializable
 data class RatingDate(
     val rating: Int,
-    @Serializable(with = InstantSerializer::class)
+    @Serializable(with = InstantEpochSecondSerializer::class)
     val date: Instant,
     // val rd: Int?,
 )

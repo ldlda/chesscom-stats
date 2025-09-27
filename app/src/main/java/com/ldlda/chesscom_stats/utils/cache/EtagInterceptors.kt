@@ -46,10 +46,11 @@ class CaptureEtagAndServe304FromCacheInterceptor : Interceptor {
                     .body(bodyBytes.toResponseBody(response.body.contentType()))
                     .build()
             }
+
             304 -> {
                 val cached = EtagCache.getBody(key)
                 if (cached != null) {
-                    // Synthesize a 200 OK with cached body so converters can arse as usual
+                    // Synthesize a 200 OK with cached body so converters can parse as usual
                     Response.Builder()
                         .request(request)
                         .protocol(response.protocol)
@@ -62,6 +63,7 @@ class CaptureEtagAndServe304FromCacheInterceptor : Interceptor {
                     response
                 }
             }
+
             else -> response
         }
     }

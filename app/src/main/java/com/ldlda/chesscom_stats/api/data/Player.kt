@@ -1,10 +1,10 @@
-@file:UseSerializers(InstantSerializer::class, URISerializer::class)
+@file:UseSerializers(InstantEpochSecondSerializer::class, URISerializer::class)
 
 package com.ldlda.chesscom_stats.api.data
 
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
-import com.ldlda.chesscom_stats.utils.serialize.InstantSerializer
-import com.ldlda.chesscom_stats.utils.serialize.URISerializer
+import com.ldlda.chesscom_stats.utils.serialize.InstantEpochSecondSerializer
+import com.ldlda.chesscom_stats.utils.serialize.tostring.URISerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers

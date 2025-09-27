@@ -2,7 +2,7 @@
 
 package com.ldlda.chesscom_stats.api.data
 
-import com.ldlda.chesscom_stats.utils.serialize.URISerializer
+import com.ldlda.chesscom_stats.utils.serialize.tostring.URISerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -31,6 +31,16 @@ fun LeaderboardEntry.toPlayerPreview() = PlayerPreview(
     avatarUrl = avatarUrl
 )
 
+
+/* demo
+fun ChessSearchItem.toPlayerPreview() = PlayerPreview(
+    playerId = userView.userId,
+    username = userView.username,
+    profilePage = URI("https://www.chess.com/member/${userView.username}"),
+    title = userView.title,
+    avatarUrl = userView.avatar
+)
+*/
 // A minimal “preview” that mirrors what leaderboards returns about a player.
 @Serializable
 data class PlayerPreview(

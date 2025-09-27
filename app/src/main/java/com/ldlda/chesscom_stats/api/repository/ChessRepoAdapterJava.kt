@@ -5,6 +5,7 @@ import com.ldlda.chesscom_stats.api.data.CountryInfo
 import com.ldlda.chesscom_stats.api.data.Leaderboards
 import com.ldlda.chesscom_stats.api.data.Player
 import com.ldlda.chesscom_stats.api.data.PlayerStats
+import com.ldlda.chesscom_stats.api.data.search.ChessSearchItem
 import com.ldlda.chesscom_stats.api.fetch.ChessApiException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,8 +23,10 @@ import java.util.concurrent.CompletableFuture
  *
  * - get*Blocking: call from worker thread in tests or background code.
  * - get*Async: CompletableFuture for Java async tests/UI.
+ *
+ * - also includes some convenient functions
  */
-class ChessRepositoryJava @JvmOverloads constructor(
+class ChessRepoAdapterJava @JvmOverloads constructor(
     private val repo: ChessRepository = ChessRepositoryTimedCache(),
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) {
@@ -66,6 +69,8 @@ class ChessRepositoryJava @JvmOverloads constructor(
     fun getCountryByUrlAsync(url: URI): CompletableFuture<CountryInfo> =
         runAsyncLda { repo.getCountry(url) }
 
+    fun getUsernameSuggestionsAsync(prefix: String): CompletableFuture<List<ChessSearchItem>> =
+        runAsyncLda { repo.searchPlayers(prefix) }
 
     /* convenience functions */
     @WorkerThread
@@ -96,10 +101,6 @@ class ChessRepositoryJava @JvmOverloads constructor(
     /** Call in test teardown if needed to stop any in-flight work. */
     fun close() {
         scope.cancel()
-    }
-
-    companion object {
-        val default = ChessRepositoryJava()
     }
 }
 

@@ -6,18 +6,16 @@ import com.ldlda.chesscom_stats.api.data.Leaderboards
 import com.ldlda.chesscom_stats.api.data.Player
 import com.ldlda.chesscom_stats.api.data.PlayerStats
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient
-import com.ldlda.chesscom_stats.api.fetch.DefaultChessApi
 import com.ldlda.chesscom_stats.utils.cache.TimedCache
 import java.net.URI
 
 class ChessRepositoryTimedCache(
-    private val client: ChessApiClient = DefaultChessApi,
+    client: ChessApiClient = ChessApiClient(),
     private val playerCache: TimedCache<Player> = TimedCache(ttlMillis = 5 * 60_000L), // 5 min
     private val statsCache: TimedCache<PlayerStats> = TimedCache(ttlMillis = 2 * 60_000L), // 2 min
     private val leaderboardsCache: TimedCache<Leaderboards> = TimedCache(ttlMillis = 15 * 60_000L), // 15 min
     private val countryCache: TimedCache<CountryInfo> = TimedCache(ttlMillis = 24 * 60 * 60_000L), // 24h
-
-) : ChessRepository {
+) : ChessRepositoryImpl(client) {
     private companion object {
         private const val LEADERBOARDS_KEY = "leaderboards"
     }

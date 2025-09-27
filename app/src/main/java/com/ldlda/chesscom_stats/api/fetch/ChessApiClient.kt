@@ -5,6 +5,8 @@ import com.ldlda.chesscom_stats.api.data.CountryInfo
 import com.ldlda.chesscom_stats.api.data.Leaderboards
 import com.ldlda.chesscom_stats.api.data.Player
 import com.ldlda.chesscom_stats.api.data.PlayerStats
+import com.ldlda.chesscom_stats.api.data.search.ChessSearchItem
+import com.ldlda.chesscom_stats.api.data.search.ChessSearchRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,14 +23,18 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.io.IOException
 import java.util.concurrent.CompletableFuture
 
-open class ChessApiClient(
+class ChessApiClient @JvmOverloads /* why */ constructor(
     val baseUrl: String = "https://api.chess.com/",
     val okHttp: OkHttpClient = OkHttpClient.Builder()
-//            .addInterceptor(AddIfNoneMatchInterceptor())
-//            .addNetworkInterceptor(CaptureEtagAndServe304FromCacheInterceptor())
+//        .addInterceptor(AddIfNoneMatchInterceptor())
+//        .addNetworkInterceptor(CaptureEtagAndServe304FromCacheInterceptor())
         .build(),
     val retrofit: Retrofit = run {
-        val json = Json { ignoreUnknownKeys = true }
+        val json = Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+            /* this or [ChessSearchRequest] has to have every keys serialized */
+        }
         val contentType = "application/json".toMediaType()
         Retrofit.Builder().baseUrl(baseUrl)
             .client(okHttp)
@@ -37,6 +43,8 @@ open class ChessApiClient(
     val service: ChessApiService = retrofit.create(ChessApiService::class.java)
 
 ) : ChessApiBackend {
+
+    @Throws(ChessApiException::class)
     suspend fun <T> execute(get: suspend (ChessApiService) -> T): T {
         try {
             return get(service)
@@ -68,6 +76,13 @@ open class ChessApiClient(
     suspend fun getCountry(code: String): CountryInfo = execute { it.country(code) }
     override suspend fun getCountryByUrl(url: String): CountryInfo =
         execute { it.countryByUrl(url) }
+
+    override suspend fun searchPlayers(prefix: String): List<ChessSearchItem> =
+        execute { it.searchUsername(ChessSearchRequest(prefix)).suggestions }
+
+    suspend fun searchPlayers(request: ChessSearchRequest): List<ChessSearchItem> =
+        execute { it.searchUsername(request).suggestions }
+
 
     // deprecated
 
@@ -134,6 +149,9 @@ open class ChessApiClient(
     @Deprecated("use ChessRepository instead")
     fun getCountryByUrlAsync(url: String): CompletableFuture<CountryInfo> =
         getAsync { it.countryByUrl(url) }
-}
 
-object DefaultChessApi : ChessApiClient()
+    @Deprecated("use ChessRepository instead")
+    @Throws(ChessApiException::class)
+    fun searchPlayersAsync(username: String): CompletableFuture<List<ChessSearchItem>> =
+        getAsync { searchPlayers(username) }
+}

@@ -18,13 +18,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ldlda.chesscom_stats.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-    private final String TAG = "MainActivity";
-
     private static final String KEY_SELECTED = "selectedItemId";
     private static final String TAG_HOME = "tab:home";
     private static final String TAG_HALL = "tab:hall";
     private static final String TAG_FAV = "tab:fav";
     private static final String TAG_LESSONS = "tab:lessons";
+    private final String TAG = "MainActivity";
     private MediaPlayer backgroundSong;
 
     // Cached fragment references for show/hide pattern
