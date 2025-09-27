@@ -19,17 +19,6 @@ import java.util.Locale;
 
 public class HallOfFameAdapter extends ListAdapter<LeaderboardEntry, HallOfFameAdapter.PlayerViewHolder> {
 
-    public interface OnPlayerClickListener {
-        void onPlayerClick(LeaderboardEntry player);
-    }
-
-    private final OnPlayerClickListener listener;
-
-    public HallOfFameAdapter(OnPlayerClickListener listener) {
-        super(DIFF);
-        this.listener = listener;
-    }
-
     private static final DiffUtil.ItemCallback<LeaderboardEntry> DIFF =
             new DiffUtil.ItemCallback<>() {
                 @Override
@@ -43,6 +32,12 @@ public class HallOfFameAdapter extends ListAdapter<LeaderboardEntry, HallOfFameA
                     return a.equals(b);
                 }
             };
+    private final OnPlayerClickListener listener;
+
+    public HallOfFameAdapter(OnPlayerClickListener listener) {
+        super(DIFF);
+        this.listener = listener;
+    }
 
     @NonNull
     @Override
@@ -69,6 +64,10 @@ public class HallOfFameAdapter extends ListAdapter<LeaderboardEntry, HallOfFameA
             holder.avatar.setImageResource(R.drawable.ic_person);
         }
         holder.itemView.setOnClickListener(v -> listener.onPlayerClick(player));
+    }
+
+    public interface OnPlayerClickListener {
+        void onPlayerClick(LeaderboardEntry player);
     }
 
     public static class PlayerViewHolder extends RecyclerView.ViewHolder {

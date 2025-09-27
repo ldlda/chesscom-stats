@@ -11,7 +11,7 @@ import java.time.DateTimeException
 import java.time.Instant
 
 /** Epoch Second */
-object InstantSerializer : KSerializer<Instant> {
+object InstantEpochSecondSerializer : KSerializer<Instant> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("Instant", PrimitiveKind.LONG)
 

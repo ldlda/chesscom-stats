@@ -27,5 +27,6 @@
             android:name=".PlayerDetailActivity"
             android:exported="false" />
     </application>
-
+    <attribution android:tag="audioPlayback"
+        android:label="@string/audio_playback_attribution_label" />
 </manifest>

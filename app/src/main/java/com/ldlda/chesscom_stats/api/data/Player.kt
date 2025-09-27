@@ -1,13 +1,12 @@
-@file:UseSerializers(InstantSerializer::class, URISerializer::class)
+@file:UseSerializers(InstantEpochSecondSerializer::class, URISerializer::class)
 
 package com.ldlda.chesscom_stats.api.data
 
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
-import com.ldlda.chesscom_stats.utils.serialize.InstantSerializer
-import com.ldlda.chesscom_stats.utils.serialize.URISerializer
+import com.ldlda.chesscom_stats.utils.serialize.InstantEpochSecondSerializer
+import com.ldlda.chesscom_stats.utils.serialize.tostring.URISerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
 import java.net.URI
@@ -47,41 +46,23 @@ data class Player(
     /** name as in government name */
     val name: String? = null,
 ) {
-    /**
-     * Legacy compatibility alias for [avatarUrl].
-     *
-     * Deprecated: Use [avatarUrl] directly instead.
-     */
-    @Deprecated(
-        message = "profilePictureResource is a legacy compatibility alias. Use avatarUrl directly.",
-        replaceWith = ReplaceWith("avatarUrl"),
-//        level = DeprecationLevel.WARNING
-    )
-    @Transient
-    val profilePictureResource = avatarUrl
+    var countryInfo: CountryInfo? = null
+        private set
 
-
-    val country: CountryInfo? get() = _countryInfo
-
-    @Transient
-    private var _countryInfo: CountryInfo? = null
-
-    val playerStats: PlayerStats? get() = _playerStats
-
-    @Transient
-    private var _playerStats: PlayerStats? = null
+    var playerStats: PlayerStats? = null
+        private set
 
     suspend fun fetchPlayerStats(repo: ChessRepository): PlayerStats {
         val newPlayerStats = repo.getPlayerStats(username)
         playerStats?.takeIf { it == newPlayerStats }?.let { return it }
-        _playerStats = newPlayerStats
+        playerStats = newPlayerStats
         return newPlayerStats
     }
 
     suspend fun fetchCountryInfo(repo: ChessRepository): CountryInfo {
-        country?.let { return it }
+        countryInfo?.let { return it }
         val countryInfo = repo.getCountry(countryUrl)
-        _countryInfo = countryInfo
+        this.countryInfo = countryInfo
         return countryInfo
     }
 
@@ -89,8 +70,8 @@ data class Player(
         private val jsonFormat = Json { ignoreUnknownKeys = true; prettyPrint = true }
 
         @JvmStatic
-        fun fromJSON(jsonString: String) =
-            jsonFormat.decodeFromString(serializer(), jsonString)
+        fun fromJSON(jsonString: String): Player =
+            jsonFormat.decodeFromString(jsonString)
     }
 
     fun toJSON() = jsonFormat.encodeToString(this)
