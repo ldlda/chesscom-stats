@@ -28,7 +28,8 @@ interface ChessApiService {
     @GET
     suspend fun countryByUrl(@Url url: String): CountryInfo
 
-//    @Headers("Content-Type: application/json")
+    // This (or something of the sort) must be present or else the endpoint wont work
+    @Headers("Content-Type: application/json")
     /**
      * this is not an official endpoint. it can break at any point.
      */

@@ -28,7 +28,6 @@ data class ChessSearchResult(
 
         @JvmStatic
         fun fromJSON(jsonString: String): ChessSearchResult {
-            println(jsonString)
             return jsonFormat.decodeFromString(jsonString)
         }
     }
@@ -51,7 +50,7 @@ data class ChessComUserView(
     val username: String,
 
     @Serializable(ThisURISerializer::class)
-    val avatar: URI, // NO
+    val avatar: URI,
 
     /**
     finally a use for [this fuckass][com.ldlda.chesscom_stats.api.fetch.ChessApiService.country]
@@ -89,7 +88,7 @@ data class ChessComUserView(
             encoder: Encoder,
             value: URI
         ) {
-            throw NotImplementedError("we do not do this")
+            throw NotImplementedError("URI serialization not implemented for search responses")
         }
     }
 }

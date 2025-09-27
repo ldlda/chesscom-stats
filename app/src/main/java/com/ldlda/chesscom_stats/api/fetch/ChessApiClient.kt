@@ -26,6 +26,7 @@ import java.util.concurrent.CompletableFuture
 class ChessApiClient @JvmOverloads /* why */ constructor(
     val baseUrl: String = "https://api.chess.com/",
     val okHttp: OkHttpClient = OkHttpClient.Builder()
+        //  TODO: This are not enabled for now, enable when ETag caching is fleshed out
 //        .addInterceptor(AddIfNoneMatchInterceptor())
 //        .addNetworkInterceptor(CaptureEtagAndServe304FromCacheInterceptor())
         .build(),

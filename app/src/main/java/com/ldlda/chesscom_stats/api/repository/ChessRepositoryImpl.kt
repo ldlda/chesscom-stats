@@ -8,7 +8,10 @@ import com.ldlda.chesscom_stats.api.data.search.ChessSearchItem
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient
 import java.net.URI
 
-// bare ass chess repo
+/**
+ * Basic implementation of [ChessRepository] that delegates all API calls to the provided [ChessApiClient].
+ * This implementation does not perform any caching or additional processing.
+ */
 open class ChessRepositoryImpl(val client: ChessApiClient) : ChessRepository {
     override suspend fun getPlayer(username: String): Player =
         client.getPlayer(username)
