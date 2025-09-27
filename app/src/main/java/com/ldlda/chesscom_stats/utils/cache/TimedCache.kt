@@ -24,6 +24,6 @@ class TimedCache<T>(private val ttlMillis: Long) {
     }
 
     fun clear() = map.clear()
-}
 
-data class Entry<T>(val value: T, val time: Long)
+    data class Entry<T>(val value: T, val time: Long)
+}
