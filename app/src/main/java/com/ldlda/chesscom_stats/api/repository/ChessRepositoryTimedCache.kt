@@ -23,7 +23,7 @@ class ChessRepositoryTimedCache(
     override suspend fun getPlayer(username: String): Player {
         val key = username.normalize()
         playerCache.get(key)?.let { return it }
-        val player = client.getPlayer(key)
+        val player = super.getPlayer(key)
         playerCache.put(key, player)
         return player
     }
@@ -31,14 +31,14 @@ class ChessRepositoryTimedCache(
     override suspend fun getPlayerStats(username: String): PlayerStats {
         val key = username.normalize()
         statsCache.get(key)?.let { return it }
-        val stats = client.getPlayerStats(key)
+        val stats = super.getPlayerStats(key)
         statsCache.put(key, stats)
         return stats
     }
 
     override suspend fun getLeaderboards(): Leaderboards {
         leaderboardsCache.get(LEADERBOARDS_KEY)?.let { return it }
-        val boards = client.getLeaderboards()
+        val boards = super.getLeaderboards()
         leaderboardsCache.put(LEADERBOARDS_KEY, boards)
         return boards
     }
@@ -47,7 +47,7 @@ class ChessRepositoryTimedCache(
     override suspend fun getCountry(countryUrl: URI): CountryInfo {
         val url = countryUrl.toString()
         countryCache.get(url)?.let { return it }
-        val info = client.getCountryByUrl(url)
+        val info = super.getCountry(countryUrl)
         countryCache.put(url, info)
         return info
     }
