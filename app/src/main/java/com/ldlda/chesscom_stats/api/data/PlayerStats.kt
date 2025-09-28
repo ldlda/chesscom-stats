@@ -1,6 +1,6 @@
 package com.ldlda.chesscom_stats.api.data
 
-import com.ldlda.chesscom_stats.utils.serialize.InstantSerializer
+import com.ldlda.chesscom_stats.utils.serialize.InstantEpochSecondSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -31,8 +31,8 @@ data class PlayerStats(
         private val jsonFormat = Json { ignoreUnknownKeys = true; prettyPrint = true }
 
         @JvmStatic
-        fun fromJSON(jsonString: String) =
-            jsonFormat.decodeFromString(serializer(), jsonString)
+        fun fromJSON(jsonString: String): PlayerStats =
+            jsonFormat.decodeFromString(jsonString)
     }
 
     fun toJSON() = jsonFormat.encodeToString(this)
@@ -66,7 +66,7 @@ data class PuzzleRushScore(
 @Serializable
 data class RatingDate(
     val rating: Int,
-    @Serializable(with = InstantSerializer::class)
+    @Serializable(with = InstantEpochSecondSerializer::class)
     val date: Instant,
     // val rd: Int?,
 )
