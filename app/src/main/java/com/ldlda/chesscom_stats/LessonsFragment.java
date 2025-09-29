@@ -53,8 +53,9 @@ public class LessonsFragment extends Fragment {
 
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, contentLesson, "ContentLesson")
-                .addToBackStack(null)
+                .hide(this)
+                .add(R.id.fragment_container, contentLesson, "ContentLesson")
+                .addToBackStack("gay")
                 .commit();
     }
 }
