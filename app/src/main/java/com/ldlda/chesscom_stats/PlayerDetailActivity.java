@@ -66,12 +66,16 @@ public class PlayerDetailActivity extends AppCompatActivity {
         statsView = binding.playerDetailStats;
 
         addFavoriteBtn = binding.addToFavBtn;
-        username = binding.playerDetailUsername.getText().toString().trim();
+
+        username = getIntent().getStringExtra("username");
 
         try (FileInputStream fis = openFileInput("favorites.txt");
              BufferedReader reader = new BufferedReader(new InputStreamReader(fis))) {
             String line;
+
             while ((line = reader.readLine()) != null) {
+                Toast.makeText(PlayerDetailActivity.this, line, Toast.LENGTH_SHORT).show();
+                Toast.makeText(PlayerDetailActivity.this, username, Toast.LENGTH_SHORT).show();
                 if (line.trim().equalsIgnoreCase(username)) {
                     isFavorited = true;
                     break;
@@ -84,7 +88,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
         addFavoriteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isFavorited) {
+                if (isFavorited)  // Remove fav
+                {
                     try {
                         FileInputStream fis = openFileInput("favorites.txt");
                         BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
@@ -112,7 +117,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
 
                 }
                 else {
-                    // Add favorite
+                    // Add fav
                     try (FileOutputStream fos = openFileOutput("favorites.txt", MODE_APPEND)) {
                         fos.write((username + "\n").getBytes());
                         isFavorited = true;
@@ -125,8 +130,6 @@ public class PlayerDetailActivity extends AppCompatActivity {
                 addFavoriteBtn.setText(isFavorited? R.string.remove_fav : R.string.add_fav);
             }
         });
-
-        username = getIntent().getStringExtra("username");
 
         if (username == null) {
             throw new IllegalArgumentException("Intent extra 'username' must not be null");
