@@ -22,6 +22,7 @@
     <string name="lesson">Lessons</string>
 
     <string name="add_fav">Add to favorite</string>
+    <string name="remove_fav">Remove from favorite</string>
 
     <!--Menu stuff -->
     <string name="about">About us</string>

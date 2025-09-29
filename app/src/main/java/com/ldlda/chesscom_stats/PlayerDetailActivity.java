@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.ldlda.chesscom_stats.api.data.CountryInfo;
 import com.ldlda.chesscom_stats.api.data.PlayerStats;
@@ -20,17 +19,16 @@ import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class PlayerDetailActivity extends AppCompatActivity {
@@ -40,6 +38,15 @@ public class PlayerDetailActivity extends AppCompatActivity {
 
     private ActivityPlayerDetailBinding binding;
 
+    boolean isFavorited = false;
+    private String username;
+    private ImageView avatar;
+    private TextView usernameView;
+    private  TextView nameView;
+    private TextView statsView;
+
+    private Button addFavoriteBtn;
+
     private String formatInstant(java.time.Instant instant) {
         if (instant == null) return "";
         Date date = Date.from(instant);
@@ -47,106 +54,91 @@ public class PlayerDetailActivity extends AppCompatActivity {
         return formatter.format(date);
     }
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityPlayerDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        ImageView avatar = binding.playerDetailAvatar;
-        TextView usernameView = binding.playerDetailUsername;
-        TextView nameView = binding.playerDetailName;
-        TextView statsView = binding.playerDetailStats;
+        avatar = binding.playerDetailAvatar;
+        usernameView = binding.playerDetailUsername;
+        nameView = binding.playerDetailName;
+        statsView = binding.playerDetailStats;
 
-        Button addFavoriteBtn = binding.addToFavBtn;
-        addFavoriteBtn.setOnClickListener(v -> {
-            String username = binding.playerDetailUsername.getText().toString().trim();
+        addFavoriteBtn = binding.addToFavBtn;
+        username = binding.playerDetailUsername.getText().toString().trim();
 
-            try {
-                // Read existing favorites
-                FileInputStream fis = openFileInput("favorites.txt");
-                BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
-
-                Set<String> favorites = new HashSet<>();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    favorites.add(line.trim());
+        try (FileInputStream fis = openFileInput("favorites.txt");
+             BufferedReader reader = new BufferedReader(new InputStreamReader(fis))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.trim().equalsIgnoreCase(username)) {
+                    isFavorited = true;
+                    break;
                 }
-                reader.close();
+            }
+        } catch (IOException ignored) {}
 
-                //Check if player already favorited
-                if (favorites.contains(username)) {
-                    Toast.makeText(PlayerDetailActivity.this, "Already favorited", Toast.LENGTH_SHORT).show();
-                    return;
+        addFavoriteBtn.setText(isFavorited? R.string.remove_fav : R.string.add_fav);
+
+        addFavoriteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isFavorited) {
+                    try {
+                        FileInputStream fis = openFileInput("favorites.txt");
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+                        List<String> favorites = new ArrayList<>();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            if (!line.trim().equalsIgnoreCase(username)) {
+                                favorites.add(line.trim());
+                            }
+                        }
+                        reader.close();
+
+                        FileOutputStream fos = openFileOutput("favorites.txt", MODE_PRIVATE);
+                        for (String fav : favorites) {
+                            fos.write((fav + "\n").getBytes());
+                        }
+                        fos.close();
+
+                        isFavorited = false;
+                        Toast.makeText(PlayerDetailActivity.this, "Removed from favorites", Toast.LENGTH_SHORT).show();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                else {
+                    // Add favorite
+                    try (FileOutputStream fos = openFileOutput("favorites.txt", MODE_APPEND)) {
+                        fos.write((username + "\n").getBytes());
+                        isFavorited = true;
+                        Toast.makeText(PlayerDetailActivity.this, "Added to favorites", Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
 
-                // Add to favorite
-                FileOutputStream fos = openFileOutput("favorites.txt", MODE_APPEND);
-                fos.write((username + "\n").getBytes());
-                fos.close();
-
-                Toast.makeText(PlayerDetailActivity.this, "Added to favorites", Toast.LENGTH_SHORT).show();
-
-            } catch (FileNotFoundException e) {
-                try {
-                    FileOutputStream fos = openFileOutput("favorites.txt", MODE_PRIVATE);
-                    fos.write((username + "\n").getBytes());
-                    fos.close();
-                    Toast.makeText(PlayerDetailActivity.this, "Added to favorites", Toast.LENGTH_SHORT).show();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(PlayerDetailActivity.this, "Failed to save favorite", Toast.LENGTH_SHORT).show();
+                addFavoriteBtn.setText(isFavorited? R.string.remove_fav : R.string.add_fav);
             }
         });
 
-
-        // the biggest bullshit is that i cant export the damn leaderboard entry it already had stuff
-        String username = getIntent().getStringExtra("username");
+        username = getIntent().getStringExtra("username");
 
         if (username == null) {
             throw new IllegalArgumentException("Intent extra 'username' must not be null");
         }
-/*  Use that to prime the view before loading everything
-
-        String leaderboardEntry = getIntent().getStringExtra("leaderboard_entry");
-        if (leaderboardEntry != null) {
-            Log.d(TAG, "onCreate: leaderboard entry is " + leaderboardEntry);
-            LeaderboardEntry entry = LeaderboardEntry.fromJSON(leaderboardEntry);
-            runOnUiThread(() -> {
-                // Avatar (null/placeholder-safe)
-                URI avatarUri = entry.getAvatarUrl();
-                if (avatarUri != null) {
-                    Picasso.get()
-                            .load(avatarUri.toString())
-                            .placeholder(R.drawable.ic_person)
-                            .error(R.drawable.ic_person)
-                            .into(avatar);
-                } else {
-                    avatar.setImageResource(R.drawable.ic_person);
-                }
-                String name = entry.getName();
-                if (name != null && !name.isEmpty())
-                    nameView.setText(name);
-                StringBuilder stats = new StringBuilder();
-                String title = entry.getTitle();
-                if (title != null && !title.isEmpty())
-                    stats.append("Title: ").append(title).append("\n");
-                String status = entry.getStatus();
-                if (status != null && !status.isEmpty())
-                    stats.append("Status: ").append(status).append("\n");
-
-                statsView.setText(stats.toString());
-            });
-        }
-*/
 
         usernameView.setText(username);
 
         // Fetch player data via repository
+        fetchPlayerData();
+    }
+
+    private void fetchPlayerData(){
         repo = new ChessRepoAdapterJava();
         inFlight = repo.getCompletePlayerAsync(username)
                 .thenAccept(player -> {
@@ -218,7 +210,6 @@ public class PlayerDetailActivity extends AppCompatActivity {
                     runOnUiThread(() -> statsView.setText(R.string.failed_to_load_player_data));
                     return null;
                 });
-
     }
 
     @Override
