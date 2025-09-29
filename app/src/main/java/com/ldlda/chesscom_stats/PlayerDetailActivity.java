@@ -2,11 +2,15 @@ package com.ldlda.chesscom_stats;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.ldlda.chesscom_stats.api.data.CountryInfo;
 import com.ldlda.chesscom_stats.api.data.PlayerStats;
@@ -46,6 +50,14 @@ public class PlayerDetailActivity extends AppCompatActivity {
         TextView usernameView = binding.playerDetailUsername;
         TextView nameView = binding.playerDetailName;
         TextView statsView = binding.playerDetailStats;
+
+        Button addFavoriteBtn = binding.addToFavBtn;
+        addFavoriteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(PlayerDetailActivity.this,"Added to favorite",Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // the biggest bullshit is that i cant export the damn leaderboard entry it already had stuff
         String username = getIntent().getStringExtra("username");
