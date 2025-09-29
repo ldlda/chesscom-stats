@@ -18,11 +18,19 @@ import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;
 import com.ldlda.chesscom_stats.databinding.ActivityPlayerDetailBinding;
 import com.squareup.picasso.Picasso;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class PlayerDetailActivity extends AppCompatActivity {
@@ -52,12 +60,49 @@ public class PlayerDetailActivity extends AppCompatActivity {
         TextView statsView = binding.playerDetailStats;
 
         Button addFavoriteBtn = binding.addToFavBtn;
-        addFavoriteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(PlayerDetailActivity.this,"Added to favorite",Toast.LENGTH_SHORT).show();
+        addFavoriteBtn.setOnClickListener(v -> {
+            String username = binding.playerDetailUsername.getText().toString().trim();
+
+            try {
+                // Read existing favorites
+                FileInputStream fis = openFileInput("favorites.txt");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+
+                Set<String> favorites = new HashSet<>();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    favorites.add(line.trim());
+                }
+                reader.close();
+
+                //Check if player already favorited
+                if (favorites.contains(username)) {
+                    Toast.makeText(PlayerDetailActivity.this, "Already favorited", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Add to favorite
+                FileOutputStream fos = openFileOutput("favorites.txt", MODE_APPEND);
+                fos.write((username + "\n").getBytes());
+                fos.close();
+
+                Toast.makeText(PlayerDetailActivity.this, "Added to favorites", Toast.LENGTH_SHORT).show();
+
+            } catch (FileNotFoundException e) {
+                try {
+                    FileOutputStream fos = openFileOutput("favorites.txt", MODE_PRIVATE);
+                    fos.write((username + "\n").getBytes());
+                    fos.close();
+                    Toast.makeText(PlayerDetailActivity.this, "Added to favorites", Toast.LENGTH_SHORT).show();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(PlayerDetailActivity.this, "Failed to save favorite", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         // the biggest bullshit is that i cant export the damn leaderboard entry it already had stuff
         String username = getIntent().getStringExtra("username");
