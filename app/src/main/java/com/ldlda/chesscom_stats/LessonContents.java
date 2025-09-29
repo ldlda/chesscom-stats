@@ -54,9 +54,14 @@ public class LessonContents extends Fragment {
 
         int lessonIndex = getArguments() != null ? getArguments().getInt("lesson_index") : 0;
 
-        // Set correct lesson title + content
-        titleView.setText(lessonTitles.get(lessonIndex));
-        contentView.setText(lessonContents.get(lessonIndex));
+        // Set correct lesson title + content with bounds checking
+        if (lessonIndex >= 0 && lessonIndex < lessonTitles.size() && lessonIndex < lessonContents.size()) {
+            titleView.setText(lessonTitles.get(lessonIndex));
+            contentView.setText(lessonContents.get(lessonIndex));
+        } else {
+            titleView.setText("Invalid lesson");
+            contentView.setText("The requested lesson does not exist.");
+        }
 
         return view;
     }

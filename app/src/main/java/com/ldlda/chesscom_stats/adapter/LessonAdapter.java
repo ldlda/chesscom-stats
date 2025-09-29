@@ -8,10 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-// Assuming R class is correctly generated in this package.
-// If your R class is in a different package, this might need adjustment.
-// import com.ldlda.chesscom_stats.R; 
-
 import java.util.List; // Added for List
 
 public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonViewHolder> {
