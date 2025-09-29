@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ldlda.chesscom_stats.databinding.ActivityMainBinding;
@@ -57,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
             int menuId = item.getItemId();
             Fragment target = fragmentFor(menuId);
             if (target != null && target != currentFragment) {
+                getSupportFragmentManager()
+                        .popBackStack("gay", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 getSupportFragmentManager()
                         .beginTransaction()
                         .hide(currentFragment)
