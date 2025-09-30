@@ -23,9 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.playerdetail.PlayerDetailActivity"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".ui.playerdetail.PlayerDetailActivity"-->
+<!--            android:exported="false" />-->
     </application>
     <attribution android:tag="audioPlayback"
         android:label="@string/audio_playback_attribution_label" />

@@ -15,10 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailActivity;
 import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.api.data.LeaderboardEntry;
 import com.ldlda.chesscom_stats.databinding.FragmentHallOfFameBinding;
+import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +41,12 @@ public class LeaderboardsFragment extends Fragment {
         RecyclerView recyclerView = binding.hallOfFameRecycler;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new LeaderboardsAdapter(player -> {
-            // Launch PlayerDetailActivity with the selected username
-            android.content.Intent intent = new android.content.Intent(getContext(), PlayerDetailActivity.class);
-            intent.putExtra("username", player.getUsername());
-            startActivity(intent);
+            // Navigate to PlayerDetailFragment
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, PlayerDetailFragment.newInstance(player.getUsername()))
+                    .addToBackStack("playerDetail")
+                    .commit();
         });
         recyclerView.setAdapter(adapter);
 

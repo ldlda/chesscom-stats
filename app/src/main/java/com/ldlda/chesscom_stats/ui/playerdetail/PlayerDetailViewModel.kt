@@ -1,24 +1,22 @@
-package com.ldlda.chesscom_stats.ui.leaderboards
+package com.ldlda.chesscom_stats.ui.playerdetail
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.ldlda.chesscom_stats.api.data.Leaderboards
+import com.ldlda.chesscom_stats.api.data.Player
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
 import com.ldlda.chesscom_stats.di.RepositoryProvider
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class LeaderboardsViewModel(
-    app: Application
-) : AndroidViewModel(app) {
-
+class PlayerDetailViewModel(app: Application) : AndroidViewModel(app) {
     private val repo: ChessRepository = RepositoryProvider.defaultRepository(app)
 
-    private val _data = MutableLiveData<Leaderboards>()
-    val data: LiveData<Leaderboards> = _data
+    private val _player = MutableLiveData<Player?>()
+    val player: LiveData<Player?> = _player
 
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
@@ -26,16 +24,19 @@ class LeaderboardsViewModel(
     private val _error = MutableLiveData<Throwable?>()
     val error: LiveData<Throwable?> = _error
 
-    fun load(refresh: Boolean = false) {
+    fun load(username: String) {
         if (_loading.value == true) return
         _loading.value = true
         _error.value = null
         viewModelScope.launch {
             try {
-                // For now, repository-level TTL will handle freshness. If you add an explicit
-                // bypass-ETag path, thread it here when refresh=true.
-                val boards = repo.getLeaderboards()
-                _data.value = boards
+                val user = repo.getPlayer(username)
+                // Fetch country and stats in parallel; they mutate the Player instance via helpers
+                val fetchCountry = async { user.fetchCountryInfo(repo) }
+                val fetchStats = async { user.fetchPlayerStats(repo) }
+                fetchCountry.await()
+                fetchStats.await()
+                _player.value = user
             } catch (_: CancellationException) {
                 // ignore
             } catch (t: Throwable) {

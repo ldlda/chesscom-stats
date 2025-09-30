@@ -23,15 +23,10 @@ import com.ldlda.chesscom_stats.ui.lessons.LessonsFragment;
 
 public class MainActivity extends AppCompatActivity {
     private static final String KEY_SELECTED = "selectedItemId";
-    private static final String TAG_HOME = "tab:home";
-    private static final String TAG_HALL = "tab:hall";
-    private static final String TAG_FAV = "tab:fav";
-    private static final String TAG_LESSONS = "tab:lessons";
     private final String TAG = "MainActivity";
     private MediaPlayer backgroundSong;
 
-    // Cached fragment references for show/hide pattern
-    private Fragment homeFragment, hallFragment, favoritesFragment, lessonsFragment, currentFragment;
+    // Current selected tab id only; fragments are replaced on selection
     private int selectedItemId = R.id.home;
 
     private Context context;
@@ -54,21 +49,16 @@ public class MainActivity extends AppCompatActivity {
             selectedItemId = savedInstanceState.getInt(KEY_SELECTED, R.id.home);
         }
 
-        ensureFragments();
-        showSelected(selectedItemId);
+        if (savedInstanceState == null) {
+            replaceTo(fragmentFor(R.id.home));
+        }
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int menuId = item.getItemId();
             Fragment target = fragmentFor(menuId);
-            if (target != null && target != currentFragment) {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .hide(currentFragment)
-                        .show(target)
-                        .commit();
-                currentFragment = target;
-                selectedItemId = menuId;
-            }
+
+            replaceTo(target);
+            selectedItemId = menuId;
             return true;
         });
 
@@ -119,52 +109,20 @@ public class MainActivity extends AppCompatActivity {
         outState.putInt(KEY_SELECTED, selectedItemId);
     }
 
-    private void ensureFragments() {
-        var fm = getSupportFragmentManager();
-        var tx = fm.beginTransaction();
-
-        homeFragment = fm.findFragmentByTag(TAG_HOME);
-        hallFragment = fm.findFragmentByTag(TAG_HALL);
-        favoritesFragment = fm.findFragmentByTag(TAG_FAV);
-        lessonsFragment = fm.findFragmentByTag(TAG_LESSONS);
-
-        if (homeFragment == null) {
-            homeFragment = new HomeFragment();
-            tx.add(R.id.fragment_container, homeFragment, TAG_HOME).hide(homeFragment);
-        }
-        if (hallFragment == null) {
-            hallFragment = new LeaderboardsFragment();
-            tx.add(R.id.fragment_container, hallFragment, TAG_HALL).hide(hallFragment);
-        }
-        if (favoritesFragment == null) {
-            favoritesFragment = new FavoritesFragment();
-            tx.add(R.id.fragment_container, favoritesFragment, TAG_FAV).hide(favoritesFragment);
-        }
-        if (lessonsFragment == null) {
-            lessonsFragment = new LessonsFragment();
-            tx.add(R.id.fragment_container, lessonsFragment, TAG_LESSONS).hide(lessonsFragment);
-        }
-        tx.commitNow();
-    }
-
-    private void showSelected(int menuId) {
-        Fragment target = fragmentFor(menuId);
-        if (target == null) target = homeFragment;
-        var tx = getSupportFragmentManager().beginTransaction();
-        if (homeFragment != null) tx.hide(homeFragment);
-        if (hallFragment != null) tx.hide(hallFragment);
-        if (favoritesFragment != null) tx.hide(favoritesFragment);
-        if (lessonsFragment != null) tx.hide(lessonsFragment);
-        tx.show(target).commitNow();
-        currentFragment = target;
+    private void replaceTo(Fragment fragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.fragment_container, fragment)
+                .commit();
     }
 
     private Fragment fragmentFor(int menuId) {
-        if (menuId == R.id.home) return homeFragment;
-        if (menuId == R.id.leaderboards) return hallFragment;
-        if (menuId == R.id.favorites) return favoritesFragment;
-        if (menuId == R.id.lessons) return lessonsFragment;
-        return null;
+        if (menuId == R.id.home) return new HomeFragment();
+        if (menuId == R.id.leaderboards) return new LeaderboardsFragment();
+        if (menuId == R.id.favorites) return new FavoritesFragment();
+        if (menuId == R.id.lessons) return new LessonsFragment();
+        return new HomeFragment();
     }
 
     @Override
