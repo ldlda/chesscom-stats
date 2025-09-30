@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats;
+package com.ldlda.chesscom_stats.ui.playerdetail;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.api.data.CountryInfo;
 import com.ldlda.chesscom_stats.api.data.PlayerStats;
 import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;

@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.adapter;
+package com.ldlda.chesscom_stats.ui.leaderboards;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +17,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
 
-public class HallOfFameAdapter extends ListAdapter<LeaderboardEntry, HallOfFameAdapter.PlayerViewHolder> {
+public class LeaderboardsAdapter extends ListAdapter<LeaderboardEntry, LeaderboardsAdapter.PlayerViewHolder> {
 
     private static final DiffUtil.ItemCallback<LeaderboardEntry> DIFF =
             new DiffUtil.ItemCallback<>() {
@@ -34,7 +34,7 @@ public class HallOfFameAdapter extends ListAdapter<LeaderboardEntry, HallOfFameA
             };
     private final OnPlayerClickListener listener;
 
-    public HallOfFameAdapter(OnPlayerClickListener listener) {
+    public LeaderboardsAdapter(OnPlayerClickListener listener) {
         super(DIFF);
         this.listener = listener;
     }

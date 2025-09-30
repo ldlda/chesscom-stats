@@ -16,6 +16,10 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ldlda.chesscom_stats.databinding.ActivityMainBinding;
+import com.ldlda.chesscom_stats.ui.favorites.FavoritesFragment;
+import com.ldlda.chesscom_stats.ui.home.HomeFragment;
+import com.ldlda.chesscom_stats.ui.leaderboards.LeaderboardsFragment;
+import com.ldlda.chesscom_stats.ui.lessons.LessonsFragment;
 
 public class MainActivity extends AppCompatActivity {
     private static final String KEY_SELECTED = "selectedItemId";
@@ -129,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             tx.add(R.id.fragment_container, homeFragment, TAG_HOME).hide(homeFragment);
         }
         if (hallFragment == null) {
-            hallFragment = new HallOfFameFragment();
+            hallFragment = new LeaderboardsFragment();
             tx.add(R.id.fragment_container, hallFragment, TAG_HALL).hide(hallFragment);
         }
         if (favoritesFragment == null) {

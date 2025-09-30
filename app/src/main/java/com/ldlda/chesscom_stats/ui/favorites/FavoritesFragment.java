@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats;
+package com.ldlda.chesscom_stats.ui.favorites;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.ldlda.chesscom_stats.R;
 
 public class FavoritesFragment extends Fragment {
     //Inflate fragment

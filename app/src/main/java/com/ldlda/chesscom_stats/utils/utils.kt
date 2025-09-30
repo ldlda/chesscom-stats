@@ -16,6 +16,6 @@ fun defaultWithCache(cache: Cache): ChessRepoAdapterJava = ChessRepoAdapterJava(
 )
 
 
-fun buildCache(parent: File, dir: String, maxSize: Long): Cache = Cache(
+fun buildCache(parent: File, dir: String, maxSize: Long) = Cache(
     File(parent, dir), maxSize
 )

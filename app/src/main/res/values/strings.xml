@@ -18,7 +18,7 @@
     <string name="refresh_too_soon">Please wait a few seconds before refreshing again.</string>
     <string name="home">Home</string>
     <string name="fav">Favorites</string>
-    <string name="hall_fame">Hall of Fame</string>
+    <string name="hall_of_fame">Hall of Fame</string>
     <string name="lesson">Lessons</string>
 
     <!--Menu stuff -->
@@ -31,4 +31,5 @@
     <string name="player_last_online">Last Online</string>
     <string name="player_status">Status</string>
     <string name="audio_playback_attribution_label">This app plays audio</string>
+    <string name="player_stats">Stats</string>
 </resources>

@@ -38,7 +38,7 @@
             android:id="@+id/player_detail_stats"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Stats"
+            android:text="@string/player_stats"
             android:layout_marginTop="16dp"/>
     </LinearLayout>
 </ScrollView>

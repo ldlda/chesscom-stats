@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats;
+package com.ldlda.chesscom_stats.ui.leaderboards;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,25 +10,25 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.ldlda.chesscom_stats.adapter.HallOfFameAdapter;
+import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailActivity;
+import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.api.data.LeaderboardEntry;
-import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;
 import com.ldlda.chesscom_stats.databinding.FragmentHallOfFameBinding;
-import com.ldlda.chesscom_stats.utils.UtilsKt;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HallOfFameFragment extends Fragment {
-    private static final String TAG = "HallOfFameFragment";
+public class LeaderboardsFragment extends Fragment {
+    private static final String TAG = "LeaderboardsFragment";
     private static final long MIN_REFRESH_INTERVAL_MS = 10_000; // 10 seconds between forced refreshes
     private long lastRefreshAt = 0L;
-    private HallOfFameAdapter adapter;
-    private ChessRepoAdapterJava repo;
+    private LeaderboardsAdapter adapter;
+    private LeaderboardsViewModel viewModel;
     private SearchView searchView;
     private List<LeaderboardEntry> allPlayers = new ArrayList<>();
 
@@ -40,17 +40,16 @@ public class HallOfFameFragment extends Fragment {
         SwipeRefreshLayout swipeRefreshLayout = binding.leaderboardSwipeRefresh;
         RecyclerView recyclerView = binding.hallOfFameRecycler;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new HallOfFameAdapter(player -> {
+        adapter = new LeaderboardsAdapter(player -> {
             // Launch PlayerDetailActivity with the selected username
             android.content.Intent intent = new android.content.Intent(getContext(), PlayerDetailActivity.class);
             intent.putExtra("username", player.getUsername());
             startActivity(intent);
         });
         recyclerView.setAdapter(adapter);
-        repo = UtilsKt.defaultWithCache(UtilsKt.buildCache(
-                requireContext().getCacheDir(), "http-cache",
-                20 << 20
-        ));
+
+        viewModel = new ViewModelProvider(this.requireActivity()).get(LeaderboardsViewModel.class);
+
         swipeRefreshLayout.setOnRefreshListener(() -> {
             long now = System.currentTimeMillis();
             if (now - lastRefreshAt < MIN_REFRESH_INTERVAL_MS) {
@@ -59,10 +58,11 @@ public class HallOfFameFragment extends Fragment {
                 Toast.makeText(getContext(), R.string.refresh_too_soon, Toast.LENGTH_SHORT).show();
                 return;
             }
-            fetchTopPlayers(swipeRefreshLayout);
+            viewModel.load(true);
         });
+
         // Initial load (from cache if present, otherwise network)
-        fetchTopPlayers(swipeRefreshLayout);
+        viewModel.load(false);
         Log.d(TAG, "onCreateView: called fetchTopPlayers");
 
         // SearchView handler
@@ -85,47 +85,26 @@ public class HallOfFameFragment extends Fragment {
                 return false;
             }
         });
-        return binding.getRoot();
-    }
+        // Observe
+        viewModel.getLoading().observe(getViewLifecycleOwner(), swipeRefreshLayout::setRefreshing);
+        viewModel.getData().observe(getViewLifecycleOwner(), boards -> {
+            List<com.ldlda.chesscom_stats.api.data.LeaderboardEntry> blitz = boards.getBlitz();
+            allPlayers = new ArrayList<>(blitz);
+            adapter.submitList(new ArrayList<>(allPlayers));
+            lastRefreshAt = System.currentTimeMillis();
+        });
+        viewModel.getError().observe(getViewLifecycleOwner(), err -> {
+            if (err != null && getContext() != null) {
+                Toast.makeText(getContext(), R.string.failed_to_fetch_leaderboard, Toast.LENGTH_SHORT).show();
+            }
+        });
 
-    private void fetchTopPlayers(SwipeRefreshLayout swipeRefreshLayout) {
-        if (swipeRefreshLayout != null && !swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(true);
-        }
-        Log.d(TAG, "fetchTopPlayers: reloading");
-        repo.getLeaderboardsAsync()
-                .thenAccept(boards -> {
-                    List<LeaderboardEntry> blitz = boards.getBlitz();
-                    //List<LeaderboardEntry> top = blitz.subList(0, Math.min(20, blitz.size())); // top 20 out of how many
-                    // A new safe copy list from the blitz list
-                    allPlayers = new ArrayList<>(blitz);
-                    if (getActivity() == null) return;
-                    getActivity().runOnUiThread(() ->
-                            {
-                                lastRefreshAt = System.currentTimeMillis();
-                                Log.d(TAG, "fetchTopPlayers: reloaded / added to view");
-                                adapter.submitList(new ArrayList<>(allPlayers));
-                                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
-                            }
-                    );
-                }).exceptionally(ex -> {
-                    Log.e(TAG, "fetchTopPlayers: getLeaderboards failed", ex);
-                    if (getActivity() != null) {
-                        getActivity().runOnUiThread(() ->
-                                {
-                                    Toast.makeText(getContext(), R.string.failed_to_fetch_leaderboard, Toast.LENGTH_SHORT).show();
-                                    if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
-                                }
-                        );
-                    }
-                    return null;
-                });
+        return binding.getRoot();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (repo != null) repo.close();
         binding = null;
     }
 }
