@@ -63,7 +63,8 @@ public class ChessAPIUnitTest {
     @Test
     public void search() throws Exception {
         // please dont change your ahh in front of my face
-        List<@NotNull ChessSearchItem> contains_ldabsbplef = instance.searchPlayersAsync("ldabsbplef").get();
+        List<@NotNull ChessSearchItem> contains_ldabsbplef =
+                instance.searchPlayersAsync("ldabsbplef").get();
 
         boolean ldabsbplefFound = false;
         for (ChessSearchItem i : contains_ldabsbplef) {

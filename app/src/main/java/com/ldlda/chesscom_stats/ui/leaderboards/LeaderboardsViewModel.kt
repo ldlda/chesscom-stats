@@ -1,6 +1,7 @@
 package com.ldlda.chesscom_stats.ui.leaderboards
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -35,6 +36,7 @@ class LeaderboardsViewModel(
                 // For now, repository-level TTL will handle freshness. If you add an explicit
                 // bypass-ETag path, thread it here when refresh=true.
                 val boards = repo.getLeaderboards()
+                Log.i(this::class.simpleName, "load: got leaderboards")
                 _data.value = boards
             } catch (_: CancellationException) {
                 // ignore

@@ -11,5 +11,8 @@ interface ChessApiBackend {
     suspend fun getPlayer(username: String): Player
     suspend fun getPlayerStats(username: String): PlayerStats
     suspend fun getCountryByUrl(url: String): CountryInfo
+
+    /** for searchplayers (but they send everything) */
+    suspend fun getCountry(code: String): CountryInfo
     suspend fun searchPlayers(prefix: String): List<ChessSearchItem>
 }

@@ -1,7 +1,6 @@
 package com.ldlda.chesscom_stats.ui.leaderboards;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +64,6 @@ public class LeaderboardsFragment extends Fragment {
 
         // Initial load (from cache if present, otherwise network)
         viewModel.load(false);
-        Log.d(TAG, "onCreateView: called fetchTopPlayers");
 
         // SearchView handler
         searchView = binding.playerSearchView;

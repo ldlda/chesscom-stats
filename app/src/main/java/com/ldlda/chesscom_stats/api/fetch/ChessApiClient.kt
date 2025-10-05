@@ -23,7 +23,7 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.io.IOException
 import java.util.concurrent.CompletableFuture
 
-class ChessApiClient @JvmOverloads /* why */ constructor(
+class ChessApiClient @JvmOverloads /* why ever build one of these in java */ constructor(
     val baseUrl: String = "https://api.chess.com/",
     val okHttp: OkHttpClient = OkHttpClient.Builder()
         //  TODO: This are not enabled for now, enable when ETag caching is fleshed out
@@ -74,7 +74,7 @@ class ChessApiClient @JvmOverloads /* why */ constructor(
     override suspend fun getPlayerStats(username: String): PlayerStats =
         execute { it.playerStats(username) }
 
-    suspend fun getCountry(code: String): CountryInfo = execute { it.country(code) }
+    override suspend fun getCountry(code: String): CountryInfo = execute { it.country(code) }
     override suspend fun getCountryByUrl(url: String): CountryInfo =
         execute { it.countryByUrl(url) }
 
@@ -106,50 +106,46 @@ class ChessApiClient @JvmOverloads /* why */ constructor(
     )
     @WorkerThread
     @Throws(ChessApiException::class)
-    fun getPlayerSync(username: String): Player {
-        return getSync { it.player(username) }
-    }
+    fun getPlayerSync(username: String): Player = getSync { getPlayer(username) }
 
     @Deprecated("use ChessRepository instead")
     @WorkerThread
     @Throws(ChessApiException::class)
-    fun getPlayerStatsSync(username: String): PlayerStats {
-        return getSync { it.playerStats(username) }
-    }
+    fun getPlayerStatsSync(username: String): PlayerStats = getSync { getPlayerStats(username) }
 
     @Deprecated("use ChessRepository instead")
     @WorkerThread
     @Throws(ChessApiException::class)
-    fun getLeaderboardsSync(): Leaderboards {
-        return getSync { it.leaderboards() }
-    }
+    fun getLeaderboardsSync(): Leaderboards = getSync { getLeaderboards() }
+
 
     @Deprecated("use ChessRepository instead")
     @WorkerThread
     @Throws(ChessApiException::class)
-    fun getCountryByUrlSync(url: String): CountryInfo = getSync { it.countryByUrl(url) }
+    fun getCountryByUrlSync(url: String): CountryInfo = getSync { getCountryByUrl(url) }
 
     @Deprecated("use ChessRepository instead. Direct country fetching by code is discouraged.")
     @WorkerThread
     @Throws(ChessApiException::class)
-    fun getCountrySync(code: String): CountryInfo = getSync { it.country(code) }
+    fun getCountrySync(code: String): CountryInfo = getSync { getCountry(code) }
+
 
     // Java-friendly async wrappers (recommended for UI)
 
     @Deprecated("use ChessRepository instead")
     fun getPlayerAsync(username: String): CompletableFuture<Player> =
-        getAsync { it.player(username) }
+        getAsync { getPlayer(username) }
 
     @Deprecated("use ChessRepository instead")
     fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
-        getAsync { it.playerStats(username) }
+        getAsync { getPlayerStats(username) }
 
     @Deprecated("use ChessRepository instead")
-    fun getLeaderboardsAsync(): CompletableFuture<Leaderboards> = getAsync { it.leaderboards() }
+    fun getLeaderboardsAsync(): CompletableFuture<Leaderboards> = getAsync { getLeaderboards() }
 
     @Deprecated("use ChessRepository instead")
     fun getCountryByUrlAsync(url: String): CompletableFuture<CountryInfo> =
-        getAsync { it.countryByUrl(url) }
+        getAsync { getCountryByUrl(url) }
 
     @Deprecated("use ChessRepository instead")
     @Throws(ChessApiException::class)
