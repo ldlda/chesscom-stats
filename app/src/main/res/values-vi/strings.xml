@@ -18,6 +18,8 @@
 
     <!-- Home fragment -->
     <string name="lastOnline_date">Online lần cuối:</string>
+    <string name="blitz_score">Điểm Blitz</string>
+    <string name="rapid_score">Điểm Rapid</string>
     <string name="home_txt">Chào mừng</string>
     <string name="plr_search">Tìm kiếm người chơi</string>
 
@@ -57,4 +59,5 @@
 
     <!-- Placeholder -->
     <string name="hello_blank_fragment">Xin chào fragment trống</string>
+    <string name="bullet_score">Điểm Bullet</string>
 </resources>

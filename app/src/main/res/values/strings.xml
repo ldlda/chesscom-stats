@@ -42,6 +42,10 @@
     <string name="join_date">Join date: </string>
     <string name="lastOnline_date">"Last online: "</string>
 
+    <string name="bullet_score">Bullet Stats</string>
+    <string name="blitz_score">Blitz Stats</string>
+    <string name="rapid_score">Rapid Stats</string>
+
     <!--Home fragment stuff-->
     <string name="home_txt">Welcome Home</string>
     <string name="plr_search"> Search for a player </string>
