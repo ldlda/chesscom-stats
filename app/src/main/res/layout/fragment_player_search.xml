@@ -7,7 +7,6 @@
     tools:context=".PlayerSearchFragment">
 
     <androidx.appcompat.widget.SearchView
-        app:iconifiedByDefault="true"
         android:id="@+id/all_plr_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,16 +14,17 @@
         android:background="@drawable/search_bg"
         android:iconifiedByDefault="false"/>
 
-    <ProgressBar
+    <!--<ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
     <ImageView
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_below="@id/all_plr_search"
         android:layout_marginTop="15dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/outline_book_24"/>
+        android:src="@drawable/outline_book_24"/>-->
 
 </RelativeLayout>

@@ -110,7 +110,7 @@ public class HallOfFameFragment extends Fragment {
                     );
                 }).exceptionally(ex -> {
                     Log.e(TAG, "fetchTopPlayers: getLeaderboards failed", ex);
-                    if (getActivity() != null) {
+                    if (isAdded() && getActivity() != null) {
                         getActivity().runOnUiThread(() ->
                                 {
                                     Toast.makeText(getContext(), R.string.failed_to_fetch_leaderboard, Toast.LENGTH_SHORT).show();

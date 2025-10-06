@@ -3,16 +3,13 @@ package com.ldlda.chesscom_stats;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.appcompat.widget.SearchView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
-
-import com.ldlda.chesscom_stats.api.data.LeaderboardEntry;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 public class PlayerSearchFragment extends Fragment {
     private SearchView endpoints_plr_search;
@@ -37,10 +34,26 @@ public class PlayerSearchFragment extends Fragment {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                return false;
+                Toast.makeText(getContext(),query,Toast.LENGTH_SHORT).show();
+                return true;
             }
         });
 
+        endpoints_plr_search = view.findViewById(R.id.all_plr_search);
+        endpoints_plr_search.setIconified(false);
+        endpoints_plr_search.requestFocus();
+
+        // Force keyboard to appear
+        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(getContext().INPUT_METHOD_SERVICE);
+        imm.showSoftInput(endpoints_plr_search, InputMethodManager.SHOW_IMPLICIT);
+
         return view;
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
+    }
+
 }
