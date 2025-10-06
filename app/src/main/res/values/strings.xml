@@ -21,6 +21,9 @@
     <string name="hall_fame">Hall of Fame</string>
     <string name="lesson">Lessons</string>
 
+    <string name="add_fav">Add to favorite</string>
+    <string name="remove_fav">Remove from favorite</string>
+
     <!--Menu stuff -->
     <string name="about">About us</string>
 
@@ -30,4 +33,7 @@
     <string name="player_joined">Joined</string>
     <string name="player_last_online">Last Online</string>
     <string name="player_status">Status</string>
+    <string name="audio_playback_attribution_label">This app plays audio</string>
+
+
 </resources>
