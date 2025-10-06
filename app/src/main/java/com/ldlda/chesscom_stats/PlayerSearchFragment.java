@@ -114,16 +114,15 @@ public class PlayerSearchFragment extends Fragment {
                                     if (response.isSuccessful() && response.body() != null) {
                                         PlayerStatsData dataStats = response.body();
 
-                                        int blitzLast = dataStats.blitz.last.rating;
-                                        int blitzBest = dataStats.blitz.best.rating;
+                                        int blitzLast = dataStats.blitz != null && dataStats.blitz.last != null ? dataStats.blitz.last.rating : 0;
+                                        int blitzBest = dataStats.blitz != null && dataStats.blitz.best != null ? dataStats.blitz.best.rating : 0;
 
-// Bullet ratings
-                                        int bulletLast = dataStats.bullet.last.rating;
-                                        int bulletBest = dataStats.bullet.best.rating;
+                                        int bulletLast = dataStats.bullet != null && dataStats.bullet.last != null ? dataStats.bullet.last.rating : 0;
+                                        int bulletBest = dataStats.bullet != null && dataStats.bullet.best != null ? dataStats.bullet.best.rating : 0;
 
-// Rapid ratings
-                                        int rapidLast = dataStats.rapid.last.rating;
-                                        int rapidBest = dataStats.rapid.best.rating;
+                                        int rapidLast = dataStats.rapid != null && dataStats.rapid.last != null ? dataStats.rapid.last.rating : 0;
+                                        int rapidBest = dataStats.rapid != null && dataStats.rapid.best != null ? dataStats.rapid.best.rating : 0;
+
 
                                         String bullet_txt = requireContext().getString(R.string.bullet_score)+"\n"
                                                 +"Best: "+ bulletBest+"\n"
@@ -142,7 +141,7 @@ public class PlayerSearchFragment extends Fragment {
                                     }else {
                                         Log.e("SearchFrag_Error", "HTTP " + response.code());
                                         Toast.makeText(requireContext(),
-                                                "Stats not found (" + response.code() + ")",
+                                                "Player's stats not found (" + response.code() + ")",
                                                 Toast.LENGTH_SHORT).show();
                                     }
                                 }
