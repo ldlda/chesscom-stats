@@ -1,54 +1,83 @@
 package com.ldlda.chesscom_stats.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List; // Added for List
+import com.ldlda.chesscom_stats.LessonContents;
+import com.ldlda.chesscom_stats.R;
+import com.ldlda.chesscom_stats.Lesson;
 
-public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonViewHolder> {
+import java.util.List;
 
-    private final List<String> lessons; // Changed from String[] to List<String>
-    private final OnLessonClickListener listener;
+public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.MyViewHolder> {
 
-    public interface OnLessonClickListener {
-        void onLessonClick(int position);
+    private final Context context;
+    private List<Lesson> dataList;
+
+    public void setSearchList(List<Lesson> dataSearchList) {
+        this.dataList = dataSearchList;
+        notifyDataSetChanged();
     }
 
-    public LessonAdapter(List<String> lessons, OnLessonClickListener listener) { // Changed from String[] to List<String>
-        this.lessons = lessons;
-        this.listener = listener;
+    public LessonAdapter(Context context, List<Lesson> dataList) {
+        this.context = context;
+        this.dataList = dataList;
     }
 
     @NonNull
     @Override
-    public LessonViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(android.R.layout.simple_list_item_1, parent, false);
-        return new LessonViewHolder(view);
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.lesson_list, parent, false);
+        return new MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull LessonViewHolder holder, int position) {
-        holder.title.setText(lessons.get(position)); // Changed from lessons[position] to lessons.get(position)
-        holder.itemView.setOnClickListener(v -> listener.onLessonClick(position));
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        holder.recImage.setImageResource(dataList.get(position).getDataImage());
+        holder.recTitle.setText(dataList.get(position).getDataTitle());
+        holder.recDesc.setText(dataList.get(position).getDataDesc());
+        holder.recLang.setText(dataList.get(position).getDataLang());
+
+        holder.recCard.setOnClickListener(view -> {
+            int currentPosition = holder.getBindingAdapterPosition();
+            if (currentPosition != RecyclerView.NO_POSITION) {
+                Intent intent = new Intent(context, LessonContents.class);
+                intent.putExtra("Image", dataList.get(currentPosition).getDataImage());
+                intent.putExtra("Title", dataList.get(currentPosition).getDataTitle());
+                intent.putExtra("Desc", dataList.get(currentPosition).getDataDesc());
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return lessons.size(); // Changed from lessons.length to lessons.size()
+        return dataList.size();
     }
 
-    static class LessonViewHolder extends RecyclerView.ViewHolder {
-        TextView title;
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        LessonViewHolder(View itemView) {
+        ImageView recImage;
+        TextView recTitle, recDesc, recLang;
+        CardView recCard;
+
+        public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            title = itemView.findViewById(android.R.id.text1);
+
+            recImage = itemView.findViewById(R.id.recImage);
+            recTitle = itemView.findViewById(R.id.recTitle);
+            recDesc = itemView.findViewById(R.id.recDesc);
+            recLang = itemView.findViewById(R.id.recLang);
+            recCard = itemView.findViewById(R.id.recCard);
         }
     }
 }
