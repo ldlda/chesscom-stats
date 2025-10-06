@@ -1,17 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-val org.gradle.accessors.dm.LibrariesForLibs.gson: kotlin.Any
-
-
-
-val org.gradle.accessors.dm.LibrariesForLibs.ConverterLibraryAccessors.gson: kotlin.Any
-
-
-
-val org.gradle.accessors.dm.LibrariesForLibs.retrofit: kotlin.Any
-
-
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -78,7 +66,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.serialization.core)
 
-    implementation(libs.gson)
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
+    implementation("com.google.code.gson:gson:2.13.2")
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+
 }

@@ -18,11 +18,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.ldlda.chesscom_stats.java_api.ApiClient;
+import com.ldlda.chesscom_stats.java_api.PlayerProfile;
+import com.ldlda.chesscom_stats.java_api.PlayerProfileData;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Objects;
+
+import retrofit2.Call;
 
 public class PlayerSearchFragment extends Fragment {
     private SearchView endpoints_plr_search;
@@ -44,6 +49,8 @@ public class PlayerSearchFragment extends Fragment {
         endpoints_plr_search = view.findViewById(R.id.all_plr_search);
 
         // API https://api.chess.com/pub/player/
+        PlayerProfile api = ApiClient.getClient().create(PlayerProfile.class);
+
         endpoints_plr_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
@@ -52,27 +59,41 @@ public class PlayerSearchFragment extends Fragment {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                String url = "https://api.chess.com/pub/player/"+query.toLowerCase();
-                Log.i("SearchFrag",url);
-                JsonObjectRequest jsonObject = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                String username = query.toLowerCase().trim();
+                Log.i("SearchFrag", "Searching for: " + username);
+
+                Call<PlayerProfileData> call = api.getPlayerProfile(username);
+
+                call.enqueue(new retrofit2.Callback<PlayerProfileData>() {
                     @Override
-                    public void onResponse(JSONObject jsonObject) {
-                        try {
-                            String username = jsonObject.getString("username");
-                            String country = jsonObject.getString("country");
-                            Toast.makeText(requireContext(), username + " from " + country, Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                    public void onResponse(Call<PlayerProfileData> call, retrofit2.Response<PlayerProfileData> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            PlayerProfileData data = response.body();
+
+                            // Log entire JSON response
+                            Log.i("SearchFrag_JSON", new com.google.gson.Gson().toJson(data));
+
+                            // Simple Toast to show result
+                            Toast.makeText(requireContext(),
+                                    data.username + " (" + data.title + ")",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e("SearchFrag_Error", "HTTP " + response.code());
+                            Toast.makeText(requireContext(),
+                                    "Player not found (" + response.code() + ")",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
-                }, new Response.ErrorListener() {
+
                     @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        Toast.makeText(getContext(),volleyError.toString(),Toast.LENGTH_SHORT).show();
+                    public void onFailure(Call<PlayerProfileData> call, Throwable t) {
+                        Log.e("SearchFrag_Failure", "Error: " + t.getMessage());
+                        Toast.makeText(requireContext(),
+                                "Request failed: " + t.getMessage(),
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
 
-                queue.add(jsonObject);
                 return true;
             }
         });
