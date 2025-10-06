@@ -65,4 +65,6 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.serialization.core)
+
+    implementation("com.google.code.gson:gson:2.13.2")
 }
