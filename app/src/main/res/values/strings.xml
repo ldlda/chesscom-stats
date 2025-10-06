@@ -39,6 +39,9 @@
     <string name="mod">Mod</string>
     <string name="staff">Staff</string>
 
+    <string name="join_date">Join date: </string>
+    <string name="lastOnline_date">"Last online: "</string>
+
     <!--Home fragment stuff-->
     <string name="home_txt">Welcome Home</string>
     <string name="plr_search"> Search for a player </string>

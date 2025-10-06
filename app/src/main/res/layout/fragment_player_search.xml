@@ -51,4 +51,24 @@
         android:textStyle="bold"
         android:drawableEnd="@drawable/ic_person"
         android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/join_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:text="@string/join_date"
+        android:layout_marginLeft="15dp"
+        android:textSize="15sp"
+        android:layout_below="@id/title"/>
+
+    <TextView
+        android:id="@+id/last_onl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:text="@string/lastOnline_date"
+        android:textSize="15sp"
+        android:layout_toEndOf="@id/avatar"
+        android:layout_below="@id/title"/>
 </RelativeLayout>

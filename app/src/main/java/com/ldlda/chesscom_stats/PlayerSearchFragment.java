@@ -29,6 +29,9 @@ import com.ldlda.chesscom_stats.java_api.PlayerProfileData;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -41,6 +44,9 @@ public class PlayerSearchFragment extends Fragment {
     private TextView title;
 
     private TextView account_state;
+
+    private TextView joinDate;
+    private TextView lastOnlDate;
     RequestQueue queue;
 
     @Override
@@ -60,6 +66,8 @@ public class PlayerSearchFragment extends Fragment {
         search_prog = view.findViewById(R.id.prog_bar);
         title = view.findViewById(R.id.title);
         account_state = view.findViewById(R.id.account_state);
+        joinDate = view.findViewById(R.id.join_date);
+        lastOnlDate = view.findViewById(R.id.last_onl);
 
         // API https://api.chess.com/pub/player/
         PlayerProfile api = ApiClient.getClient().create(PlayerProfile.class);
@@ -100,6 +108,22 @@ public class PlayerSearchFragment extends Fragment {
                             setAccountState(data.status);
 
                             title.setText(titleRes);
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+
+                            // First joined date
+                            Date date_joined = new Date(data.joined * 1000L);
+
+                            String joinedDateText = requireContext().getString(R.string.join_date) + "\n" + sdf.format(date_joined);
+
+                            joinDate.setText(joinedDateText);
+
+                            // Last online date
+                            Date date_lastOnl = new Date(data.lastOnline * 1000L);
+
+                            String lastOnlDateText = requireContext().getString(R.string.lastOnline_date) + "\n" + sdf.format(date_lastOnl);
+
+                            lastOnlDate.setText(joinedDateText);
                         } else {
                             Log.e("SearchFrag_Error", "HTTP " + response.code());
                             Toast.makeText(requireContext(),

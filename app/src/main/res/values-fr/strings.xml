@@ -41,7 +41,10 @@
     <string name="mod">Mod</string>
     <string name="staff">Staff</string>
 
+    <string name="join_date">Date d\'adhésion: </string>
+
     <!-- Home fragment -->
+    <string name="lastOnline_date">Dernière connexion:</string>
     <string name="home_txt">Bienvenue à l\'accueil</string>
     <string name="plr_search">Rechercher un joueur</string>
 

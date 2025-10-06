@@ -17,9 +17,11 @@
     <string name="remove_fav">Bỏ yêu thích</string>
 
     <!-- Home fragment -->
+    <string name="lastOnline_date">Online lần cuối:</string>
     <string name="home_txt">Chào mừng</string>
     <string name="plr_search">Tìm kiếm người chơi</string>
 
+    <string name="player_avatar_desc">Avatar người dùng</string>
     <string name="player_username">Tên người dùng</string>
     <string name="player_name">Tên</string>
     <string name="player_country">Quốc gia</string>
@@ -40,6 +42,8 @@
     <string name="premium">Premium</string>
     <string name="mod">Mod</string>
     <string name="staff">Staff</string>
+
+    <string name="join_date">Ngày tham gia: </string>
 
     <string name="player_rating">Xếp hạng</string>
     <string name="player_title">Danh hiệu</string>
