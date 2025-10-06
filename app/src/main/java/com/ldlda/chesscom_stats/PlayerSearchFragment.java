@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -32,6 +33,7 @@ import retrofit2.Call;
 public class PlayerSearchFragment extends Fragment {
     private SearchView endpoints_plr_search;
 
+    private ProgressBar search_prog;
     RequestQueue queue;
 
     @Override
@@ -46,7 +48,9 @@ public class PlayerSearchFragment extends Fragment {
 
         queue = Volley.newRequestQueue(requireContext());
 
+        // Components
         endpoints_plr_search = view.findViewById(R.id.all_plr_search);
+        search_prog = view.findViewById(R.id.prog_bar);
 
         // API https://api.chess.com/pub/player/
         PlayerProfile api = ApiClient.getClient().create(PlayerProfile.class);
@@ -60,22 +64,22 @@ public class PlayerSearchFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 String username = query.toLowerCase().trim();
+                search_prog.setVisibility(View.VISIBLE);
                 Log.i("SearchFrag", "Searching for: " + username);
 
                 Call<PlayerProfileData> call = api.getPlayerProfile(username);
 
                 call.enqueue(new retrofit2.Callback<PlayerProfileData>() {
+
                     @Override
                     public void onResponse(Call<PlayerProfileData> call, retrofit2.Response<PlayerProfileData> response) {
                         if (response.isSuccessful() && response.body() != null) {
+                            search_prog.setVisibility(View.GONE);
                             PlayerProfileData data = response.body();
-
-                            // Log entire JSON response
-                            Log.i("SearchFrag_JSON", new com.google.gson.Gson().toJson(data));
 
                             // Simple Toast to show result
                             Toast.makeText(requireContext(),
-                                    data.username + " (" + data.title + ")",
+                                    data.username,
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             Log.e("SearchFrag_Error", "HTTP " + response.code());

@@ -24,6 +24,12 @@
     <string name="add_fav">Add to favorite</string>
     <string name="remove_fav">Remove from favorite</string>
 
+    <!-- Player stuff -->
+    <string name="grandmaster">Grandmaster</string>
+    <string name="i_master">International Master</string>
+    <string name="fide_master">FIDE Master</string>
+    <string name="fide_cand_master">FIDE Candidate Master</string>
+
     <!--Home fragment stuff-->
     <string name="home_txt">Welcome Home</string>
     <string name="plr_search"> Search for a player </string>

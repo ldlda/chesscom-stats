@@ -15,11 +15,13 @@
         android:iconifiedByDefault="false"/>
 
     <ProgressBar
+        android:id="@+id/prog_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="gone"/>
     <ImageView
+        android:id="@+id/avatar"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_below="@id/all_plr_search"
@@ -27,4 +29,14 @@
         android:layout_centerHorizontal="true"
         android:src="@drawable/outline_book_24"/>
 
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/avatar"
+        android:layout_centerHorizontal="true"
+        android:textSize="15sp"
+        android:textColor="@color/white"
+        android:background="@drawable/tittle_bg"
+        android:padding="10dp"/>
 </RelativeLayout>
