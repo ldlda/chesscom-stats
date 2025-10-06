@@ -1,37 +1,18 @@
 <resources>
-    <string name="app_name">Statistiques pour chess.com</string>
+    <string name="app_name">Stats de chess.com</string>
     <string name="action_settings">Paramètres</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">Premier fragment</string>
-    <string name="second_fragment_label">Deuxième fragment</string>
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Suivant</string>
     <string name="previous">Précédent</string>
 
-    <string name="player_avatar_desc">Avatar du joueur</string>
-    <string name="player_username">Nom d\'utilisateur</string>
-    <string name="player_name">Nom</string>
-    <string name="player_country">Pays</string>
-    <string name="player_rank">Classement</string>
-    <string name="player_score">Score</string>
-    <string name="failed_to_fetch_leaderboard">Échec du chargement du classement</string>
-    <string name="failed_to_load_player_data">Échec du chargement des données du joueur.</string>
-    <string name="refresh_too_soon">Veuillez attendre quelques secondes avant de rafraîchir à nouveau.</string>
     <string name="home">Accueil</string>
     <string name="fav">Favoris</string>
     <string name="hall_fame">Temple de la renommée</string>
     <string name="lesson">Leçons</string>
 
-    <string name="add_fav">Ajouter aux favoris</string>
-    <string name="remove_fav">Retirer des favoris</string>
+    <string name="about">De nous</string>
 
-    <!--Menu stuff -->
-    <string name="about">À propos</string>
-
-    <string name="home_txt">Bienvenue à l\'accueil</string>
-    <string name="player_rating">Classement</string>
-    <string name="player_title">Titre</string>
-    <string name="player_joined">Inscription</string>
-    <string name="player_last_online">Dernière connexion</string>
-    <string name="player_status">Statut</string>
-    <string name="audio_playback_attribution_label">Cette application lit de l’audio</string>
+    <string name="home_txt">Bienvenue sur la page</string>
 </resources>
