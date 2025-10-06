@@ -10,6 +10,6 @@ public interface PlayerProfile {
     @GET("player/{username}")
     Call<PlayerProfileData> getPlayerProfile(@Path("username") String username);
 
-    @GET("pub/player/{username}/stats")
+    @GET("player/{username}/stats")
     Call<PlayerStatsData> getPlayerStats(@Path("username") String username);
 }

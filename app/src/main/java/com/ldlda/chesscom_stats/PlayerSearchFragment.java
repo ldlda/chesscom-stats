@@ -21,6 +21,7 @@ import com.android.volley.toolbox.Volley;
 import com.ldlda.chesscom_stats.java_api.ApiClient;
 import com.ldlda.chesscom_stats.java_api.PlayerProfile;
 import com.ldlda.chesscom_stats.java_api.PlayerProfileData;
+import com.ldlda.chesscom_stats.java_api.PlayerStatsData;
 
 
 import java.text.SimpleDateFormat;
@@ -28,6 +29,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import retrofit2.Call;
+import retrofit2.Response;
 
 public class PlayerSearchFragment extends Fragment {
     private SearchView endpoints_plr_search;
@@ -40,6 +42,12 @@ public class PlayerSearchFragment extends Fragment {
 
     private TextView joinDate;
     private TextView lastOnlDate;
+
+    // Chess stats
+
+    private TextView bullet_stats;
+    private TextView blitz_stats;
+    private TextView rapid_stats;
     RequestQueue queue;
 
     @Override
@@ -61,6 +69,10 @@ public class PlayerSearchFragment extends Fragment {
         account_state = view.findViewById(R.id.account_state);
         joinDate = view.findViewById(R.id.join_date);
         lastOnlDate = view.findViewById(R.id.last_onl);
+
+        bullet_stats = view.findViewById(R.id.bullet_stats);
+        blitz_stats = view.findViewById(R.id.blitz_stats);
+        rapid_stats = view.findViewById(R.id.rapid_stats);
 
         // API https://api.chess.com/pub/player/
         PlayerProfile api = ApiClient.getClient().create(PlayerProfile.class);
@@ -87,36 +99,62 @@ public class PlayerSearchFragment extends Fragment {
                             search_prog.setVisibility(View.GONE);
                             PlayerProfileData data = response.body();
 
-                            int titleRes = R.string.none;
-
-                            if (data.title != null) {
-                                switch (data.title) {
-                                    case "GM": titleRes = R.string.grandmaster; break;
-                                    case "IM": titleRes = R.string.i_master; break;
-                                    case "FM": titleRes = R.string.fide_master; break;
-                                    case "CM": titleRes = R.string.fide_cand_master; break;
-                                }
-                            }
-
+                            setAccountTitle(data.title);
                             setAccountState(data.status);
+                            setDates(data.joined, data.lastOnline);
 
-                            title.setText(titleRes);
+                            // Calling the chess stats, big L chat
 
-                            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+                            Call<PlayerStatsData> statCall = api.getPlayerStats(username);
 
-                            // First joined date
-                            Date date_joined = new Date(data.joined * 1000L);
+                            statCall.enqueue(new retrofit2.Callback<PlayerStatsData>() {
 
-                            String joinedDateText = requireContext().getString(R.string.join_date) + "\n" + sdf.format(date_joined);
+                                @Override
+                                public void onResponse(Call<PlayerStatsData> statCall, Response<PlayerStatsData> response) {
+                                    if (response.isSuccessful() && response.body() != null) {
+                                        PlayerStatsData dataStats = response.body();
 
-                            joinDate.setText(joinedDateText);
+                                        int blitzLast = dataStats.blitz.last.rating;
+                                        int blitzBest = dataStats.blitz.best.rating;
 
-                            // Last online date
-                            Date date_lastOnl = new Date(data.lastOnline * 1000L);
+// Bullet ratings
+                                        int bulletLast = dataStats.bullet.last.rating;
+                                        int bulletBest = dataStats.bullet.best.rating;
 
-                            String lastOnlDateText = requireContext().getString(R.string.lastOnline_date) + "\n" + sdf.format(date_lastOnl);
+// Rapid ratings
+                                        int rapidLast = dataStats.rapid.last.rating;
+                                        int rapidBest = dataStats.rapid.best.rating;
 
-                            lastOnlDate.setText(lastOnlDateText);
+                                        String bullet_txt = requireContext().getString(R.string.bullet_score)+"\n"
+                                                +"Best: "+ bulletBest+"\n"
+                                                +"Last: "+ bulletLast+"\n";
+                                        bullet_stats.setText(bullet_txt);
+
+                                        String blitz_txt = requireContext().getString(R.string.blitz_score)+"\n"
+                                                +"Best: "+ blitzBest+"\n"
+                                                +"Last: "+ blitzLast+"\n";
+                                        blitz_stats.setText(bullet_txt);
+
+                                        String rapid_txt = requireContext().getString(R.string.rapid_score)+"\n"
+                                                +"Best: "+ rapidBest+"\n"
+                                                +"Last: "+ rapidLast+"\n";
+                                        rapid_stats.setText(bullet_txt);
+                                    }else {
+                                        Log.e("SearchFrag_Error", "HTTP " + response.code());
+                                        Toast.makeText(requireContext(),
+                                                "Stats not found (" + response.code() + ")",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<PlayerStatsData> statCall, Throwable t) {
+                                    Log.e("SearchFrag_Failure", "Error: " + t.getMessage());
+                                    Toast.makeText(requireContext(),
+                                            "Request failed for stats: " + t.getMessage(),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         } else {
                             Log.e("SearchFrag_Error", "HTTP " + response.code());
                             Toast.makeText(requireContext(),
@@ -155,6 +193,20 @@ public class PlayerSearchFragment extends Fragment {
         requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
     }
 
+    private void setAccountTitle(String acc_title){
+        int titleRes = R.string.none;
+
+        if (acc_title != null) {
+            switch (acc_title) {
+                case "GM": titleRes = R.string.grandmaster; break;
+                case "IM": titleRes = R.string.i_master; break;
+                case "FM": titleRes = R.string.fide_master; break;
+                case "CM": titleRes = R.string.fide_cand_master; break;
+            }
+        }
+
+        title.setText(titleRes);
+    }
     private void setAccountState(String status) {
         int textRes;
         int iconRes;
@@ -191,4 +243,21 @@ public class PlayerSearchFragment extends Fragment {
         account_state.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null);
     }
 
+    private void setDates(long joinedTimeStamp, long lastOnlTimeStamp){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+
+        // First joined date
+        Date date_joined = new Date(joinedTimeStamp * 1000L);
+
+        String joinedDateText = requireContext().getString(R.string.join_date) + "\n" + sdf.format(date_joined);
+
+        joinDate.setText(joinedDateText);
+
+        // Last online date
+        Date date_lastOnl = new Date(lastOnlTimeStamp * 1000L);
+
+        String lastOnlDateText = requireContext().getString(R.string.lastOnline_date) + "\n" + sdf.format(date_lastOnl);
+
+        lastOnlDate.setText(lastOnlDateText);
+    }
 }

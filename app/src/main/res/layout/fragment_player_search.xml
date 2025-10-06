@@ -105,21 +105,6 @@
                     android:textStyle="bold"
                     android:paddingBottom="8dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Best"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Last"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Record"/>
-
             </LinearLayout>
 
             <LinearLayout
@@ -140,21 +125,6 @@
                     android:textStyle="bold"
                     android:paddingBottom="8dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Best"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Last"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Record"/>
-
             </LinearLayout>
 
             <LinearLayout
@@ -173,21 +143,6 @@
                     android:text="@string/rapid_score"
                     android:textStyle="bold"
                     android:paddingBottom="8dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Best"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Last"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Record"/>
 
             </LinearLayout>
 
