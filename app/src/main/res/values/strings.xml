@@ -24,10 +24,13 @@
     <string name="add_fav">Add to favorite</string>
     <string name="remove_fav">Remove from favorite</string>
 
+    <!--Home fragment stuff-->
+    <string name="home_txt">Welcome Home</string>
+    <string name="plr_search"> Search for a player </string>
+
     <!--Menu stuff -->
     <string name="about">About us</string>
 
-    <string name="home_txt">Welcome Home</string>
     <string name="player_rating">Rating</string>
     <string name="player_title">Title</string>
     <string name="player_joined">Joined</string>
