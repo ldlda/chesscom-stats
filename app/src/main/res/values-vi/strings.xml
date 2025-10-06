@@ -33,6 +33,14 @@
     <string name="fide_cand_master">Ứng viên kiện tướng FIDE</string>
     <string name="none">Không có danh hiệu </string>
 
+    <string name="unknown_acc">Unknown</string>
+    <string name="basic_acc">Basic</string>
+    <string name="banned">Banned</string>
+    <string name="closed">Closed</string>
+    <string name="premium">Premium</string>
+    <string name="mod">Mod</string>
+    <string name="staff">Staff</string>
+
     <string name="player_rating">Xếp hạng</string>
     <string name="player_title">Danh hiệu</string>
     <string name="player_joined">Tham gia</string>

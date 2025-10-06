@@ -1,7 +1,9 @@
 package com.ldlda.chesscom_stats;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.widget.SearchView;
 
@@ -37,6 +39,8 @@ public class PlayerSearchFragment extends Fragment {
     private ProgressBar search_prog;
 
     private TextView title;
+
+    private TextView account_state;
     RequestQueue queue;
 
     @Override
@@ -55,6 +59,7 @@ public class PlayerSearchFragment extends Fragment {
         endpoints_plr_search = view.findViewById(R.id.all_plr_search);
         search_prog = view.findViewById(R.id.prog_bar);
         title = view.findViewById(R.id.title);
+        account_state = view.findViewById(R.id.account_state);
 
         // API https://api.chess.com/pub/player/
         PlayerProfile api = ApiClient.getClient().create(PlayerProfile.class);
@@ -91,6 +96,8 @@ public class PlayerSearchFragment extends Fragment {
                                     case "CM": titleRes = R.string.fide_cand_master; break;
                                 }
                             }
+
+                            setAccountState(data.status);
 
                             title.setText(titleRes);
                         } else {
@@ -129,6 +136,42 @@ public class PlayerSearchFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
+    }
+
+    private void setAccountState(String status) {
+        int textRes;
+        int iconRes;
+
+        switch (status) {
+            case "closed":
+                textRes = R.string.closed;
+                iconRes = R.drawable.ic_closed_acc;
+                break;
+            case "closed:fair_play_violations":
+                textRes = R.string.banned;
+                iconRes = R.drawable.ic_banned_acc;
+                break;
+            case "premium":
+                textRes = R.string.premium;
+                iconRes = R.drawable.ic_premium_acc;
+                break;
+            case "mod":
+                textRes = R.string.mod;
+                iconRes = R.drawable.ic_mod_acc;
+                break;
+            case "staff":
+                textRes = R.string.staff;
+                iconRes = R.drawable.ic_staff;
+                break;
+            default:
+                textRes = R.string.basic_acc;
+                iconRes = R.drawable.ic_basic_acc;
+                break;
+        }
+
+        account_state.setText(textRes);
+        Drawable icon = ContextCompat.getDrawable(requireContext(), iconRes);
+        account_state.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null);
     }
 
 }

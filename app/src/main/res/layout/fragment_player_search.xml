@@ -40,4 +40,15 @@
         android:textColor="@color/white"
         android:background="@drawable/title_bg"
         android:padding="10dp"/>
+
+    <TextView
+        android:id="@+id/account_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/unknown_acc"
+        android:layout_toEndOf="@id/avatar"
+        android:layout_alignBottom="@id/avatar"
+        android:textStyle="bold"
+        android:drawableEnd="@drawable/ic_person"
+        android:gravity="center"/>
 </RelativeLayout>

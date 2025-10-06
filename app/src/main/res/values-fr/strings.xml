@@ -33,6 +33,14 @@
     <string name="fide_cand_master">Candidat Maître FIDE</string>
     <string name="none">Aucun </string>
 
+    <string name="unknown_acc">Unknown</string>
+    <string name="basic_acc">Basic</string>
+    <string name="banned">Banned</string>
+    <string name="closed">Closed</string>
+    <string name="premium">Premium</string>
+    <string name="mod">Mod</string>
+    <string name="staff">Staff</string>
+
     <!-- Home fragment -->
     <string name="home_txt">Bienvenue à l\'accueil</string>
     <string name="plr_search">Rechercher un joueur</string>
