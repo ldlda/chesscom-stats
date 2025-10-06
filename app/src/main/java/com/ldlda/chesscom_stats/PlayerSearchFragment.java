@@ -16,23 +16,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.ldlda.chesscom_stats.java_api.ApiClient;
 import com.ldlda.chesscom_stats.java_api.PlayerProfile;
 import com.ldlda.chesscom_stats.java_api.PlayerProfileData;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 import retrofit2.Call;
 
@@ -123,7 +116,7 @@ public class PlayerSearchFragment extends Fragment {
 
                             String lastOnlDateText = requireContext().getString(R.string.lastOnline_date) + "\n" + sdf.format(date_lastOnl);
 
-                            lastOnlDate.setText(joinedDateText);
+                            lastOnlDate.setText(lastOnlDateText);
                         } else {
                             Log.e("SearchFrag_Error", "HTTP " + response.code());
                             Toast.makeText(requireContext(),
