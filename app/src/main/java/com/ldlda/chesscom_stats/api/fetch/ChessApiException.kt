@@ -21,4 +21,24 @@ sealed class ChessApiException(message: String?, cause: Throwable?) : Exception(
         ChessApiException(message, cause)
 
     class Other(message: String?, cause: Throwable?) : ChessApiException(message, cause)
+    companion object {
+        fun build(e: Exception) = when (e) {
+            is ChessApiException -> e
+            is HttpException -> when (e.code()) {
+                404 -> NotFound(e.message(), e)
+                410 -> Gone(e.message(), e)
+                429 -> TooManyRequests(e.message(), e)
+                in 300..399 -> Redirected(e.message(), e)
+                else -> Internal(e.code(), e.message(), e)
+            }
+
+            is IOException -> Network(e.message, e)
+
+            // this happens when type T doesn't work with what [get] got
+            is SerializationException -> Serialization(e.message, e)
+
+            else -> Other(e.message, e)
+        }
+    }
+
 }

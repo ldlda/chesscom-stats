@@ -65,6 +65,7 @@ data class ChessComUserView(
     val chessTitle: String? = null,
 
     // one second after creation but i think im not certain
+    // last profile update, above line is what if bro just joined
     @Serializable(InstantParseSerializer::class)
     val updatedAt: Instant? = null,
 
@@ -88,7 +89,8 @@ data class ChessComUserView(
             encoder: Encoder,
             value: URI
         ) {
-            throw NotImplementedError("URI serialization not implemented for search responses")
+            // random ahh:
+            encoder.encodeSerializableValue(URISurrogate.serializer(), URISurrogate(value))
         }
     }
 }

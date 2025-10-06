@@ -1,8 +1,7 @@
 package com.ldlda.chesscom_stats
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 import java.time.Instant
 
 /**

@@ -13,57 +13,75 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
-import java.io.IOException
 import java.util.concurrent.CompletableFuture
 
-class ChessApiClient @JvmOverloads /* why ever build one of these in java */ constructor(
-    val baseUrl: String = "https://api.chess.com/",
-    val okHttp: OkHttpClient = OkHttpClient.Builder()
-        //  TODO: This are not enabled for now, enable when ETag caching is fleshed out
-//        .addInterceptor(AddIfNoneMatchInterceptor())
-//        .addNetworkInterceptor(CaptureEtagAndServe304FromCacheInterceptor())
-        .build(),
-    val retrofit: Retrofit = run {
-        val json = Json {
-            ignoreUnknownKeys = true
-            encodeDefaults = true
-            /* this or [ChessSearchRequest] has to have every keys serialized */
-        }
-        val contentType = "application/json".toMediaType()
-        Retrofit.Builder().baseUrl(baseUrl)
-            .client(okHttp)
-            .addConverterFactory(json.asConverterFactory(contentType)).build()
-    },
-    val service: ChessApiService = retrofit.create(ChessApiService::class.java)
+/*
+    what is this bullshit
+ */
+class ChessApiClient : ChessApiBackend {
+    companion object {
+        const val CHESS_API_URL = "https://api.chess.com/"
+        val defaultOkHttp = OkHttpClient.Builder()
+            //  TODO: This are not enabled for now, enable when ETag caching is fleshed out
+//            .addInterceptor(AddIfNoneMatchInterceptor())
+//            .addNetworkInterceptor(CaptureEtagAndServe304FromCacheInterceptor())
+            .build()
 
-) : ChessApiBackend {
+
+        private val retrofitBuilder = { baseUrl: String, okHttp: OkHttpClient ->
+            val json = Json {
+                ignoreUnknownKeys = true
+                encodeDefaults = true
+                /* this or [ChessSearchRequest] has to have every keys serialized */
+            }
+            val contentType = "application/json".toMediaType()
+            Retrofit.Builder().baseUrl(baseUrl)
+                .client(okHttp)
+                .addConverterFactory(json.asConverterFactory(contentType))
+                .build()
+        }
+        val defaultRetrofit: Retrofit = retrofitBuilder(CHESS_API_URL, defaultOkHttp)
+
+        private val buildService: Retrofit.() -> ChessApiService =
+            { retrofit: Retrofit -> retrofit.create(ChessApiService::class.java) }
+        val defaultService: ChessApiService = defaultRetrofit.buildService()
+
+        val defaultInstance = ChessApiClient()
+    }
+
+    val baseUrl: String
+    val service: ChessApiService
+
+    @JvmOverloads
+    constructor(
+        baseUrl: String = CHESS_API_URL,
+        okHttp: OkHttpClient = defaultOkHttp,
+    ) {
+        this.baseUrl = baseUrl
+        val retrofit = retrofitBuilder(baseUrl, okHttp)
+        service = retrofit.buildService()
+
+    }
+
+    constructor(
+        retrofit: Retrofit = defaultRetrofit
+    ) {
+        baseUrl = retrofit.baseUrl().toString()
+        service = retrofit.buildService()
+    }
+
 
     @Throws(ChessApiException::class)
     suspend fun <T> execute(get: suspend (ChessApiService) -> T): T {
         try {
             return get(service)
-        } catch (e: HttpException) {
-            throw when (e.code()) {
-                404 -> ChessApiException.NotFound(e.message(), e)
-                410 -> ChessApiException.Gone(e.message(), e)
-                429 -> ChessApiException.TooManyRequests(e.message(), e)
-                in 300..399 -> ChessApiException.Redirected(e.message(), e)
-                else -> ChessApiException.Internal(e.code(), e.message(), e)
-            }
-        } catch (e: IOException) {
-            throw (ChessApiException.Network(e.message, e))
-        } catch (e: SerializationException) {
-            // this happens when type T doesn't work with what [get] got
-            throw ChessApiException.Serialization(e.message, e)
         } catch (e: Exception) {
-            throw (ChessApiException.Other(e.message, e))
+            throw ChessApiException.build(e)
         }
     }
 
@@ -91,13 +109,13 @@ class ChessApiClient @JvmOverloads /* why ever build one of these in java */ con
     fun close() = scope.cancel()
 
     // ok
-    private fun <T> getAsync(get: suspend (ChessApiService) -> T): CompletableFuture<T> =
-        scope.future { execute(get) }
+    private fun <T> getAsync(get: suspend CoroutineScope.() -> T): CompletableFuture<T> =
+        scope.future(block = get)
 
 
     @WorkerThread
-    private fun <T> getSync(get: suspend (ChessApiService) -> T): T =
-        runBlocking(Dispatchers.IO) { execute(get) }
+    private fun <T> getSync(get: suspend CoroutineScope.() -> T): T =
+        runBlocking(scope.coroutineContext, get)
 
     // Public synchronous functions for Java
 

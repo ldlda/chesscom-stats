@@ -37,6 +37,7 @@ public class ChessApiClientJavaTest {
     @After
     public void tearDown() throws Exception {
         server.shutdown();
+        client.close();
     }
 
     @Test
@@ -59,6 +60,7 @@ public class ChessApiClientJavaTest {
         Player p = client.getPlayerSync("hikaru");
         assertNotNull(p);
         assertEquals(15448422L, p.getPlayerId());
+        assertEquals(1000000, p.getFollowers());
 
         RecordedRequest recorded = server.takeRequest(5, TimeUnit.SECONDS);
         assertNotNull(recorded);
@@ -76,6 +78,7 @@ public class ChessApiClientJavaTest {
             client.getPlayerSync("does-not-exist");
             fail("Expected ChessApiException.NotFound");
         } catch (ChessApiException e) {
+            System.out.println(e.getClass().getName());
             assertTrue(e instanceof ChessApiException.NotFound);
         }
 

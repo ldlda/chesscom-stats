@@ -10,13 +10,15 @@ import com.ldlda.chesscom_stats.utils.cache.TimedCache
 import java.net.URI
 
 class ChessRepositoryTimedCache(
-    client: ChessApiClient = ChessApiClient(),
-    private val playerCache: TimedCache<Player> = TimedCache(ttlMillis = 5 * 60_000L), // 5 min
-    private val statsCache: TimedCache<PlayerStats> = TimedCache(ttlMillis = 2 * 60_000L), // 2 min
-    private val leaderboardsCache: TimedCache<Leaderboards> = TimedCache(ttlMillis = 15 * 60_000L), // 15 min
-    private val countryCache: TimedCache<CountryInfo> = TimedCache(ttlMillis = 24 * 60 * 60_000L), // 24h
+    client: ChessApiClient = ChessApiClient.defaultInstance,
+    private val playerCache: TimedCache<Player> = TimedCacheProvider.defaultPlayerCache,
+    private val statsCache: TimedCache<PlayerStats> = TimedCacheProvider.defaultStatsCache,
+    private val leaderboardsCache: TimedCache<Leaderboards> = TimedCacheProvider.defaultLeaderboardsCache,
+    private val countryCache: TimedCache<CountryInfo> = TimedCacheProvider.defaultCountryCache,
 ) : ChessRepositoryImpl(client) {
-    private companion object {
+    companion object {
+        @JvmStatic
+        val defaultInstance = ChessRepositoryTimedCache()
         private const val LEADERBOARDS_KEY = "leaderboards"
     }
 
@@ -62,3 +64,9 @@ class ChessRepositoryTimedCache(
     }
 }
 
+object TimedCacheProvider {
+    val defaultPlayerCache = TimedCache<Player>(ttlMillis = 5 * 60_000L)
+    val defaultStatsCache = TimedCache<PlayerStats>(ttlMillis = 2 * 60_000L)
+    val defaultLeaderboardsCache = TimedCache<Leaderboards>(ttlMillis = 15 * 60_000L)
+    val defaultCountryCache = TimedCache<CountryInfo>(ttlMillis = 24 * 60 * 60_000L)
+}

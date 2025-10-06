@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
@@ -47,12 +48,12 @@ public class ChessAPIUnitTest {
             Player fhsjkfhskjdhf = instance.getPlayerSync("usaghfklawgfkwahf");
             System.out.println("player does exist OK: " + fhsjkfhskjdhf);
         } catch (ChessApiException e) {
-            Response r;
+            Response<?> r;
             if (e.getCause() instanceof HttpException) {
                 r = ((HttpException) e.getCause()).response();
                 if (r == null) return;
                 try (ResponseBody r2 = r.errorBody()) {
-                    System.out.println(r2.string());
+                    System.out.println(Objects.requireNonNull(r2).string());
                 } catch (IOException e2) {
                     System.out.println(e2.getMessage());
                 }

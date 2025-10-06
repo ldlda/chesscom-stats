@@ -10,6 +10,7 @@ import com.ldlda.chesscom_stats.api.repository.ChessRepository
 import com.ldlda.chesscom_stats.di.RepositoryProvider
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 
 class PlayerDetailViewModel(app: Application) : AndroidViewModel(app) {
@@ -34,8 +35,7 @@ class PlayerDetailViewModel(app: Application) : AndroidViewModel(app) {
                 // Fetch country and stats in parallel; they mutate the Player instance via helpers
                 val fetchCountry = async { user.fetchCountryInfo(repo) }
                 val fetchStats = async { user.fetchPlayerStats(repo) }
-                fetchCountry.await()
-                fetchStats.await()
+                awaitAll(fetchCountry, fetchStats)
                 _player.value = user
             } catch (_: CancellationException) {
                 // ignore

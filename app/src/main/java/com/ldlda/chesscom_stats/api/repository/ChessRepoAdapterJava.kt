@@ -27,10 +27,9 @@ import java.util.concurrent.CompletableFuture
  * - also includes some convenient functions
  */
 class ChessRepoAdapterJava @JvmOverloads constructor(
-    private val repo: ChessRepository = ChessRepositoryTimedCache(),
+    private val repo: ChessRepository = ChessRepositoryTimedCache.defaultInstance,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) {
-
     private fun <T> runBlockingLda(task: suspend CoroutineScope.() -> T) =
         runBlocking(scope.coroutineContext, task)
 
@@ -99,9 +98,7 @@ class ChessRepoAdapterJava @JvmOverloads constructor(
         }
 
     /** Call in test teardown if needed to stop any in-flight work. */
-    fun close() {
-        scope.cancel()
-    }
+    fun close() = scope.cancel()
 }
 
 

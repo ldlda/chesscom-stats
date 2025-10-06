@@ -70,12 +70,11 @@ public class LeaderboardsFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
-                List<LeaderboardEntry> filtered = new ArrayList<>();
-                for (LeaderboardEntry player : allPlayers) {
-                    if (player.getUsername().toLowerCase().contains(newText.toLowerCase())) {
-                        filtered.add(player);
-                    }
-                }
+                List<LeaderboardEntry> filtered = allPlayers
+                        .stream()
+                        .filter(player -> player.getUsername().toLowerCase()
+                                .contains(newText.toLowerCase()))
+                        .toList();
                 adapter.submitList(filtered);
                 return true;
             }

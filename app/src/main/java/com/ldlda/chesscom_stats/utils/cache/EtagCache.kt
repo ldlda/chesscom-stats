@@ -24,6 +24,7 @@ object EtagCache {
     fun getBody(key: String): ByteString? = map[key]?.body
 
     fun put(key: String, etag: String?, body: ByteString) {
+        // null etag is crazy
         map[key] = Entry(etag, body)
     }
 

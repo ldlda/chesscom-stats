@@ -11,10 +11,8 @@ object RepositoryProvider {
     @JvmStatic
     fun defaultRepository(context: Context): ChessRepository {
         val cache: Cache = buildCache(context.cacheDir, "http-cache", 20L shl 20)
-        val base = ChessApiClient()
         val clientWithCache = ChessApiClient(
-            baseUrl = base.baseUrl,
-            okHttp = base.okHttp.newBuilder().cache(cache).build()
+            okHttp = ChessApiClient.defaultOkHttp.newBuilder().cache(cache).build()
         )
         return ChessRepositoryTimedCache(clientWithCache)
     }
