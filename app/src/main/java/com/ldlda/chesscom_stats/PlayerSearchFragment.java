@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -34,6 +35,8 @@ public class PlayerSearchFragment extends Fragment {
     private SearchView endpoints_plr_search;
 
     private ProgressBar search_prog;
+
+    private TextView title;
     RequestQueue queue;
 
     @Override
@@ -51,6 +54,7 @@ public class PlayerSearchFragment extends Fragment {
         // Components
         endpoints_plr_search = view.findViewById(R.id.all_plr_search);
         search_prog = view.findViewById(R.id.prog_bar);
+        title = view.findViewById(R.id.title);
 
         // API https://api.chess.com/pub/player/
         PlayerProfile api = ApiClient.getClient().create(PlayerProfile.class);
@@ -77,10 +81,18 @@ public class PlayerSearchFragment extends Fragment {
                             search_prog.setVisibility(View.GONE);
                             PlayerProfileData data = response.body();
 
-                            // Simple Toast to show result
-                            Toast.makeText(requireContext(),
-                                    data.username,
-                                    Toast.LENGTH_SHORT).show();
+                            int titleRes = R.string.none;
+
+                            if (data.title != null) {
+                                switch (data.title) {
+                                    case "GM": titleRes = R.string.grandmaster; break;
+                                    case "IM": titleRes = R.string.i_master; break;
+                                    case "FM": titleRes = R.string.fide_master; break;
+                                    case "CM": titleRes = R.string.fide_cand_master; break;
+                                }
+                            }
+
+                            title.setText(titleRes);
                         } else {
                             Log.e("SearchFrag_Error", "HTTP " + response.code());
                             Toast.makeText(requireContext(),

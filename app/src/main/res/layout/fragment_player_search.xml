@@ -36,7 +36,8 @@
         android:layout_below="@id/avatar"
         android:layout_centerHorizontal="true"
         android:textSize="15sp"
+        android:text="@string/none"
         android:textColor="@color/white"
-        android:background="@drawable/tittle_bg"
+        android:background="@drawable/title_bg"
         android:padding="10dp"/>
 </RelativeLayout>

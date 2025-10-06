@@ -31,6 +31,7 @@
     <string name="i_master">Kiện tướng quốc tế</string>
     <string name="fide_master">Kiện tướng FIDE</string>
     <string name="fide_cand_master">Ứng viên kiện tướng FIDE</string>
+    <string name="none">Không có danh hiệu </string>
 
     <string name="player_rating">Xếp hạng</string>
     <string name="player_title">Danh hiệu</string>

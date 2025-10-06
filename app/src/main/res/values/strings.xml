@@ -29,6 +29,7 @@
     <string name="i_master">International Master</string>
     <string name="fide_master">FIDE Master</string>
     <string name="fide_cand_master">FIDE Candidate Master</string>
+    <string name="none">None </string>
 
     <!--Home fragment stuff-->
     <string name="home_txt">Welcome Home</string>

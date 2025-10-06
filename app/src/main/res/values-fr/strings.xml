@@ -9,7 +9,7 @@
     <string name="previous">Précédent</string>
 
     <string name="player_avatar_desc">Avatar du joueur</string>
-    <string name="player_username">Nom d'utilisateur</string>
+    <string name="player_username">Nom d\'utilisateur</string>
     <string name="player_name">Nom</string>
     <string name="player_country">Pays</string>
     <string name="player_rank">Classement</string>
@@ -31,9 +31,10 @@
     <string name="i_master">Maître International</string>
     <string name="fide_master">Maître FIDE</string>
     <string name="fide_cand_master">Candidat Maître FIDE</string>
+    <string name="none">Aucun </string>
 
     <!-- Home fragment -->
-    <string name="home_txt">Bienvenue à l'accueil</string>
+    <string name="home_txt">Bienvenue à l\'accueil</string>
     <string name="plr_search">Rechercher un joueur</string>
 
     <!-- Menu -->
@@ -44,7 +45,7 @@
     <string name="player_joined">Inscription</string>
     <string name="player_last_online">Dernière connexion</string>
     <string name="player_status">Statut</string>
-    <string name="audio_playback_attribution_label">Cette application lit de l’audio</string>
+    <string name="audio_playback_attribution_label">Cette application lit de l\’audio</string>
 
     <!-- Placeholder -->
     <string name="hello_blank_fragment">Bonjour fragment vide</string>
