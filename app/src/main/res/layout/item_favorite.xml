@@ -3,8 +3,9 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="12dp"
+    android:layout_marginBottom="5dp"
     android:gravity="center_vertical"
-    android:background="?attr/selectableItemBackground"
+    android:background="@drawable/bg_fav_item"
     android:dividerPadding="8dp">
 
     <TextView
@@ -22,5 +23,5 @@
         android:layout_height="wrap_content"
         android:text="Remove"
         android:textSize="12sp"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+        android:backgroundTint="@color/transparent_black" />
 </LinearLayout>

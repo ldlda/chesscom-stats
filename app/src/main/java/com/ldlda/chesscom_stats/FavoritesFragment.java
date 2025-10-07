@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ldlda.chesscom_stats.adapter.FavoritesAdapter;
-import com.ldlda.chesscom_stats.adapter.HallOfFameAdapter;
-import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;
 import com.ldlda.chesscom_stats.databinding.FragmentFavoritesBinding;
 
 import java.io.BufferedReader;
