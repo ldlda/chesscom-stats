@@ -53,8 +53,9 @@ dependencies {
     implementation(libs.volley)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.adapter.java8)
+    implementation(libs.converter.gson)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -69,7 +70,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.serialization.core)
+    testImplementation(kotlin("test"))
 }

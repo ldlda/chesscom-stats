@@ -2,9 +2,9 @@ package com.ldlda.chesscom_stats.api.repository
 
 import androidx.annotation.WorkerThread
 import com.ldlda.chesscom_stats.api.data.CountryInfo
-import com.ldlda.chesscom_stats.api.data.Leaderboards
-import com.ldlda.chesscom_stats.api.data.Player
-import com.ldlda.chesscom_stats.api.data.PlayerStats
+import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
+import com.ldlda.chesscom_stats.api.data.player.Player
+import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
 import com.ldlda.chesscom_stats.api.data.search.ChessSearchItem
 import com.ldlda.chesscom_stats.api.fetch.ChessApiException
 import kotlinx.coroutines.CoroutineScope
@@ -63,10 +63,10 @@ class ChessRepoAdapterJava @JvmOverloads constructor(
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getCountryByUrlBlocking(url: URI): CountryInfo =
-        runBlockingLda { repo.getCountry(url) }
+        runBlockingLda { repo.getCountryByUrl(url) }
 
     fun getCountryByUrlAsync(url: URI): CompletableFuture<CountryInfo> =
-        runAsyncLda { repo.getCountry(url) }
+        runAsyncLda { repo.getCountryByUrl(url) }
 
     fun getUsernameSuggestionsAsync(prefix: String): CompletableFuture<List<ChessSearchItem>> =
         runAsyncLda { repo.searchPlayers(prefix) }

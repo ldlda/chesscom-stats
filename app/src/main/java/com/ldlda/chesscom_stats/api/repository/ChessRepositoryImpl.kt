@@ -1,9 +1,9 @@
 package com.ldlda.chesscom_stats.api.repository
 
 import com.ldlda.chesscom_stats.api.data.CountryInfo
-import com.ldlda.chesscom_stats.api.data.Leaderboards
-import com.ldlda.chesscom_stats.api.data.Player
-import com.ldlda.chesscom_stats.api.data.PlayerStats
+import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
+import com.ldlda.chesscom_stats.api.data.player.Player
+import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
 import com.ldlda.chesscom_stats.api.data.search.ChessSearchItem
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient
 import java.net.URI
@@ -21,7 +21,7 @@ open class ChessRepositoryImpl(val client: ChessApiClient) : ChessRepository {
 
     override suspend fun getLeaderboards(): Leaderboards = client.getLeaderboards()
 
-    override suspend fun getCountry(countryUrl: URI): CountryInfo =
+    override suspend fun getCountryByUrl(countryUrl: URI): CountryInfo =
         client.getCountryByUrl(countryUrl.toString())
 
     override suspend fun searchPlayers(prefix: String): List<ChessSearchItem> =

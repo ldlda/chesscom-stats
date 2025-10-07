@@ -1,8 +1,11 @@
 @file:UseSerializers(InstantEpochSecondSerializer::class, URISerializer::class)
+package com.ldlda.chesscom_stats.api.data.player
 
-package com.ldlda.chesscom_stats.api.data
-
+import com.ldlda.chesscom_stats.api.data.CountryInfo
+import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
+import com.ldlda.chesscom_stats.utils.ldaCheck
+import com.ldlda.chesscom_stats.utils.ldaCheckThis
 import com.ldlda.chesscom_stats.utils.serialize.InstantEpochSecondSerializer
 import com.ldlda.chesscom_stats.utils.serialize.tostring.URISerializer
 import kotlinx.serialization.SerialName
@@ -28,6 +31,9 @@ data class Player(
     @SerialName("country")
     val countryUrl: URI,
 
+    // not the country tho Fuhh
+    val location: String? = null,
+
     @SerialName("joined")
     val joined: Instant,
 
@@ -41,7 +47,7 @@ data class Player(
     @SerialName("avatar")
     val avatarUrl: URI? = null,
 
-    val title: String? = null,
+    val title: Title? = null,
 
     /** name as in government name */
     val name: String? = null,
@@ -61,9 +67,15 @@ data class Player(
 
     suspend fun fetchCountryInfo(repo: ChessRepository): CountryInfo {
         countryInfo?.let { return it }
-        val countryInfo = repo.getCountry(countryUrl)
+        val countryInfo = repo.getCountryByUrl(countryUrl)
         this.countryInfo = countryInfo
         return countryInfo
+    }
+
+    fun getCountryCode(base: String, check: Boolean = false): String? {
+        return ldaCheckThis<String?, String?>(check, strict = true) {
+            CountryInfo.extractCountryCodeFromUrl(base, countryUrl.toString(), check)
+        }
     }
 
     companion object {
@@ -77,18 +89,3 @@ data class Player(
     fun toJSON() = jsonFormat.encodeToString(this)
 }
 
-@Serializable
-data class CountryInfo(
-    val name: String,
-    val code: String // Locale.IsoCountryCode + random shit
-) {
-    companion object {
-        private val jsonFormat = Json { ignoreUnknownKeys = true }
-
-        @JvmStatic
-        fun fromJSON(jsonString: String) =
-            jsonFormat.decodeFromString(serializer(), jsonString)
-    }
-
-    fun toJSON() = jsonFormat.encodeToString(this)
-}

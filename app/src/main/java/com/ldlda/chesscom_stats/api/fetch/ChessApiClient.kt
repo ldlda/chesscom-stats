@@ -2,9 +2,10 @@ package com.ldlda.chesscom_stats.api.fetch
 
 import androidx.annotation.WorkerThread
 import com.ldlda.chesscom_stats.api.data.CountryInfo
-import com.ldlda.chesscom_stats.api.data.Leaderboards
-import com.ldlda.chesscom_stats.api.data.Player
-import com.ldlda.chesscom_stats.api.data.PlayerStats
+import com.ldlda.chesscom_stats.api.data.playergames.Game
+import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
+import com.ldlda.chesscom_stats.api.data.player.Player
+import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
 import com.ldlda.chesscom_stats.api.data.search.ChessSearchItem
 import com.ldlda.chesscom_stats.api.data.search.ChessSearchRequest
 import kotlinx.coroutines.CoroutineScope
@@ -18,6 +19,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import java.net.URI
 import java.util.concurrent.CompletableFuture
 
 /*
@@ -25,36 +27,39 @@ import java.util.concurrent.CompletableFuture
  */
 class ChessApiClient : ChessApiBackend {
     companion object {
-        const val CHESS_API_URL = "https://api.chess.com/"
+        const val CHESS_API_URL = "https://api.chess.com/pub/"
         val defaultOkHttp = OkHttpClient.Builder()
             //  TODO: This are not enabled for now, enable when ETag caching is fleshed out
 //            .addInterceptor(AddIfNoneMatchInterceptor())
 //            .addNetworkInterceptor(CaptureEtagAndServe304FromCacheInterceptor())
             .build()
 
-
-        private val retrofitBuilder = { baseUrl: String, okHttp: OkHttpClient ->
+        private fun OkHttpClient.buildRetrofit(baseUrl: String): Retrofit {
+            val okHttp = this
             val json = Json {
                 ignoreUnknownKeys = true
                 encodeDefaults = true
                 /* this or [ChessSearchRequest] has to have every keys serialized */
             }
             val contentType = "application/json".toMediaType()
-            Retrofit.Builder().baseUrl(baseUrl)
+            return Retrofit.Builder().baseUrl(baseUrl)
                 .client(okHttp)
                 .addConverterFactory(json.asConverterFactory(contentType))
                 .build()
         }
-        val defaultRetrofit: Retrofit = retrofitBuilder(CHESS_API_URL, defaultOkHttp)
 
-        private val buildService: Retrofit.() -> ChessApiService =
-            { retrofit: Retrofit -> retrofit.create(ChessApiService::class.java) }
+        val defaultRetrofit: Retrofit = defaultOkHttp.buildRetrofit(CHESS_API_URL)
+
+        private fun Retrofit.buildService(): ChessApiService =
+            this.create(ChessApiService::class.java)
+
         val defaultService: ChessApiService = defaultRetrofit.buildService()
 
         val defaultInstance = ChessApiClient()
     }
 
     val baseUrl: String
+    val retrofit: Retrofit
     val service: ChessApiService
 
     @JvmOverloads
@@ -63,14 +68,14 @@ class ChessApiClient : ChessApiBackend {
         okHttp: OkHttpClient = defaultOkHttp,
     ) {
         this.baseUrl = baseUrl
-        val retrofit = retrofitBuilder(baseUrl, okHttp)
+        retrofit = okHttp.buildRetrofit(baseUrl)
         service = retrofit.buildService()
-
     }
 
     constructor(
         retrofit: Retrofit = defaultRetrofit
     ) {
+        this.retrofit = retrofit
         baseUrl = retrofit.baseUrl().toString()
         service = retrofit.buildService()
     }
@@ -93,6 +98,7 @@ class ChessApiClient : ChessApiBackend {
         execute { it.playerStats(username) }
 
     override suspend fun getCountry(code: String): CountryInfo = execute { it.country(code) }
+
     override suspend fun getCountryByUrl(url: String): CountryInfo =
         execute { it.countryByUrl(url) }
 
@@ -102,6 +108,23 @@ class ChessApiClient : ChessApiBackend {
     suspend fun searchPlayers(request: ChessSearchRequest): List<ChessSearchItem> =
         execute { it.searchUsername(request).suggestions }
 
+    override suspend fun getMonthlyArchivesList(username: String): List<URI> =
+        execute { it.monthlyArchivesList(username).archives }
+
+    override suspend fun getMonthlyArchives(username: String, year: Int, month: Int): List<Game> {
+        require(year > 0)
+        require(month > 0 && month <= 12)
+        return execute {
+            it.monthlyArchives(
+                username,
+                "%04d".format(year),
+                "%02d".format(month),
+            ).games
+        }
+    }
+
+    override suspend fun getMonthlyArchivesByUrl(url: String) =
+        execute { it.monthlyArchivesByUrl(url).games }
 
     // deprecated
 
@@ -119,9 +142,7 @@ class ChessApiClient : ChessApiBackend {
 
     // Public synchronous functions for Java
 
-    @Deprecated(
-        "use ChessRepository instead"
-    )
+    @Deprecated("use ChessRepository instead")
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getPlayerSync(username: String): Player = getSync { getPlayer(username) }
@@ -135,7 +156,6 @@ class ChessApiClient : ChessApiBackend {
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getLeaderboardsSync(): Leaderboards = getSync { getLeaderboards() }
-
 
     @Deprecated("use ChessRepository instead")
     @WorkerThread

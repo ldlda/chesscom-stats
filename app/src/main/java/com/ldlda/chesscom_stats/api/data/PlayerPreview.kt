@@ -2,34 +2,14 @@
 
 package com.ldlda.chesscom_stats.api.data
 
+import com.ldlda.chesscom_stats.api.data.leaderboards.LeaderboardEntry
+import com.ldlda.chesscom_stats.api.data.player.Player
+import com.ldlda.chesscom_stats.api.data.player.Title
 import com.ldlda.chesscom_stats.utils.serialize.tostring.URISerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import java.net.URI
-
-// Lightweight view with the fields leaderboards actually provides
-fun Player.toPlayerPreview() = PlayerPreview(
-    playerId = playerId,
-    username = username,
-    profilePage = profilePage,
-    countryUrl = countryUrl,
-    status = status,
-    title = title,
-    name = name,
-    avatarUrl = avatarUrl
-)
-
-fun LeaderboardEntry.toPlayerPreview() = PlayerPreview(
-    playerId = playerId,
-    username = username,
-    profilePage = profilePage,
-    countryUrl = countryUrl,
-    status = status,
-    title = title,
-    name = name,
-    avatarUrl = avatarUrl
-)
 
 
 /* demo
@@ -49,7 +29,30 @@ data class PlayerPreview(
     @SerialName("url") val profilePage: URI? = null,
     @SerialName("country") val countryUrl: URI? = null,
     val status: String? = null,
-    val title: String? = null,
+    val title: Title? = null,
     val name: String? = null,
     @SerialName("avatar") val avatarUrl: URI? = null,
-)
+) {
+    // Lightweight view with the fields leaderboards actually provides
+    fun Player.toPlayerPreview() = PlayerPreview(
+        playerId = playerId,
+        username = username,
+        profilePage = profilePage,
+        countryUrl = countryUrl,
+        status = status,
+        title = title,
+        name = name,
+        avatarUrl = avatarUrl
+    )
+
+    fun LeaderboardEntry.toPlayerPreview() = PlayerPreview(
+        playerId = playerId,
+        username = username,
+        profilePage = profilePage,
+        countryUrl = countryUrl,
+        status = status,
+        title = title,
+        name = name,
+        avatarUrl = avatarUrl
+    )
+}

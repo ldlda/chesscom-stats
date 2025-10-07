@@ -1,25 +1,17 @@
-@file:UseSerializers(URISerializer::class)
+@file:UseSerializers(InstantEpochSecondSerializer::class, URISerializer::class)
 
-package com.ldlda.chesscom_stats.api.data
+package com.ldlda.chesscom_stats.api.data.leaderboards
 
+import com.ldlda.chesscom_stats.api.data.player.Title
+import com.ldlda.chesscom_stats.api.data.playerstats.Game
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
+import com.ldlda.chesscom_stats.utils.serialize.InstantEpochSecondSerializer
 import com.ldlda.chesscom_stats.utils.serialize.tostring.URISerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
 import java.net.URI
-
-@Serializable
-data class Leaderboards(
-    @SerialName("live_blitz")
-    val blitz: List<LeaderboardEntry> = emptyList(),
-    @SerialName("live_bullet")
-    val bullet: List<LeaderboardEntry> = emptyList(),
-    @SerialName("live_rapid")
-    val rapid: List<LeaderboardEntry> = emptyList(),
-    val tactics: List<LeaderboardEntry> = emptyList(),
-)
 
 /**
  *
@@ -74,7 +66,7 @@ data class LeaderboardEntry(
     @SerialName("url") val profilePage: URI,
     @SerialName("country") val countryUrl: URI? = null,
     val status: String? = null,
-    val title: String? = null,
+    val title: Title? = null,
     val name: String? = null,
     @SerialName("avatar") val avatarUrl: URI? = null, // URI("https://www.chess.com/bundles/web/images/noavatar_l.84a92436.gif"),
 ) {
@@ -83,10 +75,10 @@ data class LeaderboardEntry(
         get() =
             (winCount ?: drawCount ?: lossCount)
                 ?.let {
-                    GameRecord(
+                    Game(
                         win = winCount ?: 0,
                         draw = drawCount ?: 0,
-                        loss = lossCount ?: 0
+                        loss = lossCount ?: 0,
                     )
                 }
 

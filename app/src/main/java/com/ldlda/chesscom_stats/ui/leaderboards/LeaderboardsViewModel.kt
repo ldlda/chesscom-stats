@@ -6,9 +6,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.ldlda.chesscom_stats.api.data.Leaderboards
+import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
-import com.ldlda.chesscom_stats.di.RepositoryProvider
+import com.ldlda.chesscom_stats.utils.RepoProvider
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
@@ -16,7 +16,7 @@ class LeaderboardsViewModel(
     app: Application
 ) : AndroidViewModel(app) {
 
-    private val repo: ChessRepository = RepositoryProvider.defaultRepository(app)
+    private val repo: ChessRepository = RepoProvider.defaultRepository(app)
 
     private val _data = MutableLiveData<Leaderboards>()
     val data: LiveData<Leaderboards> = _data

@@ -74,7 +74,7 @@ public class PlayerDetailFragment extends Fragment {
             }
 
             StringBuilder stats = new StringBuilder();
-            if (!TextUtils.isEmpty(player.getTitle())) {
+            if (player.getTitle() != null) {
                 stats.append(getString(R.string.player_title)).append(": ").append(player.getTitle()).append("\n");
             }
             if (player.getCountryInfo() != null) {

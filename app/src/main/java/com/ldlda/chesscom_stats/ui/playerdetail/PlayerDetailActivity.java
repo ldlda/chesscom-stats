@@ -10,7 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.api.data.CountryInfo;
-import com.ldlda.chesscom_stats.api.data.PlayerStats;
+import com.ldlda.chesscom_stats.api.data.player.Title;
+import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats;
 import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;
 import com.ldlda.chesscom_stats.databinding.ActivityPlayerDetailBinding;
 import com.squareup.picasso.Picasso;
@@ -117,8 +118,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
                         // Stats text (title, country URL, joined, last online, status)
                         StringBuilder stats = new StringBuilder();
 
-                        String title = player.getTitle();
-                        if (title != null && !title.isEmpty())
+                        Title title = player.getTitle();
+                        if (title != null)
                             stats.append(String.format("%s: %s\n", getString(R.string.player_title), title));
 
                         // Build and set the base stats first

@@ -28,6 +28,7 @@ sealed class ChessApiException(message: String?, cause: Throwable?) : Exception(
                 404 -> NotFound(e.message(), e)
                 410 -> Gone(e.message(), e)
                 429 -> TooManyRequests(e.message(), e)
+                // never happens (because okhttp good)
                 in 300..399 -> Redirected(e.message(), e)
                 else -> Internal(e.code(), e.message(), e)
             }

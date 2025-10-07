@@ -1,9 +1,11 @@
 package com.ldlda.chesscom_stats.api.fetch
 
 import com.ldlda.chesscom_stats.api.data.CountryInfo
-import com.ldlda.chesscom_stats.api.data.Leaderboards
-import com.ldlda.chesscom_stats.api.data.Player
-import com.ldlda.chesscom_stats.api.data.PlayerStats
+import com.ldlda.chesscom_stats.api.data.playergames.MonthlyArchive
+import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
+import com.ldlda.chesscom_stats.api.data.playergames.MonthlyArchives
+import com.ldlda.chesscom_stats.api.data.player.Player
+import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
 import com.ldlda.chesscom_stats.api.data.search.ChessSearchRequest
 import com.ldlda.chesscom_stats.api.data.search.ChessSearchResult
 import retrofit2.http.Body
@@ -14,20 +16,35 @@ import retrofit2.http.Path
 import retrofit2.http.Url
 
 interface ChessApiService {
-    @GET("pub/player/{username}")
+    @GET("player/{username}")
     suspend fun player(@Path("username") username: String): Player
 
-    @GET("pub/player/{username}/stats")
+    @GET("player/{username}/stats")
     suspend fun playerStats(@Path("username") username: String): PlayerStats
 
-    @GET("pub/leaderboards")
+    @GET("leaderboards")
     suspend fun leaderboards(): Leaderboards
 
-    @GET("pub/country/{code}")
+    @GET("country/{code}")
     suspend fun country(@Path("code") countryCode: String): CountryInfo
 
     @GET
     suspend fun countryByUrl(@Url url: String): CountryInfo
+
+    @GET("player/{username}/games/archives")
+    suspend fun monthlyArchivesList(@Path("username") username: String): MonthlyArchives
+
+    @GET("player/{username}/games/{year}/{month}")
+    suspend fun monthlyArchives(
+        @Path("username") username: String,
+        @Path("year") year: String,
+        @Path("month") month: String
+    ): MonthlyArchive
+
+    @GET
+    suspend fun monthlyArchivesByUrl(@Url url: String): MonthlyArchive
+
+    // not supporting live/base/increment because if you query hikaru it will 503
 
     // This (or something of the sort) must be present or else the endpoint wont work
     @Headers("Content-Type: application/json")

@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ldlda.chesscom_stats.R;
-import com.ldlda.chesscom_stats.api.data.LeaderboardEntry;
+import com.ldlda.chesscom_stats.api.data.leaderboards.LeaderboardEntry;
 import com.ldlda.chesscom_stats.databinding.FragmentHallOfFameBinding;
 import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailFragment;
 
@@ -87,7 +87,7 @@ public class LeaderboardsFragment extends Fragment {
         // Observe
         viewModel.getLoading().observe(getViewLifecycleOwner(), swipeRefreshLayout::setRefreshing);
         viewModel.getData().observe(getViewLifecycleOwner(), boards -> {
-            List<com.ldlda.chesscom_stats.api.data.LeaderboardEntry> blitz = boards.getBlitz();
+            List<LeaderboardEntry> blitz = boards.getBlitz();
             allPlayers = new ArrayList<>(blitz);
             adapter.submitList(new ArrayList<>(allPlayers));
             lastRefreshAt = System.currentTimeMillis();

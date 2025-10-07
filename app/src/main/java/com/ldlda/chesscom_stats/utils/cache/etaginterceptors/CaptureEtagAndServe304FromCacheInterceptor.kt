@@ -1,24 +1,10 @@
-package com.ldlda.chesscom_stats.utils.cache
+package com.ldlda.chesscom_stats.utils.cache.etaginterceptors
 
+import com.ldlda.chesscom_stats.utils.cache.EtagCache
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
-
-/**
- * Adds If-None-Match for known cacheable endpoints if we have an ETag stored.
- */
-class AddIfNoneMatchInterceptor : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val req = chain.request()
-        val key = EtagCache.key(req.url)
-        val etag = EtagCache.getEtag(key)
-        val newReq = if (!etag.isNullOrEmpty()) {
-            req.newBuilder().header("If-None-Match", etag).build()
-        } else req
-        return chain.proceed(newReq)
-    }
-}
 
 /**
  * Captures ETag and response body on 200; if server returns 304 and we have a cached body,
@@ -36,6 +22,7 @@ class CaptureEtagAndServe304FromCacheInterceptor : Interceptor {
                 val bodyBytes = response.body.byteString()
                 val etag = response.header("ETag")
                 if (bodyBytes.size > 0) {
+                    // lowk ignoring no etag is crazy
                     EtagCache.put(key, etag, bodyBytes)
                 } else {
                     // No body? Drop any stale cache
@@ -48,6 +35,7 @@ class CaptureEtagAndServe304FromCacheInterceptor : Interceptor {
             }
 
             304 -> {
+                // this path is free if we are like hitting some persistent endp like game archive
                 val cached = EtagCache.getBody(key)
                 if (cached != null) {
                     // Synthesize a 200 OK with cached body so converters can parse as usual

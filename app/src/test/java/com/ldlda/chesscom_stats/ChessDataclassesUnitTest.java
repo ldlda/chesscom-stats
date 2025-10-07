@@ -5,8 +5,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.ldlda.chesscom_stats.api.data.Player;
-import com.ldlda.chesscom_stats.api.data.PlayerStats;
+import com.ldlda.chesscom_stats.api.data.player.Player;
+import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats;
 import com.ldlda.chesscom_stats.testutil.NetworkRequestExample;
 
 import org.intellij.lang.annotations.Language;
@@ -79,7 +79,7 @@ public class ChessDataclassesUnitTest {
             return;
         }
         PlayerStats hikaruStats = PlayerStats.fromJSON(jsonstr);
-        assertTrue(123 <= Objects.requireNonNull(hikaruStats.getPuzzleRush()).getBest().getScore());
+        assertTrue(123 <= Objects.requireNonNull(Objects.requireNonNull(hikaruStats.getPuzzleRush()).getBest()).getScore());
         assertTrue(hikaruStats.getFide() > 2700); // i hope he dont fall off
         /// https://www.timestamp-converter.com/ // "2014-01-06T21:20:58Z"
     }

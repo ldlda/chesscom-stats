@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ldlda.chesscom_stats.R;
-import com.ldlda.chesscom_stats.api.data.LeaderboardEntry;
+import com.ldlda.chesscom_stats.api.data.leaderboards.LeaderboardEntry;
 import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
