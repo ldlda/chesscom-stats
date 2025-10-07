@@ -27,10 +27,14 @@ public class MainActivity extends AppCompatActivity {
     private MediaPlayer backgroundSong;
 
     // Cached fragment references for show/hide pattern
-    private Fragment homeFragment, hallFragment, favoritesFragment, lessonsFragment, currentFragment;
+    private Fragment homeFragment, hallFragment, favoritesFragment, lessonsFragment, currentFragment, lessonContentFragment;
     private int selectedItemId = R.id.home;
 
     private ActivityMainBinding binding;
+
+    private static final String TAG_LESSON_CONTENT = "tab:lesson_content";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
         hallFragment = fm.findFragmentByTag(TAG_HALL);
         favoritesFragment = fm.findFragmentByTag(TAG_FAV);
         lessonsFragment = fm.findFragmentByTag(TAG_LESSONS);
+        lessonContentFragment = fm.findFragmentByTag(TAG_LESSON_CONTENT);
+
 
         if (homeFragment == null) {
             homeFragment = new HomeFragment();
@@ -138,6 +144,11 @@ public class MainActivity extends AppCompatActivity {
         if (lessonsFragment == null) {
             lessonsFragment = new LessonsFragment();
             tx.add(R.id.fragment_container, lessonsFragment, TAG_LESSONS).hide(lessonsFragment);
+        }
+        if (lessonContentFragment == null) {
+            lessonContentFragment = new LessonContents();
+            tx.add(R.id.fragment_container, lessonContentFragment, TAG_LESSON_CONTENT)
+                    .hide(lessonContentFragment);
         }
         tx.commitNow();
     }
@@ -179,4 +190,26 @@ public class MainActivity extends AppCompatActivity {
             return super.onOptionsItemSelected(item);
         }
     }
+    public void showLessonContent(Bundle args) {
+        if (lessonContentFragment == null) {
+            lessonContentFragment = new LessonContents();
+            lessonContentFragment.setArguments(args);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment_container, lessonContentFragment, TAG_LESSON_CONTENT)
+                    .hide(currentFragment)
+                    .show(lessonContentFragment)
+                    .addToBackStack(null)
+                    .commit();
+        } else {
+            lessonContentFragment.setArguments(args);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .hide(currentFragment)
+                    .show(lessonContentFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
+
 }
