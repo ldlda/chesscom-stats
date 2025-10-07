@@ -74,8 +74,6 @@ public class PlayerDetailActivity extends AppCompatActivity {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                Toast.makeText(PlayerDetailActivity.this, line, Toast.LENGTH_SHORT).show();
-                Toast.makeText(PlayerDetailActivity.this, username, Toast.LENGTH_SHORT).show();
                 if (line.trim().equalsIgnoreCase(username)) {
                     isFavorited = true;
                     break;
