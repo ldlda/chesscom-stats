@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.button.MaterialButton;
 import com.ldlda.chesscom_stats.java_api.ApiClient;
 import com.ldlda.chesscom_stats.java_api.PlayerProfile;
 import com.ldlda.chesscom_stats.java_api.PlayerProfileData;
@@ -50,7 +51,7 @@ public class PlayerSearchFragment extends Fragment {
     private TextView joinDate;
     private TextView lastOnlDate;
 
-    private Button fav_btn;
+    private MaterialButton fav_btn;
 
     // Chess stats
     private TextView bullet_stats;
@@ -352,16 +353,12 @@ public class PlayerSearchFragment extends Fragment {
     private void updateFavButtonState(boolean isFavorited) {
         fav_btn.setEnabled(true);
 
-        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite);
-
         if (isFavorited) {
-            fav_btn.setAlpha(0.8f); // Greyed out
-            assert icon != null;
-            icon.setTint(ContextCompat.getColor(requireContext(), android.R.color.darker_gray));
+            fav_btn.setAlpha(0.7f); // Greyed out
+            fav_btn.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.ic_unfav));
         } else {
             fav_btn.setAlpha(1f);
-            assert icon != null;
-            icon.setTint(Color.parseColor("#FA53FF")); // I love hardcoding
+            fav_btn.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite));
         }
     }
 
