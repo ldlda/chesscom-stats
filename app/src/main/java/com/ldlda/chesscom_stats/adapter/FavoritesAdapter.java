@@ -17,14 +17,16 @@ import com.ldlda.chesscom_stats.R;
 public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.FavViewHolder> {
 
     private List<String> favorites = new ArrayList<>();
+    private final OnFavoriteClickListener listener;
 
     public interface OnFavoriteClickListener {
         void onRemoveClicked(String username);
         void onItemClicked(String username);
     }
 
-    public FavoritesAdapter(List<String> favorites) {
+    public FavoritesAdapter(List<String> favorites, OnFavoriteClickListener listener) {
         this.favorites = favorites;
+        this.listener = listener;
     }
 
     @NonNull
@@ -39,6 +41,9 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.FavV
     public void onBindViewHolder(@NonNull FavViewHolder holder, int position) {
         String username = favorites.get(position);
         holder.usernameText.setText(username);
+
+        holder.removeBtn.setOnClickListener(v -> listener.onRemoveClicked(username));
+        holder.itemView.setOnClickListener(v -> listener.onItemClicked(username));
 
     }
 

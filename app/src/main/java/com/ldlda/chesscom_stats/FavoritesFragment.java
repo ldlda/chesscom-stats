@@ -47,7 +47,19 @@ public class FavoritesFragment extends Fragment {
         favs = loadFavorites();
         List<String> favList = new ArrayList<>(favs);
 
-        adapter = new FavoritesAdapter(favList);
+        adapter = new FavoritesAdapter(favList,new FavoritesAdapter.OnFavoriteClickListener() {
+            @Override
+            public void onRemoveClicked(String username) {
+                favs.remove(username);
+                saveFavorites(favs);
+                adapter.updateData(new ArrayList<>(favs));
+            }
+
+            @Override
+            public void onItemClicked(String username) {
+                Toast.makeText(requireContext(), "Nice choice liking " + username, Toast.LENGTH_SHORT).show();
+            }
+        });
         recycler.setAdapter(adapter);
 
         return binding.getRoot();
