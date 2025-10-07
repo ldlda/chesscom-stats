@@ -16,8 +16,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ldlda.chesscom_stats.adapter.HallOfFameAdapter;
 import com.ldlda.chesscom_stats.api.data.LeaderboardEntry;
-import com.ldlda.chesscom_stats.api.repository.ChessRepositoryJava;
+import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;
 import com.ldlda.chesscom_stats.databinding.FragmentHallOfFameBinding;
+import com.ldlda.chesscom_stats.utils.UtilsKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class HallOfFameFragment extends Fragment {
     private static final long MIN_REFRESH_INTERVAL_MS = 10_000; // 10 seconds between forced refreshes
     private long lastRefreshAt = 0L;
     private HallOfFameAdapter adapter;
-    private ChessRepositoryJava repo;
+    private ChessRepoAdapterJava repo;
     private SearchView searchView;
     private List<LeaderboardEntry> allPlayers = new ArrayList<>();
 
@@ -46,7 +47,10 @@ public class HallOfFameFragment extends Fragment {
             startActivity(intent);
         });
         recyclerView.setAdapter(adapter);
-        repo = new ChessRepositoryJava();
+        repo = UtilsKt.defaultWithCache(UtilsKt.buildCache(
+                requireContext().getCacheDir(), "http-cache",
+                20 << 20
+        ));
         swipeRefreshLayout.setOnRefreshListener(() -> {
             long now = System.currentTimeMillis();
             if (now - lastRefreshAt < MIN_REFRESH_INTERVAL_MS) {

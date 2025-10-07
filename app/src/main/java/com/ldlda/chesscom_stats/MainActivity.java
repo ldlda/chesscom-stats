@@ -1,6 +1,8 @@
 package com.ldlda.chesscom_stats;
 
+import android.content.Context;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,19 +19,19 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ldlda.chesscom_stats.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-    private final String TAG = "MainActivity";
-
     private static final String KEY_SELECTED = "selectedItemId";
     private static final String TAG_HOME = "tab:home";
     private static final String TAG_HALL = "tab:hall";
     private static final String TAG_FAV = "tab:fav";
     private static final String TAG_LESSONS = "tab:lessons";
+    private final String TAG = "MainActivity";
     private MediaPlayer backgroundSong;
 
     // Cached fragment references for show/hide pattern
     private Fragment homeFragment, hallFragment, favoritesFragment, lessonsFragment, currentFragment, lessonContentFragment;
     private int selectedItemId = R.id.home;
 
+    private Context context;
     private ActivityMainBinding binding;
 
     private static final String TAG_LESSON_CONTENT = "tab:lesson_content";
@@ -95,7 +97,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Music
-        backgroundSong = MediaPlayer.create(this, R.raw.open_sky);
+        context = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) ? createAttributionContext("audioPlayback") : this;
+
+        backgroundSong = MediaPlayer.create(context, R.raw.open_sky);
         backgroundSong.setLooping(true);
     }
 
