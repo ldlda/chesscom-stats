@@ -1,16 +1,15 @@
-package com.ldlda.chesscom_stats.api.repository
+package com.ldlda.chesscom_stats.api.fetch
 
 import com.ldlda.chesscom_stats.api.data.CountryInfo
 import com.ldlda.chesscom_stats.api.data.Leaderboards
 import com.ldlda.chesscom_stats.api.data.Player
 import com.ldlda.chesscom_stats.api.data.PlayerStats
 import com.ldlda.chesscom_stats.api.data.search.ChessSearchItem
-import java.net.URI
 
-interface ChessRepository {
+interface ChessApiBackend {
+    suspend fun getLeaderboards(): Leaderboards
     suspend fun getPlayer(username: String): Player
     suspend fun getPlayerStats(username: String): PlayerStats
-    suspend fun getLeaderboards(): Leaderboards
-    suspend fun getCountry(countryUrl: URI): CountryInfo
+    suspend fun getCountryByUrl(url: String): CountryInfo
     suspend fun searchPlayers(prefix: String): List<ChessSearchItem>
 }
