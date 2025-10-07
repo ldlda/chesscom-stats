@@ -1,5 +1,6 @@
 package com.ldlda.chesscom_stats;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -12,21 +13,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.ldlda.chesscom_stats.java_api.ApiClient;
 import com.ldlda.chesscom_stats.java_api.PlayerProfile;
 import com.ldlda.chesscom_stats.java_api.PlayerProfileData;
 import com.ldlda.chesscom_stats.java_api.PlayerStatsData;
 
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -43,12 +50,14 @@ public class PlayerSearchFragment extends Fragment {
     private TextView joinDate;
     private TextView lastOnlDate;
 
-    // Chess stats
+    private Button fav_btn;
 
+    // Chess stats
     private TextView bullet_stats;
     private TextView blitz_stats;
     private TextView rapid_stats;
-    RequestQueue queue;
+
+    private long currentPlayerId = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,9 +68,6 @@ public class PlayerSearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_player_search, container, false);
-
-        queue = Volley.newRequestQueue(requireContext());
-
         // Components
         endpoints_plr_search = view.findViewById(R.id.all_plr_search);
         search_prog = view.findViewById(R.id.prog_bar);
@@ -69,11 +75,34 @@ public class PlayerSearchFragment extends Fragment {
         account_state = view.findViewById(R.id.account_state);
         joinDate = view.findViewById(R.id.join_date);
         lastOnlDate = view.findViewById(R.id.last_onl);
+        fav_btn = view.findViewById(R.id.fav_btn);
 
         bullet_stats = view.findViewById(R.id.bullet_stats);
         blitz_stats = view.findViewById(R.id.blitz_stats);
         rapid_stats = view.findViewById(R.id.rapid_stats);
 
+        // No favoriting until having searched for a player
+        fav_btn.setEnabled(false);
+
+        fav_btn.setOnClickListener(v -> {
+            if (currentPlayerId != 0){
+                Set<Long> favs = loadFavorites();
+
+                if (favs.contains(currentPlayerId)) {
+                    favs.remove(currentPlayerId);
+                    saveFavorites(favs);
+                    Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT).show();
+                    updateFavButtonState(false);
+                } else {
+                    favs.add(currentPlayerId);
+                    saveFavorites(favs);
+                    Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
+                    updateFavButtonState(true);
+                }
+            }else{
+                Log.e("Favoriting","This guy trying to favorite an unknown player");
+            }
+        });
         // API https://api.chess.com/pub/player/
         PlayerProfile api = ApiClient.getClient().create(PlayerProfile.class);
 
@@ -97,7 +126,16 @@ public class PlayerSearchFragment extends Fragment {
                     public void onResponse(Call<PlayerProfileData> call, retrofit2.Response<PlayerProfileData> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             search_prog.setVisibility(View.GONE);
+
+                            // Valid player to favorite
+                            fav_btn.setEnabled(true);
+
                             PlayerProfileData data = response.body();
+
+                            currentPlayerId = data.playerId;
+
+                            Set<Long> favs = loadFavorites();
+                            updateFavButtonState(favs.contains(currentPlayerId));
 
                             setAccountTitle(data.title);
                             setAccountState(data.status);
@@ -123,21 +161,13 @@ public class PlayerSearchFragment extends Fragment {
                                         int rapidLast = dataStats.rapid != null && dataStats.rapid.last != null ? dataStats.rapid.last.rating : 0;
                                         int rapidBest = dataStats.rapid != null && dataStats.rapid.best != null ? dataStats.rapid.best.rating : 0;
 
+                                        updateChessStats(bulletBest,
+                                                bulletLast,
+                                                blitzBest,
+                                                blitzLast,
+                                                rapidBest,
+                                                rapidLast);
 
-                                        String bullet_txt = requireContext().getString(R.string.bullet_score)+"\n"
-                                                +"Best: "+ bulletBest+"\n"
-                                                +"Last: "+ bulletLast+"\n";
-                                        bullet_stats.setText(bullet_txt);
-
-                                        String blitz_txt = requireContext().getString(R.string.blitz_score)+"\n"
-                                                +"Best: "+ blitzBest+"\n"
-                                                +"Last: "+ blitzLast+"\n";
-                                        blitz_stats.setText(bullet_txt);
-
-                                        String rapid_txt = requireContext().getString(R.string.rapid_score)+"\n"
-                                                +"Best: "+ rapidBest+"\n"
-                                                +"Last: "+ rapidLast+"\n";
-                                        rapid_stats.setText(bullet_txt);
                                     }else {
                                         Log.e("SearchFrag_Error", "HTTP " + response.code());
                                         Toast.makeText(requireContext(),
@@ -155,6 +185,9 @@ public class PlayerSearchFragment extends Fragment {
                                 }
                             });
                         } else {
+                            // Invalid player to favorite
+                            fav_btn.setEnabled(false);
+
                             Log.e("SearchFrag_Error", "HTTP " + response.code());
                             Toast.makeText(requireContext(),
                                     "Player not found (" + response.code() + ")",
@@ -164,6 +197,9 @@ public class PlayerSearchFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<PlayerProfileData> call, Throwable t) {
+                        // Invalid player to favorite
+                        fav_btn.setEnabled(false);
+
                         Log.e("SearchFrag_Failure", "Error: " + t.getMessage());
                         Toast.makeText(requireContext(),
                                 "Request failed: " + t.getMessage(),
@@ -259,4 +295,74 @@ public class PlayerSearchFragment extends Fragment {
 
         lastOnlDate.setText(lastOnlDateText);
     }
+
+    private void updateChessStats(int bulletBest,
+                                  int bulletLast,
+                                  int blitzBest,
+                                  int blitzLast,
+                                  int rapidBest,
+                                  int rapidLast){
+        String bullet_txt = requireContext().getString(R.string.bullet_score)+"\n"
+                +"Best: "+ bulletBest+"\n"
+                +"Last: "+ bulletLast+"\n";
+
+
+        String blitz_txt = requireContext().getString(R.string.blitz_score)+"\n"
+                +"Best: "+ blitzBest+"\n"
+                +"Last: "+ blitzLast+"\n";
+
+
+        String rapid_txt = requireContext().getString(R.string.rapid_score)+"\n"
+                +"Best: "+ rapidBest+"\n"
+                +"Last: "+ rapidLast+"\n";
+
+        blitz_stats.setText(blitz_txt);
+        bullet_stats.setText(bullet_txt);
+        rapid_stats.setText(rapid_txt);
+    }
+
+    private File getFavoritesFile() {
+        return new File(requireContext().getFilesDir(), "favorites.txt");
+    }
+
+    private Set<Long> loadFavorites() {
+        Set<Long> favs = new HashSet<>();
+        File file = getFavoritesFile();
+        if (!file.exists()) return favs;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                favs.add(Long.parseLong(line.trim()));
+            }
+        } catch (Exception e) {
+            Log.e("Favorites", "Error loading favorites: " + e.getMessage());
+        }
+        return favs;
+    }
+
+    private void saveFavorites(Set<Long> favs) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(getFavoritesFile(), false))) {
+            for (Long id : favs) writer.write(id + "\n");
+        } catch (Exception e) {
+            Log.e("Favorites", "Error saving favorites: " + e.getMessage());
+        }
+    }
+
+    private void updateFavButtonState(boolean isFavorited) {
+        fav_btn.setEnabled(true);
+
+        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite);
+
+        if (isFavorited) {
+            fav_btn.setAlpha(0.8f); // Greyed out
+            assert icon != null;
+            icon.setTint(ContextCompat.getColor(requireContext(), android.R.color.darker_gray));
+        } else {
+            fav_btn.setAlpha(1f);
+            assert icon != null;
+            icon.setTint(Color.parseColor("#FA53FF")); // I love hardcoding
+        }
+    }
+
 }
