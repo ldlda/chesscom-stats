@@ -24,6 +24,9 @@ public class PlayerProfileData {
 
     public int followers;
 
+    @SerializedName("url")
+    public String profileUrl;
+
     @SerializedName("is_streamer")
     public boolean isStream;
     public int fide;

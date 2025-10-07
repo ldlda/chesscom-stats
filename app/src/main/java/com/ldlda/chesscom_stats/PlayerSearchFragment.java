@@ -134,7 +134,7 @@ public class PlayerSearchFragment extends Fragment {
 
                             PlayerProfileData data = response.body();
 
-                            currentUsername = username;
+                            currentUsername = data.profileUrl.substring(data.profileUrl.lastIndexOf("/") + 1);
 
                             Set<String> favs = loadFavorites();
                             updateFavButtonState(favs.contains(currentUsername));
