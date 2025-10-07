@@ -24,14 +24,41 @@
     <string name="add_fav">Add to favorite</string>
     <string name="remove_fav">Remove from favorite</string>
 
+    <!-- Player stuff -->
+    <string name="grandmaster">Grandmaster</string>
+    <string name="i_master">International Master</string>
+    <string name="fide_master">FIDE Master</string>
+    <string name="fide_cand_master">FIDE Candidate Master</string>
+    <string name="none">None </string>
+
+    <string name="unknown_acc">Unknown</string>
+    <string name="basic_acc">Basic</string>
+    <string name="banned">Banned</string>
+    <string name="closed">Closed</string>
+    <string name="premium">Premium</string>
+    <string name="mod">Mod</string>
+    <string name="staff">Staff</string>
+
+    <string name="join_date">Join date: </string>
+    <string name="lastOnline_date">"Last online: "</string>
+
+    <string name="bullet_score">Bullet Stats</string>
+    <string name="blitz_score">Blitz Stats</string>
+    <string name="rapid_score">Rapid Stats</string>
+
+    <!--Home fragment stuff-->
+    <string name="home_txt">Welcome Home</string>
+    <string name="plr_search"> Search for a player </string>
+
     <!--Menu stuff -->
     <string name="about">About us</string>
 
-    <string name="home_txt">Welcome Home</string>
     <string name="player_rating">Rating</string>
     <string name="player_title">Title</string>
     <string name="player_joined">Joined</string>
     <string name="player_last_online">Last Online</string>
     <string name="player_status">Status</string>
     <string name="audio_playback_attribution_label">This app plays audio</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

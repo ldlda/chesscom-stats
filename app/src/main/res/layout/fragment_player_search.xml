@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".PlayerSearchFragment">
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/all_plr_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="Search for a username"
+        android:background="@drawable/search_bg"
+        android:iconifiedByDefault="false"/>
+
+    <ProgressBar
+        android:id="@+id/prog_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_below="@id/all_plr_search"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/outline_book_24"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/fav_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/avatar"
+        android:layout_above="@id/join_date"
+        android:layout_marginBottom="30dp"
+        android:layout_marginStart="15dp"
+        android:background="@drawable/add_fav_bg"
+        app:backgroundTint="@null"
+        app:icon="@drawable/ic_favorite"
+        app:iconSize="120px"/>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/avatar"
+        android:layout_centerHorizontal="true"
+        android:textSize="15sp"
+        android:text="@string/none"
+        android:textColor="@color/white"
+        android:background="@drawable/title_bg"
+        android:padding="10dp"/>
+
+    <TextView
+        android:id="@+id/account_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/unknown_acc"
+        android:layout_toEndOf="@id/avatar"
+        android:layout_alignBottom="@id/avatar"
+        android:textStyle="bold"
+        android:drawableEnd="@drawable/ic_person"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/join_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:text="@string/join_date"
+        android:layout_marginStart="15dp"
+        android:textSize="15sp"
+        android:layout_below="@id/title"/>
+
+    <TextView
+        android:id="@+id/last_onl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:text="@string/lastOnline_date"
+        android:textSize="15sp"
+        android:layout_toEndOf="@id/avatar"
+        android:layout_below="@id/title"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/title"
+        android:layout_marginTop="70dp"
+        android:padding="12dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_chess_stat">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:gravity="center"
+>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_column_shape">
+
+                <TextView
+                    android:id="@+id/bullet_stats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bullet_score"
+                    android:textStyle="bold"
+                    android:paddingBottom="8dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_column_shape"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:id="@+id/blitz_stats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/blitz_score"
+                    android:textStyle="bold"
+                    android:paddingBottom="8dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_column_shape">
+
+                <TextView
+                    android:id="@+id/rapid_stats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rapid_score"
+                    android:textStyle="bold"
+                    android:paddingBottom="8dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
