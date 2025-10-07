@@ -54,19 +54,35 @@ public class MainActivity extends AppCompatActivity {
         }
 
         ensureFragments();
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            Fragment visible = null;
+            if (homeFragment != null && homeFragment.isVisible()) visible = homeFragment;
+            else if (hallFragment != null && hallFragment.isVisible()) visible = hallFragment;
+            else if (favoritesFragment != null && favoritesFragment.isVisible()) visible = favoritesFragment;
+            else if (lessonsFragment != null && lessonsFragment.isVisible()) visible = lessonsFragment;
+            else if (lessonContentFragment != null && lessonContentFragment.isVisible()) visible = lessonContentFragment;
+
+            if (visible != null) currentFragment = visible;
+        });
         showSelected(selectedItemId);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int menuId = item.getItemId();
             Fragment target = fragmentFor(menuId);
             if (target != null && target != currentFragment) {
-                getSupportFragmentManager()
-                        .popBackStack("gay", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .hide(currentFragment)
-                        .show(target)
-                        .commit();
+                var tx = getSupportFragmentManager().beginTransaction();
+
+                // Always hide current fragment
+                if (currentFragment != null) tx.hide(currentFragment);
+
+                // Also hide lessonContentFragment if it's visible
+                if (lessonContentFragment != null && lessonContentFragment.isAdded() && lessonContentFragment.isVisible()) {
+                    tx.hide(lessonContentFragment);
+                    // Clear lesson content from backstack too
+                    getSupportFragmentManager().popBackStack("gay", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
+
+                tx.show(target).commit();
                 currentFragment = target;
                 selectedItemId = menuId;
             }
@@ -161,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
         if (hallFragment != null) tx.hide(hallFragment);
         if (favoritesFragment != null) tx.hide(favoritesFragment);
         if (lessonsFragment != null) tx.hide(lessonsFragment);
+        if (lessonContentFragment != null) tx.hide(lessonContentFragment);   //added
         tx.show(target).commitNow();
         currentFragment = target;
     }
@@ -196,20 +213,23 @@ public class MainActivity extends AppCompatActivity {
             lessonContentFragment.setArguments(args);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment_container, lessonContentFragment, TAG_LESSON_CONTENT)
                     .hide(currentFragment)
+                    .add(R.id.fragment_container, lessonContentFragment, TAG_LESSON_CONTENT)
                     .show(lessonContentFragment)
-                    .addToBackStack(null)
+                    .addToBackStack("lesson_content_back")
                     .commit();
         } else {
-            lessonContentFragment.setArguments(args);
+            // DO NOT call setArguments() on an already added fragment
+            if (lessonContentFragment instanceof LessonContents) {
+                ((LessonContents) lessonContentFragment).updateContent(args);
+            }
             getSupportFragmentManager()
                     .beginTransaction()
                     .hide(currentFragment)
                     .show(lessonContentFragment)
-                    .addToBackStack(null)
+                    .addToBackStack("lesson_content_back")
                     .commit();
         }
+        currentFragment = lessonContentFragment;
     }
-
 }

@@ -30,13 +30,26 @@ public class LessonContents extends Fragment {
         detailTitle = view.findViewById(R.id.detailTitle);
         detailImage = view.findViewById(R.id.detailImage);
 
-        if (getArguments() != null) {
-            detailTitle.setText(getArguments().getString("Title"));
-            detailDesc.setText(getArguments().getInt("Desc"));
-            detailImage.setImageResource(getArguments().getInt("Image"));
-        }
+        Bundle args = getArguments();
+        applyArgsToViews(args);
 
         return view;
+    }
+
+    private void applyArgsToViews(@Nullable Bundle args) {
+        if (args == null) return;
+
+        if (args.containsKey("Title") && detailTitle != null) {
+            detailTitle.setText(args.getString("Title"));
+        }
+
+        if (args.containsKey("Desc") && detailDesc != null) {
+            detailDesc.setText(args.getInt("Desc"));
+        }
+
+        if (args.containsKey("Image") && detailImage != null) {
+            detailImage.setImageResource(args.getInt("Image"));
+        }
     }
 
     public static LessonContents newInstance(String title, int desc, int image) {
@@ -47,6 +60,16 @@ public class LessonContents extends Fragment {
         args.putInt("Image", image);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public void updateContent(@NonNull Bundle args) {
+        // If view is already created and fields are initialized -> update immediately
+        if (isAdded() && getView() != null && detailTitle != null) {
+            applyArgsToViews(args);
+        } else {
+            // If not yet created, setArguments to update when recreated
+            setArguments(args);
+        }
     }
 }
 
