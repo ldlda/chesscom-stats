@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.picasso)
     implementation(libs.volley)
     implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.activity)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.androidx.core.ktx)
