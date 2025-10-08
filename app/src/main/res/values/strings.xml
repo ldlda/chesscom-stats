@@ -49,6 +49,7 @@
     <!--Home fragment stuff-->
     <string name="home_txt">Welcome Home</string>
     <string name="plr_search"> Search for a player </string>
+    <string name="club_find"> Find a club </string>
 
     <!--Menu stuff -->
     <string name="about">About us</string>

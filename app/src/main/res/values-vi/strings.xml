@@ -55,6 +55,7 @@
     <string name="audio_playback_attribution_label">Ứng dụng này phát âm thanh</string>
 
     <!-- Menu -->
+    <string name="club_find">Tìm một CLB</string>
     <string name="about">Về chúng tôi</string>
 
     <!-- Placeholder -->

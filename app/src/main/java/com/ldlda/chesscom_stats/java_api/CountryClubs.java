@@ -1,5 +1,8 @@
 package com.ldlda.chesscom_stats.java_api;
 
+import com.google.gson.annotations.SerializedName;
+
 public class CountryClubs {
-    public String[] clubs;
+    @SerializedName("clubs")
+    public String[] clubUrlIDs;
 }

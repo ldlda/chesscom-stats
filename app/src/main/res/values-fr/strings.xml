@@ -51,6 +51,7 @@
     <string name="plr_search">Rechercher un joueur</string>
 
     <!-- Menu -->
+    <string name="club_find">Chercher pour un club</string>
     <string name="about">À propos</string>
 
     <string name="player_rating">Classement</string>
