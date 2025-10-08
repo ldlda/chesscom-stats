@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.utils.serialize.tostring
+package com.ldlda.chesscom_stats.util.serialize.tostring
 
 import kotlinx.serialization.SerializationException
 import okhttp3.HttpUrl

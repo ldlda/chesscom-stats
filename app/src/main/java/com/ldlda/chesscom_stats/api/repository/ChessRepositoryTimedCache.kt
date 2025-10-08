@@ -6,8 +6,8 @@ import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient
-import com.ldlda.chesscom_stats.utils.cache.TimedCache
-import com.ldlda.chesscom_stats.utils.cache.TimedCacheProvider
+import com.ldlda.chesscom_stats.util.cache.TimedCache
+import com.ldlda.chesscom_stats.util.cache.TimedCacheProvider
 import java.net.URI
 
 class ChessRepositoryTimedCache(

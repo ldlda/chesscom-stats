@@ -2,11 +2,11 @@
 
 package com.ldlda.chesscom_stats.api.data.playergames
 
-import com.ldlda.chesscom_stats.utils.invalidUrlBase
-import com.ldlda.chesscom_stats.utils.ldaCheckThis
-import com.ldlda.chesscom_stats.utils.malformedUrl
-import com.ldlda.chesscom_stats.utils.requireNot
-import com.ldlda.chesscom_stats.utils.serialize.tostring.URISerializer
+import com.ldlda.chesscom_stats.util.invalidUrlBase
+import com.ldlda.chesscom_stats.util.ldaCheckThis
+import com.ldlda.chesscom_stats.util.malformedUrl
+import com.ldlda.chesscom_stats.util.requireNot
+import com.ldlda.chesscom_stats.util.serialize.tostring.URISerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import okhttp3.HttpUrl
@@ -48,7 +48,7 @@ data class MonthlyArchives(val archives: List<URI> = emptyList()) {
             val base = baseUrl
             val target = this
             val bs = base.encodedPathSegments.let {
-                ldaCheckThis<Unit, Unit>(check, strict = true) {
+                ldaCheckThis(check, strict = true) {
                     require(
                         it.last().isBlank(),
                         invalidUrlBase
@@ -57,7 +57,7 @@ data class MonthlyArchives(val archives: List<URI> = emptyList()) {
                 it.subList(0, it.size - 1)
             }
             val ts = target.encodedPathSegments
-            ldaCheckThis<Unit, Unit>(check, strict = true) {
+            ldaCheckThis(check, strict = true) {
                 require(base.host == target.host && base.port == target.port, invalidUrlBase)
                 requireNot(
                     ts.size < bs.size + 5,
@@ -75,7 +75,7 @@ data class MonthlyArchives(val archives: List<URI> = emptyList()) {
             val username = requireNotNull(ts.getOrNull(bs.size + 1), malformedUrl)
             val year = requireNotNull(ts.getOrNull(bs.size + 3), malformedUrl)
             val month = requireNotNull(ts.getOrNull(bs.size + 4), malformedUrl)
-            ldaCheckThis<Unit, Unit>(check, strict = true) {
+            ldaCheckThis(check, strict = true) {
                 requireNotNull(username.takeIf { it.isNotBlank() }, malformedUrl)
                 requireNotNull(
                     year.takeIf { year -> year.length == 4 && year.all { it.isDigit() } },

@@ -26,6 +26,7 @@ import java.util.concurrent.CompletableFuture
  *
  * - also includes some convenient functions
  */
+@Deprecated("Use repository suspend functions + Futures.eager() instead; this adapter will be removed.")
 class ChessRepoAdapterJava @JvmOverloads constructor(
     private val repo: ChessRepository = ChessRepositoryTimedCache.defaultInstance,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -99,6 +100,7 @@ class ChessRepoAdapterJava @JvmOverloads constructor(
 
     /** Call in test teardown if needed to stop any in-flight work. */
     fun close() = scope.cancel()
+
 }
 
 

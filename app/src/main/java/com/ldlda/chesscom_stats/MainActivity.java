@@ -13,6 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ldlda.chesscom_stats.databinding.ActivityMainBinding;
@@ -48,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             selectedItemId = savedInstanceState.getInt(KEY_SELECTED, R.id.home);
         }
+
+        NavController navController = Navigation.findNavController(binding.fragmentContainer);
 
         if (savedInstanceState == null) {
             replaceTo(fragmentFor(R.id.home));

@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.utils
+package com.ldlda.chesscom_stats.util
 
 import okhttp3.Cache
 import okhttp3.HttpUrl
@@ -13,7 +13,7 @@ val invalidUrlBase = { "Invalid URL base" }
 
 
 fun Boolean.checkBaseAndTarget(base: HttpUrl, target: HttpUrl) =
-    ldaCheckThis<Unit, Unit>(check = this, strict = true) {
+    ldaCheckThis(check = this, strict = true) {
         require(base.host == target.host && base.port == target.port, invalidUrlBase)
         require(base.encodedPathSegments.size <= target.encodedPathSegments.size, invalidUrlBase)
         requireNot(base.encodedPathSegments.last().isBlank(), invalidUrlBase)

@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.utils
+package com.ldlda.chesscom_stats.util
 
 import android.content.Context
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient

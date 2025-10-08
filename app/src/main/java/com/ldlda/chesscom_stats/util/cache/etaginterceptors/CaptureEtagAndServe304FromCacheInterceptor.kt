@@ -1,6 +1,6 @@
-package com.ldlda.chesscom_stats.utils.cache.etaginterceptors
+package com.ldlda.chesscom_stats.util.cache.etaginterceptors
 
-import com.ldlda.chesscom_stats.utils.cache.EtagCache
+import com.ldlda.chesscom_stats.util.cache.EtagCache
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Response

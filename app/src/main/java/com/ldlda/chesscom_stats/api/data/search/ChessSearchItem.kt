@@ -1,7 +1,7 @@
 package com.ldlda.chesscom_stats.api.data.search
 
 import com.ldlda.chesscom_stats.api.data.CountryInfo
-import com.ldlda.chesscom_stats.utils.serialize.tostring.InstantParseSerializer
+import com.ldlda.chesscom_stats.util.serialize.tostring.InstantParseSerializer
 import kotlinx.serialization.Serializable
 import java.time.Instant
 

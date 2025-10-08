@@ -8,7 +8,7 @@ import com.ldlda.chesscom_stats.testutil.Damn
 import com.ldlda.chesscom_stats.testutil.dispatch
 import com.ldlda.chesscom_stats.testutil.goodThing
 import com.ldlda.chesscom_stats.testutil.real
-import com.ldlda.chesscom_stats.utils.ldaCheckThis
+import com.ldlda.chesscom_stats.util.ldaCheckThis
 import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.Assert.assertEquals

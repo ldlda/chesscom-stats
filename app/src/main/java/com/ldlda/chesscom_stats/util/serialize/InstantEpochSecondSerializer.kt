@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.utils.serialize
+package com.ldlda.chesscom_stats.util.serialize
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException

@@ -4,10 +4,9 @@ package com.ldlda.chesscom_stats.api.data.player
 import com.ldlda.chesscom_stats.api.data.CountryInfo
 import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
-import com.ldlda.chesscom_stats.utils.ldaCheck
-import com.ldlda.chesscom_stats.utils.ldaCheckThis
-import com.ldlda.chesscom_stats.utils.serialize.InstantEpochSecondSerializer
-import com.ldlda.chesscom_stats.utils.serialize.tostring.URISerializer
+import com.ldlda.chesscom_stats.util.ldaCheckThis
+import com.ldlda.chesscom_stats.util.serialize.InstantEpochSecondSerializer
+import com.ldlda.chesscom_stats.util.serialize.tostring.URISerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -73,7 +72,7 @@ data class Player(
     }
 
     fun getCountryCode(base: String, check: Boolean = false): String? {
-        return ldaCheckThis<String?, String?>(check, strict = true) {
+        return ldaCheckThis(check, strict = true) {
             CountryInfo.extractCountryCodeFromUrl(base, countryUrl.toString(), check)
         }
     }

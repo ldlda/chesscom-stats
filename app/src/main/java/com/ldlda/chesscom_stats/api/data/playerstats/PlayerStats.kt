@@ -2,8 +2,8 @@
 
 package com.ldlda.chesscom_stats.api.data.playerstats
 
-import com.ldlda.chesscom_stats.utils.serialize.InstantEpochSecondSerializer
-import com.ldlda.chesscom_stats.utils.serialize.tostring.URISerializer
+import com.ldlda.chesscom_stats.util.serialize.InstantEpochSecondSerializer
+import com.ldlda.chesscom_stats.util.serialize.tostring.URISerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers

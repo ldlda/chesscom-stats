@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.utils.cache
+package com.ldlda.chesscom_stats.util.cache
 
 import com.ldlda.chesscom_stats.api.data.CountryInfo
 import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards

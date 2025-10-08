@@ -1,5 +1,8 @@
 package com.ldlda.chesscom_stats.testutil
 
+import kotlinx.coroutines.future.await
+import java.util.concurrent.CompletableFuture
+
 fun String.real() = "real af: $this"
 // java invocation with TestKt.real(str) AHHHH why cant i do the reverse
 

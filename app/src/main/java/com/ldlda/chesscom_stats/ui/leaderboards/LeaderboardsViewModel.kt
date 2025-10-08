@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
-import com.ldlda.chesscom_stats.utils.RepoProvider
+import com.ldlda.chesscom_stats.util.RepoProvider
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 

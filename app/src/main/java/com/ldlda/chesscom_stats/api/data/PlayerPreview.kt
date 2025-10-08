@@ -5,7 +5,7 @@ package com.ldlda.chesscom_stats.api.data
 import com.ldlda.chesscom_stats.api.data.leaderboards.LeaderboardEntry
 import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.player.Title
-import com.ldlda.chesscom_stats.utils.serialize.tostring.URISerializer
+import com.ldlda.chesscom_stats.util.serialize.tostring.URISerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers

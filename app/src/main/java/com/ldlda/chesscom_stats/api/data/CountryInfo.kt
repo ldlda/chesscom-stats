@@ -1,9 +1,8 @@
 package com.ldlda.chesscom_stats.api.data
 
-import com.ldlda.chesscom_stats.utils.ldaCheck
-import com.ldlda.chesscom_stats.utils.invalidUrlBase
-import com.ldlda.chesscom_stats.utils.ldaCheckThis
-import com.ldlda.chesscom_stats.utils.malformedUrl
+import com.ldlda.chesscom_stats.util.invalidUrlBase
+import com.ldlda.chesscom_stats.util.ldaCheckThis
+import com.ldlda.chesscom_stats.util.malformedUrl
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -38,10 +37,10 @@ data class CountryInfo(
             val countryUrl = requireNotNull(countryUrl.toHttpUrlOrNull(), malformedUrl)
             val cs = countryUrl.encodedPathSegments
             val bs = base.encodedPathSegments.let {
-                ldaCheckThis<Unit, Unit>(check, strict = true) { require(it.last().isBlank(), invalidUrlBase) }
+                ldaCheckThis(check, strict = true) { require(it.last().isBlank(), invalidUrlBase) }
                 it.subList(0, it.size - 1)
             }
-            ldaCheckThis<Unit, Unit>(check, strict = true) {
+            ldaCheckThis(check, strict = true) {
                 require(
                     base.host == countryUrl.host && base.port == countryUrl.port,
                     malformedUrl
@@ -54,7 +53,7 @@ data class CountryInfo(
                 require(cs.getOrNull(bs.size) == "country", malformedUrl)
             }
             val ret = cs.getOrNull(bs.size + 1)
-            ldaCheckThis<Unit, Unit>(check, strict = true) { requireNotNull(ret?.takeIf { it.isNotBlank() }, malformedUrl) }
+            ldaCheckThis(check, strict = true) { requireNotNull(ret?.takeIf { it.isNotBlank() }, malformedUrl) }
             return requireNotNull(ret, malformedUrl)
         }
         /*
