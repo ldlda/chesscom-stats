@@ -58,7 +58,7 @@ public class PlayerSearchFragment extends Fragment {
     private TextView blitz_stats;
     private TextView rapid_stats;
 
-    private long currentPlayerId = 0;
+    private String currentUsername = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,24 +86,25 @@ public class PlayerSearchFragment extends Fragment {
         fav_btn.setEnabled(false);
 
         fav_btn.setOnClickListener(v -> {
-            if (currentPlayerId != 0){
-                Set<Long> favs = loadFavorites();
+            if (currentUsername != null) {
+                Set<String> favs = loadFavorites();
 
-                if (favs.contains(currentPlayerId)) {
-                    favs.remove(currentPlayerId);
+                if (favs.contains(currentUsername)) {
+                    favs.remove(currentUsername);
                     saveFavorites(favs);
                     Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT).show();
                     updateFavButtonState(false);
                 } else {
-                    favs.add(currentPlayerId);
+                    favs.add(currentUsername);
                     saveFavorites(favs);
                     Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
                     updateFavButtonState(true);
                 }
-            }else{
-                Log.e("Favoriting","This guy trying to favorite an unknown player");
+            } else {
+                Log.e("Favoriting", "Tried to favorite unknown player");
             }
         });
+
         // API https://api.chess.com/pub/player/
         PlayerProfile api = ApiClient.getClient().create(PlayerProfile.class);
 
@@ -133,10 +134,10 @@ public class PlayerSearchFragment extends Fragment {
 
                             PlayerProfileData data = response.body();
 
-                            currentPlayerId = data.playerId;
+                            currentUsername = data.profileUrl.substring(data.profileUrl.lastIndexOf("/") + 1);
 
-                            Set<Long> favs = loadFavorites();
-                            updateFavButtonState(favs.contains(currentPlayerId));
+                            Set<String> favs = loadFavorites();
+                            updateFavButtonState(favs.contains(currentUsername));
 
                             setAccountTitle(data.title);
                             setAccountState(data.status);
@@ -326,15 +327,15 @@ public class PlayerSearchFragment extends Fragment {
         return new File(requireContext().getFilesDir(), "favorites.txt");
     }
 
-    private Set<Long> loadFavorites() {
-        Set<Long> favs = new HashSet<>();
+    private Set<String> loadFavorites() {
+        Set<String> favs = new HashSet<>();
         File file = getFavoritesFile();
         if (!file.exists()) return favs;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                favs.add(Long.parseLong(line.trim()));
+                favs.add(line.trim());
             }
         } catch (Exception e) {
             Log.e("Favorites", "Error loading favorites: " + e.getMessage());
@@ -342,9 +343,9 @@ public class PlayerSearchFragment extends Fragment {
         return favs;
     }
 
-    private void saveFavorites(Set<Long> favs) {
+    private void saveFavorites(Set<String> favs) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(getFavoritesFile(), false))) {
-            for (Long id : favs) writer.write(id + "\n");
+            for (String name : favs) writer.write(name + "\n");
         } catch (Exception e) {
             Log.e("Favorites", "Error saving favorites: " + e.getMessage());
         }
