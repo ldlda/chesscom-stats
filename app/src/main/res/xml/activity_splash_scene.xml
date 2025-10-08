@@ -1,19 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<MotionScene 
+<MotionScene
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:motion="http://schemas.android.com/apk/res-auto">
 
+    <!-- Transition -->
     <Transition
-        motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
-        motion:duration="1000">
-       <KeyFrameSet>
-       </KeyFrameSet>
+        motion:constraintSetEnd="@id/end"
+        motion:duration="3000"
+        motion:autoTransition="animateToEnd"
+        motion:motionInterpolator="overshoot">
+
+        <KeyFrameSet>
+
+            <KeyAttribute
+                motion:motionTarget="@id/app_icon"
+                motion:framePosition="50"
+                android:scaleX="1.4"
+                android:scaleY="1.4"
+                motion:transitionEasing="spring(1,0.5,0.4,1)" />
+
+            <KeyAttribute
+                motion:motionTarget="@id/app_text"
+                motion:framePosition="70"
+                android:scaleX="1.2"
+                android:scaleY="1.2"
+                motion:transitionEasing="spring(1,0.7,0.6,1)" />
+        </KeyFrameSet>
     </Transition>
 
+    <!-- START -->
     <ConstraintSet android:id="@+id/start">
+        <Constraint android:id="@id/constraint_bg">
+            <Layout
+                android:layout_width="5dp"
+                android:layout_height="5dp"
+                motion:layout_constraintTop_toTopOf="parent"
+                motion:layout_constraintBottom_toBottomOf="parent"
+                motion:layout_constraintStart_toStartOf="parent"
+                motion:layout_constraintEnd_toEndOf="parent" />
+        </Constraint>
+
+        <Constraint android:id="@id/app_icon">
+            <Transform
+                android:scaleX="1"
+                android:scaleY="1"
+                android:elevation="0dp" />
+            <CustomAttribute
+                motion:attributeName="ColorFilter"
+                motion:customColorValue="@color/purple_blue" />
+        </Constraint>
+
+        <Constraint android:id="@id/app_text">
+            <Transform
+                android:scaleX="1"
+                android:scaleY="1"
+                android:elevation="0dp" />
+            <CustomAttribute
+                motion:attributeName="textColor"
+                motion:customColorValue="@color/clay_gray" />
+        </Constraint>
     </ConstraintSet>
 
+    <!-- END -->
     <ConstraintSet android:id="@+id/end">
+        <Constraint android:id="@id/constraint_bg">
+            <Layout
+                android:layout_width="1000dp"
+                android:layout_height="1000dp"
+                motion:layout_constraintTop_toTopOf="parent"
+                motion:layout_constraintBottom_toBottomOf="parent"
+                motion:layout_constraintStart_toStartOf="parent"
+                motion:layout_constraintEnd_toEndOf="parent" />
+        </Constraint>
+
+        <Constraint android:id="@id/app_icon">
+            <Transform
+                android:scaleX="1.3"
+                android:scaleY="1.3"
+                android:elevation="6dp" />
+            <CustomAttribute
+                motion:attributeName="ColorFilter"
+                motion:customColorValue="@android:color/black" />
+        </Constraint>
+
+        <Constraint android:id="@id/app_text">
+            <Transform
+                android:scaleX="1.1"
+                android:scaleY="1.1"
+                android:elevation="10dp" />
+            <CustomAttribute
+                motion:attributeName="textColor"
+                motion:customColorValue="@android:color/white" />
+        </Constraint>
     </ConstraintSet>
 </MotionScene>
