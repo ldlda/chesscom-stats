@@ -32,7 +32,7 @@ public class FavoritesFragment extends Fragment {
     private static final String TAG = "FavoritesFragment";
     private FragmentFavoritesBinding binding;
     private FavoritesAdapter adapter;
-    private Set<String> favs = new HashSet<>();
+    private List<String> favs = new ArrayList<>();
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -43,15 +43,26 @@ public class FavoritesFragment extends Fragment {
         RecyclerView recycler = binding.favRecycler;
         recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        favs = loadFavorites();
-        List<String> favList = new ArrayList<>(favs);
+        favs = new ArrayList<>(loadFavorites()); // convert once, keep as List
 
-        adapter = new FavoritesAdapter(favList,new FavoritesAdapter.OnFavoriteClickListener() {
+        adapter = new FavoritesAdapter(favs, new FavoritesAdapter.OnFavoriteClickListener() {
             @Override
             public void onRemoveClicked(String username) {
-                favs.remove(username);
-                saveFavorites(favs);
-                adapter.updateData(new ArrayList<>(favs));
+                int pos = favs.indexOf(username);
+                if (pos != -1) {
+                    // Animate out before removing
+                    View view = binding.favRecycler.findViewHolderForAdapterPosition(pos).itemView;
+                    view.animate()
+                            .alpha(0f)
+                            .translationX(view.getWidth())
+                            .setDuration(300)
+                            .withEndAction(() -> {
+                                favs.remove(pos);
+                                saveFavorites(new HashSet<>(favs));
+                                adapter.notifyItemRemoved(pos);
+                            })
+                            .start();
+                }
             }
 
             @Override
@@ -59,24 +70,25 @@ public class FavoritesFragment extends Fragment {
                 Toast.makeText(requireContext(), "Nice choice liking " + username, Toast.LENGTH_SHORT).show();
             }
         });
-        recycler.setAdapter(adapter);
 
+        recycler.setAdapter(adapter);
         return binding.getRoot();
-    }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (adapter != null){
-            Set<String> favs = loadFavorites();
-            adapter.updateData(new ArrayList<>(favs));
-        }
-        binding.favRecycler.getLayoutAnimation().start();
+        List<String> updatedFavs = new ArrayList<>(loadFavorites());
+        favs.clear();
+        favs.addAll(updatedFavs);
+        adapter.notifyDataSetChanged();
+        binding.favRecycler.scheduleLayoutAnimation();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private File getFavoritesFile() {

@@ -3,6 +3,7 @@ package com.ldlda.chesscom_stats.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,6 +45,8 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.FavV
 
         holder.removeBtn.setOnClickListener(v -> listener.onRemoveClicked(username));
         holder.itemView.setOnClickListener(v -> listener.onItemClicked(username));
+
+        holder.itemView.startAnimation(AnimationUtils.loadAnimation(holder.itemView.getContext(),R.anim.slide_in));
 
     }
 
