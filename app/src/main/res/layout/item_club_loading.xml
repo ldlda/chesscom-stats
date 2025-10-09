@@ -18,8 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/club_avatar"
+            <ProgressBar
+                android:id="@+id/prog_bar"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/outline_home_black_20"
@@ -29,49 +29,28 @@
 
             <TextView
                 android:id="@+id/clubName"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="@string/none"
-                android:textStyle="bold"
-                android:maxLines="3"
                 android:ellipsize="end"
-                app:layout_constraintStart_toEndOf="@id/club_avatar"
-                app:layout_constraintEnd_toStartOf="@id/clubURI"
+                android:maxLines="3"
+                android:text="@string/loading"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/prog_bar"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/clubMemberCount"
+                android:id="@+id/clubMember"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="4dp"
-                android:text="@string/clubMember"
+                android:text="We are getting more for you buddypal !"
                 android:textStyle="italic"
-                app:layout_constraintStart_toEndOf="@id/club_avatar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/prog_bar"
                 app:layout_constraintTop_toBottomOf="@id/clubName" />
 
-            <TextView
-                android:id="@+id/clubVisibility"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="20dp"
-                android:text="@string/clubPublic"
-                android:textStyle="italic"
-                app:layout_constraintStart_toEndOf="@id/clubMemberCount"
-                app:layout_constraintTop_toBottomOf="@id/clubName"
-                app:layout_constraintEnd_toStartOf="@id/clubURI" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/clubURI"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:background="@drawable/bg_spinner"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

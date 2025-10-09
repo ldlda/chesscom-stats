@@ -8,6 +8,7 @@
     <string name="next">Tiếp</string>
     <string name="previous">Trước</string>
 
+    <string name="refresh_too_soon">Tải lại quá sớm</string>
     <string name="home">Trang chủ</string>
     <string name="fav">Yêu thích</string>
     <string name="hall_fame">Bảng danh vọng</string>
@@ -20,6 +21,7 @@
     <string name="lastOnline_date">Online lần cuối:</string>
     <string name="blitz_score">Điểm Blitz</string>
     <string name="rapid_score">Điểm Rapid</string>
+    <string name="clubPrivate">Kín</string>
     <string name="home_txt">Chào mừng</string>
     <string name="plr_search">Tìm kiếm người chơi</string>
 
@@ -61,4 +63,9 @@
     <!-- Placeholder -->
     <string name="hello_blank_fragment">Xin chào fragment trống</string>
     <string name="bullet_score">Điểm Bullet</string>
+    <string name="clubMember">Thành viên</string>
+    <string name="clubPublic">Mở</string>
+    <string name="loading">Đang tải...</string>
+    <string name="failed_to_fetch_leaderboard">Không thể lấy dữ liệu xếp hạng</string>
+    <string name="failed_to_load_player_data">Không thể tải data người chơi</string>
 </resources>
