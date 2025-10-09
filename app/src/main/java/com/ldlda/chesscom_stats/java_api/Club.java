@@ -5,8 +5,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public interface Club {
-
-    @GET("club/{url-ID}")
-    Call<ClubData> getClubProfile(@Path("{url-ID}")String url);
-
+    @GET("club/{urlID}")
+    Call<ClubData> getClubProfile(@Path("urlID")String urlID);
 }

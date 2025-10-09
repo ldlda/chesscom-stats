@@ -35,8 +35,8 @@ public class Countries {
         COUNTRY_CODE.put("BL", "Saint Barthélemy");
         COUNTRY_CODE.put("BM", "Bermuda");
         COUNTRY_CODE.put("BN", "Brunei Darussalam");
-        COUNTRY_CODE.put("BO", "Bolivia, Plurinational State of");
-        COUNTRY_CODE.put("BQ", "Bonaire, Sint Eustatius and Saba");
+        COUNTRY_CODE.put("BO", "Bolivia");
+        COUNTRY_CODE.put("BQ", "Bonaire");
         COUNTRY_CODE.put("BR", "Brazil");
         COUNTRY_CODE.put("BS", "Bahamas");
         COUNTRY_CODE.put("BT", "Bhutan");
@@ -46,7 +46,7 @@ public class Countries {
         COUNTRY_CODE.put("BZ", "Belize");
         COUNTRY_CODE.put("CA", "Canada");
         COUNTRY_CODE.put("CC", "Cocos (Keeling) Islands");
-        COUNTRY_CODE.put("CD", "Congo, Democratic Republic of the");
+        COUNTRY_CODE.put("CD", "Congo");
         COUNTRY_CODE.put("CF", "Central African Republic");
         COUNTRY_CODE.put("CG", "Congo");
         COUNTRY_CODE.put("CH", "Switzerland");
@@ -79,7 +79,7 @@ public class Countries {
         COUNTRY_CODE.put("FI", "Finland");
         COUNTRY_CODE.put("FJ", "Fiji");
         COUNTRY_CODE.put("FK", "Falkland Islands (Malvinas)");
-        COUNTRY_CODE.put("FM", "Micronesia, Federated States of");
+        COUNTRY_CODE.put("FM", "Micronesia");
         COUNTRY_CODE.put("FO", "Faroe Islands");
         COUNTRY_CODE.put("FR", "France");
         COUNTRY_CODE.put("GA", "Gabon");
@@ -112,7 +112,7 @@ public class Countries {
         COUNTRY_CODE.put("IN", "India");
         COUNTRY_CODE.put("IO", "British Indian Ocean Territory");
         COUNTRY_CODE.put("IQ", "Iraq");
-        COUNTRY_CODE.put("IR", "Iran, Islamic Republic of");
+        COUNTRY_CODE.put("IR", "Iran");
         COUNTRY_CODE.put("IS", "Iceland");
         COUNTRY_CODE.put("IT", "Italy");
         COUNTRY_CODE.put("JE", "Jersey");
@@ -125,12 +125,12 @@ public class Countries {
         COUNTRY_CODE.put("KI", "Kiribati");
         COUNTRY_CODE.put("KM", "Comoros");
         COUNTRY_CODE.put("KN", "Saint Kitts and Nevis");
-        COUNTRY_CODE.put("KP", "Korea, Democratic People's Republic of");
-        COUNTRY_CODE.put("KR", "Korea, Republic of");
+        COUNTRY_CODE.put("KP", "North Korea");
+        COUNTRY_CODE.put("KR", "South Korea");
         COUNTRY_CODE.put("KW", "Kuwait");
         COUNTRY_CODE.put("KY", "Cayman Islands");
         COUNTRY_CODE.put("KZ", "Kazakhstan");
-        COUNTRY_CODE.put("LA", "Lao People's Democratic Republic");
+        COUNTRY_CODE.put("LA", "Laos");
         COUNTRY_CODE.put("LB", "Lebanon");
         COUNTRY_CODE.put("LC", "Saint Lucia");
         COUNTRY_CODE.put("LI", "Liechtenstein");
@@ -203,7 +203,7 @@ public class Countries {
         COUNTRY_CODE.put("SD", "Sudan");
         COUNTRY_CODE.put("SE", "Sweden");
         COUNTRY_CODE.put("SG", "Singapore");
-        COUNTRY_CODE.put("SH", "Saint Helena, Ascension and Tristan da Cunha");
+        COUNTRY_CODE.put("SH", "Saint Helena");
         COUNTRY_CODE.put("SI", "Slovenia");
         COUNTRY_CODE.put("SK", "Slovakia");
         COUNTRY_CODE.put("SL", "Sierra Leone");
@@ -241,7 +241,7 @@ public class Countries {
         COUNTRY_CODE.put("UZ", "Uzbekistan");
         COUNTRY_CODE.put("VA", "Holy See");
         COUNTRY_CODE.put("VC", "Saint Vincent and the Grenadines");
-        COUNTRY_CODE.put("VE", "Venezuela, Bolivarian Republic of");
+        COUNTRY_CODE.put("VE", "Venezuela");
         COUNTRY_CODE.put("VG", "Virgin Islands (British)");
         COUNTRY_CODE.put("VI", "Virgin Islands (U.S.)");
         COUNTRY_CODE.put("VN", "Viet Nam");
