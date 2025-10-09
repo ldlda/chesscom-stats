@@ -217,6 +217,12 @@ public class MainActivity extends AppCompatActivity {
             lessonContentFragment.setArguments(args);
             getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in_right,
+                            R.anim.slide_out_left,
+                            R.anim.slide_in_left,
+                            R.anim.slide_out_right
+                    )
                     .hide(currentFragment)
                     .add(R.id.fragment_container, lessonContentFragment, TAG_LESSON_CONTENT)
                     .show(lessonContentFragment)
@@ -229,6 +235,12 @@ public class MainActivity extends AppCompatActivity {
             }
             getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in_right,
+                            R.anim.slide_out_left,
+                            R.anim.slide_in_left,
+                            R.anim.slide_out_right
+                    )
                     .hide(currentFragment)
                     .show(lessonContentFragment)
                     .addToBackStack("lesson_content_back")

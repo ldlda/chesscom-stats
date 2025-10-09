@@ -64,7 +64,7 @@ public class LessonsFragment extends Fragment {
     }
 
     private void populateData() {
-        dataList.add(new Lesson("Camera", R.string.about, "Java", R.drawable.list_detail));
+        dataList.add(new Lesson("Lesson 1", R.string.about, "Beginner", R.drawable.list_detail));
         dataList.add(new Lesson("RecyclerView", R.string.about, "Kotlin", R.drawable.list_detail));
         dataList.add(new Lesson("Date Picker", R.string.about, "Java", R.drawable.list_detail));
         dataList.add(new Lesson("EditText", R.string.about, "Kotlin", R.drawable.list_detail));
