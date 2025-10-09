@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Thông số cho chess.com</string>
     <string name="action_settings">Cài đặt</string>
+
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -15,12 +16,48 @@
     <string name="add_fav">Thêm vào yêu thích</string>
     <string name="remove_fav">Bỏ yêu thích</string>
 
-    <string name="about">Về chúng tôi</string>
-
+    <!-- Home fragment -->
+    <string name="lastOnline_date">Online lần cuối:</string>
+    <string name="blitz_score">Điểm Blitz</string>
+    <string name="rapid_score">Điểm Rapid</string>
     <string name="home_txt">Chào mừng</string>
+    <string name="plr_search">Tìm kiếm người chơi</string>
+
+    <string name="player_avatar_desc">Avatar người dùng</string>
     <string name="player_username">Tên người dùng</string>
     <string name="player_name">Tên</string>
     <string name="player_country">Quốc gia</string>
     <string name="player_rank">Hạng</string>
     <string name="player_score">Điểm</string>
+
+    <!-- Player titles -->
+    <string name="grandmaster">Đại kiện tướng</string>
+    <string name="i_master">Kiện tướng quốc tế</string>
+    <string name="fide_master">Kiện tướng FIDE</string>
+    <string name="fide_cand_master">Ứng viên kiện tướng FIDE</string>
+    <string name="none">Không có danh hiệu </string>
+
+    <string name="unknown_acc">Unknown</string>
+    <string name="basic_acc">Basic</string>
+    <string name="banned">Banned</string>
+    <string name="closed">Closed</string>
+    <string name="premium">Premium</string>
+    <string name="mod">Mod</string>
+    <string name="staff">Staff</string>
+
+    <string name="join_date">Ngày tham gia: </string>
+
+    <string name="player_rating">Xếp hạng</string>
+    <string name="player_title">Danh hiệu</string>
+    <string name="player_joined">Tham gia</string>
+    <string name="player_last_online">Lần truy cập cuối</string>
+    <string name="player_status">Trạng thái</string>
+    <string name="audio_playback_attribution_label">Ứng dụng này phát âm thanh</string>
+
+    <!-- Menu -->
+    <string name="about">Về chúng tôi</string>
+
+    <!-- Placeholder -->
+    <string name="hello_blank_fragment">Xin chào fragment trống</string>
+    <string name="bullet_score">Điểm Bullet</string>
 </resources>

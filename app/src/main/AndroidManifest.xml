@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <attribution
+        android:label="@string/audio_playback_attribution_label"
+        android:tag="audioPlayback" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -14,9 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StatsForChesscom">
         <activity
-            android:name="MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.StatsForChesscom">
+            android:name=".SplashActivity"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,9 +27,14 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.StatsForChesscom">
+
+        </activity>
+        <activity
             android:name=".PlayerDetailActivity"
             android:exported="false" />
     </application>
-    <attribution android:tag="audioPlayback"
-        android:label="@string/audio_playback_attribution_label" />
+
 </manifest>

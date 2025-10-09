@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.picasso)
     implementation(libs.volley)
     implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.activity)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.androidx.core.ktx)
@@ -67,4 +68,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.core)
 
     implementation("com.google.code.gson:gson:2.13.2")
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+
 }
