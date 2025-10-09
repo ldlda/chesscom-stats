@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Statistiken für chess.com</string>
+    <string name="action_settings">Einstellungen</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">Erstes Fragment</string>
+    <string name="second_fragment_label">Zweites Fragment</string>
+    <string name="next">Weiter</string>
+    <string name="previous">Zurück</string>
+
+    <string name="player_avatar_desc">Spieleravatar</string>
+    <string name="player_username">Benutzername</string>
+    <string name="player_name">Name</string>
+    <string name="player_country">Land</string>
+    <string name="player_rank">Rang</string>
+    <string name="player_score">Punkte</string>
+    <string name="failed_to_fetch_leaderboard">Bestenliste konnte nicht abgerufen werden</string>
+    <string name="failed_to_load_player_data">Spielerdaten konnten nicht geladen werden.</string>
+    <string name="refresh_too_soon">Bitte warten Sie einige Sekunden, bevor Sie erneut aktualisieren.</string>
+    <string name="home">Startseite</string>
+    <string name="fav">Favoriten</string>
+    <string name="hall_fame">Ruhmeshalle</string>
+    <string name="lesson">Lektionen</string>
+
+    <string name="add_fav">Zu Favoriten hinzufügen</string>
+    <string name="remove_fav">Aus Favoriten entfernen</string>
+
+    <!--Menu stuff -->
+    <string name="about">Über uns</string>
+
+    <string name="home_txt">Willkommen zu Hause</string>
+    <string name="player_rating">Bewertung</string>
+    <string name="player_title">Titel</string>
+    <string name="player_joined">Beigetreten</string>
+    <string name="player_last_online">Zuletzt online</string>
+    <string name="player_status">Status</string>
+    <string name="audio_playback_attribution_label">Diese App spielt Audio ab</string>
+</resources>
