@@ -53,7 +53,12 @@ data class CountryInfo(
                 require(cs.getOrNull(bs.size) == "country", malformedUrl)
             }
             val ret = cs.getOrNull(bs.size + 1)
-            ldaCheckThis(check, strict = true) { requireNotNull(ret?.takeIf { it.isNotBlank() }, malformedUrl) }
+            ldaCheckThis(check, strict = true) {
+                requireNotNull(
+                    ret?.takeIf { it.isNotBlank() },
+                    malformedUrl
+                )
+            }
             return requireNotNull(ret, malformedUrl)
         }
         /*

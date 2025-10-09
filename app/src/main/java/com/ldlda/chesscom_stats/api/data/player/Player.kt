@@ -1,4 +1,5 @@
 @file:UseSerializers(InstantEpochSecondSerializer::class, URISerializer::class)
+
 package com.ldlda.chesscom_stats.api.data.player
 
 import com.ldlda.chesscom_stats.api.data.CountryInfo

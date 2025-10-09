@@ -23,7 +23,7 @@ public class HybridTest {
 
     @After
     public void tearDown() {
-        repo.close();
+//        repo.close();
     }
 
     @Test

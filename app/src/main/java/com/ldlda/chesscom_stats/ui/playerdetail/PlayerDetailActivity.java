@@ -170,6 +170,6 @@ public class PlayerDetailActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (inFlight != null) inFlight.cancel(true);
-        if (repo != null) repo.close();
+//        if (repo != null) repo.close();
     }
 }

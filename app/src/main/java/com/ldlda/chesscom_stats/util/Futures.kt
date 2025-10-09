@@ -18,7 +18,10 @@ import kotlin.coroutines.CoroutineContext
  * prefer wrapping a Supplier or using suspend functions directly.
  */
 object Futures {
-    /** Immediately launches the supplied suspend [block] on [context] and returns a cancellable [java.util.concurrent.CompletableFuture]. */
+    /**
+     * Immediately launches the supplied suspend [block] on [context]
+     * and returns a cancellable [java.util.concurrent.CompletableFuture].
+     */
     @JvmStatic
     @JvmOverloads
     fun <T> eager(

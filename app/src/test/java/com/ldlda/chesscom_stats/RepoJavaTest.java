@@ -24,7 +24,7 @@ public class RepoJavaTest {
 
     @After
     public void tearDown() {
-        repo.close();
+//        repo.close();
     }
 
     @Test

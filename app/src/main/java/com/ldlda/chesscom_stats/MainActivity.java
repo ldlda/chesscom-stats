@@ -13,9 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ldlda.chesscom_stats.databinding.ActivityMainBinding;
@@ -32,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     // Current selected tab id only; fragments are replaced on selection
     private int selectedItemId = R.id.home;
 
-    private Context context;
     private ActivityMainBinding binding;
 
     @Override
@@ -52,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             selectedItemId = savedInstanceState.getInt(KEY_SELECTED, R.id.home);
         }
 
-        NavController navController = Navigation.findNavController(binding.fragmentContainer);
+//        NavController navController = Navigation.findNavController(binding.fragmentContainer);
 
         if (savedInstanceState == null) {
             replaceTo(fragmentFor(R.id.home));
@@ -73,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Music
-        context = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) ? createAttributionContext("audioPlayback") : this;
+        Context context = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) ? createAttributionContext("audioPlayback") : this;
 
         backgroundSong = MediaPlayer.create(context, R.raw.open_sky);
         backgroundSong.setLooping(true);

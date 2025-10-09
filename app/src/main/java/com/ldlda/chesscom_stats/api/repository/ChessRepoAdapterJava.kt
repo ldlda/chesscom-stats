@@ -12,11 +12,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.runBlocking
 import java.net.URI
 import java.util.concurrent.CompletableFuture
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Java-friendly adapter around ChessRepository.
@@ -26,15 +26,17 @@ import java.util.concurrent.CompletableFuture
  *
  * - also includes some convenient functions
  */
-@Deprecated("Use repository suspend functions + Futures.eager() instead; this adapter will be removed.")
 class ChessRepoAdapterJava @JvmOverloads constructor(
     private val repo: ChessRepository = ChessRepositoryTimedCache.defaultInstance,
-    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val context: CoroutineContext = Dispatchers.IO
 ) {
     private fun <T> runBlockingLda(task: suspend CoroutineScope.() -> T) =
-        runBlocking(scope.coroutineContext, task)
+        runBlocking(context, task)
 
     private fun <T> runAsyncLda(task: suspend CoroutineScope.() -> T) =
+        CoroutineScope(SupervisorJob() + context).future(block = task)
+
+    private fun <T> runAsyncLda(scope: CoroutineScope, task: suspend CoroutineScope.() -> T) =
         scope.future(block = task)
 
     @WorkerThread
@@ -97,10 +99,6 @@ class ChessRepoAdapterJava @JvmOverloads constructor(
             )
             player
         }
-
-    /** Call in test teardown if needed to stop any in-flight work. */
-    fun close() = scope.cancel()
-
 }
 
 
