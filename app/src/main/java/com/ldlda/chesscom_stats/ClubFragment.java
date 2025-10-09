@@ -4,6 +4,8 @@ package com.ldlda.chesscom_stats;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
+import com.ldlda.chesscom_stats.adapter.ClubAdapter;
 import com.ldlda.chesscom_stats.adapter.CountrySpinnerAdapter;
 import com.ldlda.chesscom_stats.java_api.ApiClient;
 import com.ldlda.chesscom_stats.java_api.Club;
@@ -20,6 +23,7 @@ import com.ldlda.chesscom_stats.java_api.ClubData;
 import com.ldlda.chesscom_stats.java_api.Country;
 import com.ldlda.chesscom_stats.java_api.CountryClubs;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -37,6 +41,7 @@ public class ClubFragment extends Fragment {
         // Components
         Spinner spinner = view.findViewById(R.id.select_country);
         searchProg = view.findViewById(R.id.prog_bar);
+        RecyclerView recyclerView = view.findViewById(R.id.club_list);
 
         CountrySpinnerAdapter adapter = new CountrySpinnerAdapter(requireContext());
         spinner.setAdapter(adapter);
@@ -45,7 +50,6 @@ public class ClubFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) return;
-                String countryName = (String) parent.getItemAtPosition(position);
                 String isoCode = adapter.getCountryCode(position);
 
                 Country api = ApiClient.getClient().create(Country.class);
@@ -54,7 +58,7 @@ public class ClubFragment extends Fragment {
 
                 searchProg.setVisibility(View.VISIBLE);
 
-                countrycall.enqueue(new retrofit2.Callback<CountryClubs>(){
+                countrycall.enqueue(new retrofit2.Callback<>(){
 
                     @Override
                     public void onResponse(Call<CountryClubs> call, Response<CountryClubs> response) {
@@ -65,11 +69,17 @@ public class ClubFragment extends Fragment {
 
                             String[] clubUrls = clubs.clubUrlIDs;
                             if (clubUrls == null || clubUrls.length == 0) {
-                                Log.e("CountryClub", "This country has no clubs");
+                                Log.e("CountryClub", "This country has no clubs lmao");
                                 return;
                             }
 
+
+                            ClubAdapter clubAdapter = new ClubAdapter();
+                            recyclerView.setAdapter(clubAdapter);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+
                             Club clubApi = ApiClient.getClient().create(Club.class);
+                            List<ClubData> clubList = new ArrayList<>();
 
                             for (String url : clubUrls) {
                                 // Extract club urlID from URL
@@ -77,12 +87,13 @@ public class ClubFragment extends Fragment {
 
                                 Call<ClubData> clubDataCall = clubApi.getClubProfile(urlID);
 
-                                clubDataCall.enqueue(new retrofit2.Callback<ClubData>() {
+                                clubDataCall.enqueue(new retrofit2.Callback<>() {
                                     @Override
                                     public void onResponse(Call<ClubData> call, Response<ClubData> response) {
                                         if (response.isSuccessful() && response.body() != null) {
                                             ClubData clubData = response.body();
-
+                                            clubList.add(clubData);
+                                            clubAdapter.setClubs(new ArrayList<>(clubList));
                                         }
                                     }
 
