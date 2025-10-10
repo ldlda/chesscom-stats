@@ -46,9 +46,15 @@
     <string name="blitz_score">Blitz Stats</string>
     <string name="rapid_score">Rapid Stats</string>
 
+    <!-- Club stuff -->
+    <string name="clubMember">Club members</string>
+    <string name="clubPublic">Public</string>
+    <string name="clubPrivate">Private</string>
+
     <!--Home fragment stuff-->
     <string name="home_txt">Welcome Home</string>
     <string name="plr_search"> Search for a player </string>
+    <string name="club_find"> Find a club </string>
 
     <!--Menu stuff -->
     <string name="about">About us</string>
@@ -61,4 +67,7 @@
     <string name="audio_playback_attribution_label">This app plays audio</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--Recycler view stuff-->
+    <string name="loading">Loading...</string>
 </resources>
