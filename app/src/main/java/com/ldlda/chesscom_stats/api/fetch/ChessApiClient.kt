@@ -6,8 +6,8 @@ import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.playergames.Game
 import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
-import com.ldlda.chesscom_stats.api.data.search.ChessSearchItem
-import com.ldlda.chesscom_stats.api.data.search.ChessSearchRequest
+import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
+import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -41,7 +41,7 @@ class ChessApiClient : ChessApiBackend {
             val okHttp = this
             val json = Json {
                 ignoreUnknownKeys = true
-                encodeDefaults = true
+//                encodeDefaults = true
                 /* this or [ChessSearchRequest] has to have every keys serialized */
             }
             val contentType = "application/json".toMediaType()
@@ -105,11 +105,11 @@ class ChessApiClient : ChessApiBackend {
     override suspend fun getCountryByUrl(url: String): CountryInfo =
         execute { it.countryByUrl(url) }
 
-    override suspend fun searchPlayers(prefix: String): List<ChessSearchItem> =
-        execute { it.searchUsername(ChessSearchRequest(prefix)).suggestions }
+    override suspend fun searchPlayers(prefix: String): List<SearchItem> =
+        execute { it.autocompleteUsername(SearchRequest(prefix)).suggestions }
 
-    suspend fun searchPlayers(request: ChessSearchRequest): List<ChessSearchItem> =
-        execute { it.searchUsername(request).suggestions }
+    suspend fun searchPlayers(request: SearchRequest): List<SearchItem> =
+        execute { it.autocompleteUsername(request).suggestions }
 
     override suspend fun getMonthlyArchivesList(username: String): List<URI> =
         execute { it.monthlyArchivesList(username).archives }
@@ -190,6 +190,6 @@ class ChessApiClient : ChessApiBackend {
 
     @Deprecated("use ChessRepository instead")
     @Throws(ChessApiException::class)
-    fun searchPlayersAsync(username: String): CompletableFuture<List<ChessSearchItem>> =
+    fun searchPlayersAsync(username: String): CompletableFuture<List<SearchItem>> =
         getAsync { searchPlayers(username) }
 }

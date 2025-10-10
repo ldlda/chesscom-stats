@@ -2,6 +2,8 @@
 
 package com.ldlda.chesscom_stats.api.data.playerstats
 
+import com.ldlda.chesscom_stats.api.data.timeclass.Class
+import com.ldlda.chesscom_stats.api.data.timeclass.Time
 import com.ldlda.chesscom_stats.util.serialize.InstantEpochSecondSerializer
 import com.ldlda.chesscom_stats.util.serialize.tostring.URISerializer
 import kotlinx.serialization.SerialName
@@ -41,5 +43,14 @@ data class PlayerStats(
     }
 
     fun toJSON() = jsonFormat.encodeToString(this)
+
+    fun scoreTimeClass(time: Time, classType: Class) = when (time to classType) {
+        (Time.Daily to Class.Chess) -> daily
+        (Time.Rapid to Class.Chess) -> rapid
+        (Time.Bullet to Class.Chess) -> bullet
+        (Time.Blitz to Class.Chess) -> blitz
+        (Time.Daily to Class.Chess960) -> daily960
+        else -> null
+    }
 }
 

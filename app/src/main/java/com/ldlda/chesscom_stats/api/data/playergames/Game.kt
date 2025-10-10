@@ -43,7 +43,7 @@ data class Game(
         val playerAPIEndpoint: URI,
         @SerialName("rating")
         val ratingThen: Int,
-        val result: GameResultEnum = GameResultEnum.Lose
+        val result: GameResult = GameResult.Lose
     )
 
     @Serializable

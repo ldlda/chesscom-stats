@@ -108,20 +108,28 @@ fun requireNot(ifTrue: Boolean) = require(!ifTrue)
 
 infix fun Boolean.requiredOr(e: () -> Any) = require(this, e)
 infix fun Boolean.requiredNotOr(e: () -> Any) = requireNot(this, e)
-infix fun <T> T?.requiredNotNullOr(e: () -> Any) = requireNotNull(this, e)
+infix fun <T> T?.requiredNotNullOr(e: () -> Any): T = requireNotNull(this, e)
 
-
+@Deprecated("no")
 class LdaOn<T, U, V>(override val carriedThis: T, override val strategy: Strategy<U, V>) :
     LdaOnTrait<T, U, V>
 
+@Deprecated("no")
 interface LdaOnTrait<T, U, V> {
     val carriedThis: T
     val strategy: Strategy<U, V>
+
+    @Deprecated("no", ReplaceWith("this(toBeEval)"))
     infix fun on(toBeEval: StratEvalExtensionArg<T, U>): V =
         carriedThis.ldaCheck(strategy, toBeEval)
+
+    @Deprecated("no")
+    operator fun invoke(toBeEval: StratEvalExtensionArg<T, U>): V = on(toBeEval)
 }
 
 /**
+ * this lowk the biggest fuck you to the type system
+ *
  * call:
  * ```
  * objectT.ldaRun {
@@ -147,6 +155,7 @@ interface LdaOnTrait<T, U, V> {
 the fn that you supply to [on][LdaOnTrait.on]
  * @return a thing of [LdaOnTrait] that you run [on][LdaOnTrait.on] on
  */
+@Deprecated("no", ReplaceWith("ldaCheck(strategy)"))
 fun <T, U, V> T.ldaRun(strategy: Strategy<U, V>): LdaOn<T, U, V> = LdaOn(this, strategy)
 
 val checkFn = { check: Boolean -> ldaCheckThis<Unit>(check, true) }

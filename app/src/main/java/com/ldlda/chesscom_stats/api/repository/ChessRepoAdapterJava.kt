@@ -5,7 +5,7 @@ import com.ldlda.chesscom_stats.api.data.CountryInfo
 import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
-import com.ldlda.chesscom_stats.api.data.search.ChessSearchItem
+import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import com.ldlda.chesscom_stats.api.fetch.ChessApiException
 import com.ldlda.chesscom_stats.util.Futures.eager
 import kotlinx.coroutines.CoroutineScope
@@ -71,7 +71,7 @@ class ChessRepoAdapterJava @JvmOverloads constructor(
     fun getCountryByUrlAsync(url: URI): CompletableFuture<CountryInfo> =
         runAsyncLda { repo.getCountryByUrl(url) }
 
-    fun getUsernameSuggestionsAsync(prefix: String): CompletableFuture<List<ChessSearchItem>> =
+    fun getUsernameSuggestionsAsync(prefix: String): CompletableFuture<List<SearchItem>> =
         runAsyncLda { repo.searchPlayers(prefix) }
 
     /* convenience functions */

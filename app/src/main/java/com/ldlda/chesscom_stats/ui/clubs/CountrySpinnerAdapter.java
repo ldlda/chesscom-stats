@@ -5,7 +5,7 @@ import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 
-import com.ldlda.chesscom_stats.helpers.Countries;
+import com.ldlda.chesscom_stats.util.Countries;
 
 import java.util.ArrayList;
 import java.util.Collections;

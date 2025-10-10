@@ -117,5 +117,24 @@ class ExampleUnitTest {
         assertEquals(3.1, threePointOne, toosmall)
         assertEquals(3.1, also3p1, toosmall)
         assertEquals(2.8, twopointeight, toosmall)
+        val o = jsonIUK.decodeFromString<Game>(
+            """
+         {
+          "win": 3062,
+          "loss": 1975,
+          "draw": 369,
+          "time_per_move": 12690,
+          "timeout_percent": 0
+          }   
+        """.trimIndent()
+        )
+        val lowk: Int = o.ldaRun<Game, Int, Int> { it().getOrThrow() } on {
+            this.loss
+        }
+        val lowk2: Int = o.ldaCheck({ it().getOrThrow() }) {
+            this.loss
+        }
+        assertEquals(1975, lowk)
+        assertEquals(lowk2, lowk)
     }
 }

@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.ldlda.chesscom_stats.api.data.player.Player;
 import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats;
-import com.ldlda.chesscom_stats.api.data.search.ChessSearchItem;
+import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem;
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient;
 import com.ldlda.chesscom_stats.api.fetch.ChessApiException;
 import com.ldlda.chesscom_stats.testutil.NetworkRequestExample;
@@ -64,11 +64,11 @@ public class ChessAPIUnitTest {
     @Test
     public void search() throws Exception {
         // please dont change your ahh in front of my face
-        List<@NotNull ChessSearchItem> contains_ldabsbplef =
+        List<@NotNull SearchItem> contains_ldabsbplef =
                 instance.searchPlayersAsync("ldabsbplef").get();
 
         boolean ldabsbplefFound = false;
-        for (ChessSearchItem i : contains_ldabsbplef) {
+        for (SearchItem i : contains_ldabsbplef) {
             if (i.getUserView().getUsername().equals("ldabsbplef")) {
                 ldabsbplefFound = true;
                 System.out.println(i);

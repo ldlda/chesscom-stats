@@ -1,5 +1,6 @@
 package com.ldlda.chesscom_stats.api.data
 
+import com.ldlda.chesscom_stats.api.fetch.ChessApiClient
 import com.ldlda.chesscom_stats.util.checkFn
 import com.ldlda.chesscom_stats.util.invalidUrlBase
 import com.ldlda.chesscom_stats.util.malformedUrl
@@ -31,7 +32,7 @@ data class CountryInfo(
         @JvmStatic
         @Throws(IllegalArgumentException::class)
         fun extractCountryCodeFromUrl(
-            base: String,
+            base: String = ChessApiClient.CHESS_API_URL,
             countryUrl: String,
             check: Boolean = false
         ): String {
@@ -42,6 +43,7 @@ data class CountryInfo(
             val checkFn = checkFn(check)
             val cs = countryUrl.encodedPathSegments
             val bs = base.encodedPathSegments.let {
+                // remove the path after the last / which is blank
                 checkFn { it.last().isBlank() requiredOr invalidUrlBase }
                 it.subList(0, it.size - 1)
             }
@@ -66,6 +68,10 @@ data class CountryInfo(
          .filter(|this| this.len() == 2 || this.first().map_or(false, |first| first == "country"))
          .and_then(|list| list.last())
          .filter(|second| second.is_empty())  // lowk this isnt better
+         */
+
+        /**
+         * this requires the input to be chesscom
          */
     }
 

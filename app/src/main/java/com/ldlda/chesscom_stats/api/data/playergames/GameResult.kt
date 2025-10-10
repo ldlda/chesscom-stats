@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class GameResultEnum(val score: Int) {
+enum class GameResult(val score: Int) {
     // win
     @SerialName("win")
     Win(1),

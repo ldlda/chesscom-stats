@@ -5,7 +5,7 @@ import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.playergames.Game
 import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
-import com.ldlda.chesscom_stats.api.data.search.ChessSearchItem
+import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import java.net.URI
 
 interface ChessApiBackend {
@@ -20,7 +20,7 @@ interface ChessApiBackend {
 
     /** for searchplayers (but they send everything) */
     suspend fun getCountry(code: String): CountryInfo
-    suspend fun searchPlayers(prefix: String): List<ChessSearchItem>
+    suspend fun searchPlayers(prefix: String): List<SearchItem>
 
 
 }

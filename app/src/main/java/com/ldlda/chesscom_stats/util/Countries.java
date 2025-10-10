@@ -1,8 +1,11 @@
-package com.ldlda.chesscom_stats.helpers;
+package com.ldlda.chesscom_stats.util;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * see `GayAssCountriesTest` for
+ */
 public class Countries {
     public static final Map<String, String> COUNTRY_CODE = new HashMap<>();
 
@@ -249,9 +252,25 @@ public class Countries {
         COUNTRY_CODE.put("WF", "Wallis and Futuna");
         COUNTRY_CODE.put("WS", "Samoa");
         COUNTRY_CODE.put("YE", "Yemen");
+
+        //region X codes supported by chesscom
+        COUNTRY_CODE.put("XB", "Basque Country");
+        COUNTRY_CODE.put("XC", "Catalonia");
+        COUNTRY_CODE.put("XE", "England");
+        COUNTRY_CODE.put("XG", "Galicia");
+        COUNTRY_CODE.put("XK", "Kosovo");
+        COUNTRY_CODE.put("XP", "Palestine");
+        COUNTRY_CODE.put("XS", "Scotland");
+        COUNTRY_CODE.put("XW", "Wales");
+        COUNTRY_CODE.put("XX", "International");
+
+        // python `print("\n".join(map(lambda c: f"COUNTRY_CODE.put({THE_STRING.replace(':',',')});", s.splitlines())))`
+        //endregion
+
         COUNTRY_CODE.put("YT", "Mayotte");
         COUNTRY_CODE.put("ZA", "South Africa");
         COUNTRY_CODE.put("ZM", "Zambia");
         COUNTRY_CODE.put("ZW", "Zimbabwe");
     }
+
 }

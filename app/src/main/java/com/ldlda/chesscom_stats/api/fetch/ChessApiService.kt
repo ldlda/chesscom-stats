@@ -6,8 +6,8 @@ import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.playergames.GameList
 import com.ldlda.chesscom_stats.api.data.playergames.MonthlyArchives
 import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
-import com.ldlda.chesscom_stats.api.data.search.ChessSearchRequest
-import com.ldlda.chesscom_stats.api.data.search.ChessSearchResult
+import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchRequest
+import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchResult
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -52,5 +52,5 @@ interface ChessApiService {
      * this is not an official endpoint. it can break at any point.
      */
     @POST("https://www.chess.com/service/friends-search/idl/chesscom.friends_search.v1.FriendsSearchService/Autocomplete")
-    suspend fun searchUsername(@Body searchRequest: ChessSearchRequest): ChessSearchResult
+    suspend fun autocompleteUsername(@Body searchRequest: SearchRequest): SearchResult
 }

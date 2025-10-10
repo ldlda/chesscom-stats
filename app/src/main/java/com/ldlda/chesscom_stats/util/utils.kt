@@ -18,4 +18,3 @@ fun Boolean.checkBaseAndTarget(base: HttpUrl, target: HttpUrl) =
         (base.encodedPathSegments.size <= target.encodedPathSegments.size) requiredOr malformedUrl
         (base.encodedPathSegments.last().isBlank()) requiredOr invalidUrlBase
     }
-

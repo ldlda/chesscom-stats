@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.api.data.search
+package com.ldlda.chesscom_stats.api.data.search.autocomplete
 
 import com.ldlda.chesscom_stats.util.serialize.tostring.InstantParseSerializer
 import com.ldlda.chesscom_stats.util.serialize.tostring.URISerializer
@@ -11,7 +11,7 @@ import java.net.URI
 import java.time.Instant
 
 @Serializable
-data class ChessComUserView(
+data class UserView(
     val userId: Long,
     val username: String,
 
