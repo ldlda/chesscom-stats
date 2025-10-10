@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.androidx.navigation.safeargs)
 //    alias(libs.plugins)
@@ -53,6 +54,7 @@ dependencies {
     implementation(libs.picasso)
     implementation(libs.volley)
     implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.activity)
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.adapter.java8)
     implementation(libs.converter.gson)
@@ -75,4 +77,10 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.serialization.core)
+
+    implementation("com.google.code.gson:gson:2.13.2")
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+    implementation("com.github.bumptech.glide:glide:5.0.5")
+
 }

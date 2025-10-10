@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="8dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/club_avatar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/outline_home_black_20"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/clubName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="@string/none"
+                android:textStyle="bold"
+                android:maxLines="3"
+                android:ellipsize="end"
+                app:layout_constraintStart_toEndOf="@id/club_avatar"
+                app:layout_constraintEnd_toStartOf="@id/clubURI"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/clubMemberCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/clubMember"
+                android:textStyle="italic"
+                app:layout_constraintStart_toEndOf="@id/club_avatar"
+                app:layout_constraintTop_toBottomOf="@id/clubName" />
+
+            <TextView
+                android:id="@+id/clubVisibility"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="20dp"
+                android:text="@string/clubPublic"
+                android:textStyle="italic"
+                app:layout_constraintStart_toEndOf="@id/clubMemberCount"
+                app:layout_constraintTop_toBottomOf="@id/clubName"
+                app:layout_constraintEnd_toStartOf="@id/clubURI" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/clubURI"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="@drawable/bg_spinner"
+                app:icon="@drawable/ic_forward"
+                app:iconGravity="textStart"
+                app:iconTint="@null"
+                app:iconPadding="0dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:text="" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,13 @@
     <color name="blue">#0037FF</color>
     <color name="green">#19FF00</color>
     <color name="yellow">#FFEB3B</color>
+    <color name="amber">#FFBF00</color>
     <color name="purple">#9C27B0</color>
+    <color name="magenta">#9929EA</color>
+    <color name="pink">#F5D2D2</color>
     <color name="coffee">#6F4E37</color>
+    <color name="transparent_black">#8F000000</color>
+
+    <color name="clay_gray">#9793CC</color>
+    <color name="purple_blue">#4B5198</color>
 </resources>

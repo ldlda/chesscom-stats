@@ -1,18 +1,71 @@
 <resources>
-    <string name="app_name">Stats de chess.com</string>
+    <string name="app_name">Statistiques pour chess.com</string>
     <string name="action_settings">Paramètres</string>
+
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+    <string name="first_fragment_label">Premier fragment</string>
+    <string name="second_fragment_label">Deuxième fragment</string>
     <string name="next">Suivant</string>
     <string name="previous">Précédent</string>
+
+    <string name="player_avatar_desc">Avatar du joueur</string>
+    <string name="player_username">Nom d\'utilisateur</string>
+    <string name="player_name">Nom</string>
+    <string name="player_country">Pays</string>
+    <string name="player_rank">Classement</string>
+    <string name="player_score">Score</string>
+    <string name="failed_to_fetch_leaderboard">Échec du chargement du classement</string>
+    <string name="failed_to_load_player_data">Échec du chargement des données du joueur.</string>
+    <string name="refresh_too_soon">Veuillez attendre quelques secondes avant de rafraîchir à nouveau.</string>
 
     <string name="home">Accueil</string>
     <string name="fav">Favoris</string>
     <string name="hall_of_fame">Temple de la renommée</string>
     <string name="lesson">Leçons</string>
 
-    <string name="about">De nous</string>
+    <string name="add_fav">Ajouter aux favoris</string>
+    <string name="remove_fav">Retirer des favoris</string>
 
-    <string name="home_txt">Bienvenue sur la page</string>
+    <!-- Player titles -->
+    <string name="grandmaster">Grand Maître</string>
+    <string name="i_master">Maître International</string>
+    <string name="fide_master">Maître FIDE</string>
+    <string name="fide_cand_master">Candidat Maître FIDE</string>
+    <string name="none">Aucun </string>
+
+    <string name="unknown_acc">Unknown</string>
+    <string name="basic_acc">Basic</string>
+    <string name="banned">Banned</string>
+    <string name="closed">Closed</string>
+    <string name="premium">Premium</string>
+    <string name="mod">Mod</string>
+    <string name="staff">Staff</string>
+
+    <string name="join_date">Date d\'adhésion: </string>
+
+    <!-- Home fragment -->
+    <string name="lastOnline_date">Dernière connexion:</string>
+    <string name="blitz_score">Rapport de Blitz</string>
+    <string name="rapid_score">Rapport de Rapid</string>
+    <string name="clubPrivate">Privé</string>
+    <string name="home_txt">Bienvenue à l\'accueil</string>
+    <string name="plr_search">Rechercher un joueur</string>
+
+    <!-- Menu -->
+    <string name="club_find">Chercher pour un club</string>
+    <string name="about">À propos</string>
+
+    <string name="player_rating">Classement</string>
+    <string name="player_title">Titre</string>
+    <string name="player_joined">Inscription</string>
+    <string name="player_last_online">Dernière connexion</string>
+    <string name="player_status">Statut</string>
+    <string name="audio_playback_attribution_label">Cette application lit de l\’audio</string>
+
+    <!-- Placeholder -->
+    <string name="hello_blank_fragment">Bonjour fragment vide</string>
+    <string name="bullet_score">Rapport de Bullet</string>
+    <string name="clubMember">Membre du club</string>
+    <string name="clubPublic">public</string>
+    <string name="loading">Chargement...</string>
 </resources>

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ldlda.chesscom_stats.databinding.ActivityMainBinding;
@@ -26,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
     private MediaPlayer backgroundSong;
 
-    // Current selected tab id only; fragments are replaced on selection
+    // Cached fragment references for show/hide pattern
+    private Fragment homeFragment, hallFragment, favoritesFragment, lessonsFragment, currentFragment;
     private int selectedItemId = R.id.home;
 
     private ActivityMainBinding binding;

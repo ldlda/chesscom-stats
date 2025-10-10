@@ -13,20 +13,26 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StatsForChesscom">
         <activity
-            android:name="MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.StatsForChesscom">
+            android:name=".SplashActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--        <activity-->
-        <!--            android:name=".ui.playerdetail.PlayerDetailActivity"-->
-        <!--            android:exported="false" />-->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.StatsForChesscom">
+
+        </activity>
+        <activity
+            android:name=".PlayerDetailActivity"
+            android:exported="false" />
     </application>
     <attribution
         android:label="@string/audio_playback_attribution_label"
         android:tag="audioPlayback" />
+
 </manifest>
