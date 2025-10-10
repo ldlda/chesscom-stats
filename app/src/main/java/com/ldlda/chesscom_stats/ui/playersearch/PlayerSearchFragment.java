@@ -1,29 +1,28 @@
-package com.ldlda.chesscom_stats;
+package com.ldlda.chesscom_stats.ui.playersearch;
 
-import android.graphics.Color;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.widget.SearchView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.material.button.MaterialButton;
+import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.java_api.ApiClient;
 import com.ldlda.chesscom_stats.java_api.PlayerProfile;
 import com.ldlda.chesscom_stats.java_api.PlayerProfileData;
 import com.ldlda.chesscom_stats.java_api.PlayerStatsData;
-
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -122,10 +121,10 @@ public class PlayerSearchFragment extends Fragment {
 
                 Call<PlayerProfileData> call = api.getPlayerProfile(username);
 
-                call.enqueue(new retrofit2.Callback<PlayerProfileData>() {
+                call.enqueue(new retrofit2.Callback<>() {
 
                     @Override
-                    public void onResponse(Call<PlayerProfileData> call, retrofit2.Response<PlayerProfileData> response) {
+                    public void onResponse(@NonNull Call<PlayerProfileData> call, @NonNull retrofit2.Response<PlayerProfileData> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             search_prog.setVisibility(View.GONE);
 
@@ -147,10 +146,10 @@ public class PlayerSearchFragment extends Fragment {
 
                             Call<PlayerStatsData> statCall = api.getPlayerStats(username);
 
-                            statCall.enqueue(new retrofit2.Callback<PlayerStatsData>() {
+                            statCall.enqueue(new retrofit2.Callback<>() {
 
                                 @Override
-                                public void onResponse(Call<PlayerStatsData> statCall, Response<PlayerStatsData> response) {
+                                public void onResponse(@NonNull Call<PlayerStatsData> statCall, @NonNull Response<PlayerStatsData> response) {
                                     if (response.isSuccessful() && response.body() != null) {
                                         PlayerStatsData dataStats = response.body();
 
@@ -170,7 +169,7 @@ public class PlayerSearchFragment extends Fragment {
                                                 rapidBest,
                                                 rapidLast);
 
-                                    }else {
+                                    } else {
                                         Log.e("SearchFrag_Error", "HTTP " + response.code());
                                         Toast.makeText(requireContext(),
                                                 "Player's stats not found (" + response.code() + ")",
@@ -179,7 +178,7 @@ public class PlayerSearchFragment extends Fragment {
                                 }
 
                                 @Override
-                                public void onFailure(Call<PlayerStatsData> statCall, Throwable t) {
+                                public void onFailure(@NonNull Call<PlayerStatsData> statCall, @NonNull Throwable t) {
                                     Log.e("SearchFrag_Failure", "Error: " + t.getMessage());
                                     Toast.makeText(requireContext(),
                                             "Request failed for stats: " + t.getMessage(),
@@ -198,7 +197,7 @@ public class PlayerSearchFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<PlayerProfileData> call, Throwable t) {
+                    public void onFailure(@NonNull Call<PlayerProfileData> call, @NonNull Throwable t) {
                         // Invalid player to favorite
                         fav_btn.setEnabled(false);
 
@@ -218,7 +217,8 @@ public class PlayerSearchFragment extends Fragment {
         endpoints_plr_search.requestFocus();
 
         // Force keyboard to appear
-        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(getContext().INPUT_METHOD_SERVICE);
+        getContext();
+        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(endpoints_plr_search, InputMethodManager.SHOW_IMPLICIT);
 
         return view;
@@ -230,57 +230,57 @@ public class PlayerSearchFragment extends Fragment {
         requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
     }
 
-    private void setAccountTitle(String acc_title){
+    private void setAccountTitle(String acc_title) {
         int titleRes = R.string.none;
 
         if (acc_title != null) {
-            switch (acc_title) {
-                case "GM": titleRes = R.string.grandmaster; break;
-                case "IM": titleRes = R.string.i_master; break;
-                case "FM": titleRes = R.string.fide_master; break;
-                case "CM": titleRes = R.string.fide_cand_master; break;
-            }
+            titleRes = switch (acc_title) {
+                case "GM" -> R.string.grandmaster;
+                case "IM" -> R.string.i_master;
+                case "FM" -> R.string.fide_master;
+                case "CM" -> R.string.fide_cand_master;
+                default -> titleRes;
+            };
         }
 
         title.setText(titleRes);
     }
+
     private void setAccountState(String status) {
         int textRes;
-        int iconRes;
-
-        switch (status) {
-            case "closed":
+        int iconRes = switch (status) {
+            case "closed" -> {
                 textRes = R.string.closed;
-                iconRes = R.drawable.ic_closed_acc;
-                break;
-            case "closed:fair_play_violations":
+                yield R.drawable.ic_closed_acc;
+            }
+            case "closed:fair_play_violations" -> {
                 textRes = R.string.banned;
-                iconRes = R.drawable.ic_banned_acc;
-                break;
-            case "premium":
+                yield R.drawable.ic_banned_acc;
+            }
+            case "premium" -> {
                 textRes = R.string.premium;
-                iconRes = R.drawable.ic_premium_acc;
-                break;
-            case "mod":
+                yield R.drawable.ic_premium_acc;
+            }
+            case "mod" -> {
                 textRes = R.string.mod;
-                iconRes = R.drawable.ic_mod_acc;
-                break;
-            case "staff":
+                yield R.drawable.ic_mod_acc;
+            }
+            case "staff" -> {
                 textRes = R.string.staff;
-                iconRes = R.drawable.ic_staff;
-                break;
-            default:
+                yield R.drawable.ic_staff;
+            }
+            default -> {
                 textRes = R.string.basic_acc;
-                iconRes = R.drawable.ic_basic_acc;
-                break;
-        }
+                yield R.drawable.ic_basic_acc;
+            }
+        };
 
         account_state.setText(textRes);
         Drawable icon = ContextCompat.getDrawable(requireContext(), iconRes);
         account_state.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null);
     }
 
-    private void setDates(long joinedTimeStamp, long lastOnlTimeStamp){
+    private void setDates(long joinedTimeStamp, long lastOnlTimeStamp) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
 
         // First joined date
@@ -303,20 +303,20 @@ public class PlayerSearchFragment extends Fragment {
                                   int blitzBest,
                                   int blitzLast,
                                   int rapidBest,
-                                  int rapidLast){
-        String bullet_txt = requireContext().getString(R.string.bullet_score)+"\n"
-                +"Best: "+ bulletBest+"\n"
-                +"Last: "+ bulletLast+"\n";
+                                  int rapidLast) {
+        String bullet_txt = requireContext().getString(R.string.bullet_score) + "\n"
+                + "Best: " + bulletBest + "\n"
+                + "Last: " + bulletLast + "\n";
 
 
-        String blitz_txt = requireContext().getString(R.string.blitz_score)+"\n"
-                +"Best: "+ blitzBest+"\n"
-                +"Last: "+ blitzLast+"\n";
+        String blitz_txt = requireContext().getString(R.string.blitz_score) + "\n"
+                + "Best: " + blitzBest + "\n"
+                + "Last: " + blitzLast + "\n";
 
 
-        String rapid_txt = requireContext().getString(R.string.rapid_score)+"\n"
-                +"Best: "+ rapidBest+"\n"
-                +"Last: "+ rapidLast+"\n";
+        String rapid_txt = requireContext().getString(R.string.rapid_score) + "\n"
+                + "Best: " + rapidBest + "\n"
+                + "Last: " + rapidLast + "\n";
 
         blitz_stats.setText(blitz_txt);
         bullet_stats.setText(bullet_txt);

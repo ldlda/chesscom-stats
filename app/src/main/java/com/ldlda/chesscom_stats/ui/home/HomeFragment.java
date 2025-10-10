@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.ldlda.chesscom_stats.R;
+import com.ldlda.chesscom_stats.ui.clubs.ClubFragment;
+import com.ldlda.chesscom_stats.ui.playersearch.PlayerSearchFragment;
 
 public class HomeFragment extends Fragment {
     //Inflate fragment
@@ -20,35 +22,29 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         Button plr_search_btn = view.findViewById(R.id.plr_searcher);
 
-        plr_search_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
+        plr_search_btn.setOnClickListener(v -> {
+            requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
 
-                PlayerSearchFragment searchFragment = new PlayerSearchFragment();
+            PlayerSearchFragment searchFragment = new PlayerSearchFragment();
 
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, searchFragment)
-                        .addToBackStack(null)
-                        .commit();
-            }
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, searchFragment)
+                    .addToBackStack(null)
+                    .commit();
         });
 
         Button club_finder = view.findViewById(R.id.club_finder);
-        club_finder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
+        club_finder.setOnClickListener(v -> {
+            requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
 
-                ClubFragment clubFragment = new ClubFragment();
+            ClubFragment clubFragment = new ClubFragment();
 
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, clubFragment)
-                        .addToBackStack(null)
-                        .commit();
-            }
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, clubFragment)
+                    .addToBackStack(null)
+                    .commit();
         });
         return view;
     }

@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats;
+package com.ldlda.chesscom_stats.ui.lessons;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,12 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.ldlda.chesscom_stats.R;
+
 import java.util.Arrays;
 import java.util.List;
 
 public class LessonContents extends Fragment {
-
-    private TextView titleView, contentView;
 
     // Sample lesson titles
     private final List<String> lessonTitles = Arrays.asList(
@@ -25,7 +25,6 @@ public class LessonContents extends Fragment {
             "Lesson 4:",
             "Lesson 5:"
     );
-
     // Sample lesson contents (short draft)
     private final List<String> lessonContents = Arrays.asList(
             "Draft content for lesson 1...",
@@ -34,6 +33,7 @@ public class LessonContents extends Fragment {
             "Draft content for lesson 4...",
             "Draft content for lesson 5..."
     );
+    private TextView titleView, contentView;
 
     public static LessonContents newInstance(int lessonIndex) {
         LessonContents fragment = new LessonContents();

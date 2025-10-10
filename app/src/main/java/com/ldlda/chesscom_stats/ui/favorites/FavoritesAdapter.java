@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.adapter;
+package com.ldlda.chesscom_stats.ui.favorites;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,20 +10,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ldlda.chesscom_stats.R;
+
+import java.util.List;
 
 public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.FavViewHolder> {
 
-    private List<String> favorites = new ArrayList<>();
     private final OnFavoriteClickListener listener;
-
-    public interface OnFavoriteClickListener {
-        void onRemoveClicked(String username);
-        void onItemClicked(String username);
-    }
+    private List<String> favorites;
 
     public FavoritesAdapter(List<String> favorites, OnFavoriteClickListener listener) {
         this.favorites = favorites;
@@ -46,7 +40,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.FavV
         holder.removeBtn.setOnClickListener(v -> listener.onRemoveClicked(username));
         holder.itemView.setOnClickListener(v -> listener.onItemClicked(username));
 
-        holder.itemView.startAnimation(AnimationUtils.loadAnimation(holder.itemView.getContext(),R.anim.slide_in));
+        holder.itemView.startAnimation(AnimationUtils.loadAnimation(holder.itemView.getContext(), R.anim.slide_in));
 
     }
 
@@ -60,7 +54,13 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.FavV
         notifyDataSetChanged();
     }
 
-    static class FavViewHolder extends RecyclerView.ViewHolder {
+    public interface OnFavoriteClickListener {
+        void onRemoveClicked(String username);
+
+        void onItemClicked(String username);
+    }
+
+    public static class FavViewHolder extends RecyclerView.ViewHolder {
         TextView usernameText;
         MaterialButton removeBtn;
 

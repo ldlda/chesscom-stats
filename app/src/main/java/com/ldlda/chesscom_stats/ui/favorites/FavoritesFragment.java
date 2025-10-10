@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ldlda.chesscom_stats.adapter.FavoritesAdapter;
 import com.ldlda.chesscom_stats.databinding.FragmentFavoritesBinding;
 
 import java.io.BufferedReader;
@@ -27,14 +25,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
-import com.ldlda.chesscom_stats.R;
-
 public class FavoritesFragment extends Fragment {
     private static final String TAG = "FavoritesFragment";
     private FragmentFavoritesBinding binding;
     private FavoritesAdapter adapter;
     private List<String> favs = new ArrayList<>();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -53,7 +49,9 @@ public class FavoritesFragment extends Fragment {
                 int pos = favs.indexOf(username);
                 if (pos != -1) {
                     // Animate out before removing
-                    View view = binding.favRecycler.findViewHolderForAdapterPosition(pos).itemView;
+                    var viewHolder = binding.favRecycler.findViewHolderForAdapterPosition(pos);
+                    if (viewHolder == null) return;
+                    View view = viewHolder.itemView;
                     view.animate()
                             .alpha(0f)
                             .translationX(view.getWidth())
@@ -96,6 +94,7 @@ public class FavoritesFragment extends Fragment {
     private File getFavoritesFile() {
         return new File(requireContext().getFilesDir(), "favorites.txt");
     }
+
     private Set<String> loadFavorites() {
         Set<String> favs = new HashSet<>();
         File file = getFavoritesFile();

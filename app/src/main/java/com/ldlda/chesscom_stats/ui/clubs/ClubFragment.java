@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats;
+package com.ldlda.chesscom_stats.ui.clubs;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,8 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ldlda.chesscom_stats.adapter.ClubAdapter;
-import com.ldlda.chesscom_stats.adapter.CountrySpinnerAdapter;
+import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.java_api.ApiClient;
 import com.ldlda.chesscom_stats.java_api.Club;
 import com.ldlda.chesscom_stats.java_api.ClubData;
@@ -31,18 +30,15 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 public class ClubFragment extends Fragment {
+    private static final int BATCH_SIZE = 10;
     private final Club clubApi = ApiClient.getClient().create(Club.class);
     private final Country api = ApiClient.getClient().create(Country.class);
-
+    private final List<ClubData> clubList = new ArrayList<>();
+    private final List<String> clubUrls = new ArrayList<>();
     private ProgressBar searchProg;
     private RecyclerView recyclerView;
     private ClubAdapter clubAdapter;
-
-    private final List<ClubData> clubList = new ArrayList<>();
-    private final List<String> clubUrls = new ArrayList<>();
     private boolean isLoading = false;
-
-    private static final int BATCH_SIZE = 10;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,7 +66,8 @@ public class ClubFragment extends Fragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         return view;
@@ -98,7 +95,7 @@ public class ClubFragment extends Fragment {
         searchProg.setVisibility(View.VISIBLE);
         api.getClubsFromCountry(isoCode).enqueue(new retrofit2.Callback<>() {
             @Override
-            public void onResponse(Call<CountryClubs> call, Response<CountryClubs> response) {
+            public void onResponse(@NonNull Call<CountryClubs> call, @NonNull Response<CountryClubs> response) {
                 searchProg.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     CountryClubs clubs = response.body();
@@ -118,7 +115,7 @@ public class ClubFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<CountryClubs> call, Throwable t) {
+            public void onFailure(@NonNull Call<CountryClubs> call, @NonNull Throwable t) {
                 searchProg.setVisibility(View.GONE);
                 Log.e("CountryClub", "Error: " + t.getMessage());
             }
@@ -133,7 +130,7 @@ public class ClubFragment extends Fragment {
 
             clubApi.getClubProfile(urlID).enqueue(new retrofit2.Callback<>() {
                 @Override
-                public void onResponse(Call<ClubData> call, Response<ClubData> response) {
+                public void onResponse(@NonNull Call<ClubData> call, @NonNull Response<ClubData> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         clubList.add(response.body());
                         clubAdapter.setClubs(new ArrayList<>(clubList));
@@ -141,7 +138,7 @@ public class ClubFragment extends Fragment {
                 }
 
                 @Override
-                public void onFailure(Call<ClubData> call, Throwable t) {
+                public void onFailure(@NonNull Call<ClubData> call, @NonNull Throwable t) {
                     Log.e("Club", "Failed to fetch club: " + t.getMessage());
                 }
             });

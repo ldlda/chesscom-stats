@@ -61,11 +61,12 @@
     <string name="about">Về chúng tôi</string>
 
     <!-- Placeholder -->
+    <string name="player_stats">Thống kê</string>
     <string name="hello_blank_fragment">Xin chào fragment trống</string>
     <string name="bullet_score">Điểm Bullet</string>
     <string name="clubMember">Thành viên</string>
     <string name="clubPublic">Mở</string>
-    <string name="loading">Đang tải...</string>
+    <string name="loading">Đang tải…</string>
     <string name="failed_to_fetch_leaderboard">Không thể lấy dữ liệu xếp hạng</string>
     <string name="failed_to_load_player_data">Không thể tải data người chơi</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.adapter;
+package com.ldlda.chesscom_stats.ui.clubs;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,8 +19,6 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.java_api.ClubData;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,11 +43,11 @@ public class ClubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
-        if (viewType == VIEW_TYPE_ITEM){
-             view = LayoutInflater.from(parent.getContext())
+        if (viewType == VIEW_TYPE_ITEM) {
+            view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_club, parent, false);
             return new ClubViewHolder(view);
-        }else{
+        } else {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_club_loading, parent, false);
             return new ClubLoadViewHolder(view);
@@ -59,10 +57,9 @@ public class ClubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Context context = holder.itemView.getContext();
-        if (holder instanceof ClubViewHolder){
+        if (holder instanceof ClubViewHolder vh) {
             ClubData club = clubs.get(position);
             if (club != null) {
-                ClubViewHolder vh = (ClubViewHolder) holder;
 
                 vh.clubName.setText(club.name);
 
@@ -74,18 +71,18 @@ public class ClubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 vh.clubMembersCount.setText(memberCountTxt);
 
                 // Hacky  lol
-                String clubVisTxt = club.visibility.equals("public")?
-                context.getResources().getString(R.string.clubPublic):
-                context.getResources().getString(R.string.clubPrivate);
+                String clubVisTxt = club.visibility.equals("public") ?
+                        context.getResources().getString(R.string.clubPublic) :
+                        context.getResources().getString(R.string.clubPrivate);
 
 
-                vh.clubVisiblity.setText(clubVisTxt);
+                vh.clubVisibility.setText(clubVisTxt);
 
                 // Could have done better but I'm too lazy
-                if (clubVisTxt.equals("Public")){
-                    vh.clubVisiblity.setTextColor(context.getResources().getColor(R.color.green));
-                }else{
-                    vh.clubVisiblity.setTextColor(context.getResources().getColor(R.color.red));
+                if (clubVisTxt.equals("Public")) {
+                    vh.clubVisibility.setTextColor(context.getResources().getColor(R.color.green));
+                } else {
+                    vh.clubVisibility.setTextColor(context.getResources().getColor(R.color.red));
                 }
 
                 vh.clubURI.setOnClickListener(v -> {
@@ -106,8 +103,8 @@ public class ClubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         .into(vh.clubAvatar);
 
             }
-        }else {
-            Toast.makeText(holder.itemView.getContext(),"CHILL",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(holder.itemView.getContext(), "CHILL", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -120,20 +117,21 @@ public class ClubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        return  clubs.get(position) == null? VIEW_TYPE_LOADING:VIEW_TYPE_ITEM;
+        return clubs.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
     static class ClubViewHolder extends RecyclerView.ViewHolder {
         TextView clubName;
         TextView clubMembersCount;
-        TextView clubVisiblity;
+        TextView clubVisibility;
         ImageView clubAvatar;
         MaterialButton clubURI;
+
         ClubViewHolder(@NonNull View itemView) {
             super(itemView);
             clubName = itemView.findViewById(R.id.clubName);
             clubMembersCount = itemView.findViewById(R.id.clubMemberCount);
-            clubVisiblity = itemView.findViewById(R.id.clubVisibility);
+            clubVisibility = itemView.findViewById(R.id.clubVisibility);
             clubURI = itemView.findViewById(R.id.clubURI);
             clubAvatar = itemView.findViewById(R.id.club_avatar);
         }
@@ -141,6 +139,7 @@ public class ClubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     static class ClubLoadViewHolder extends RecyclerView.ViewHolder {
         ProgressBar progressBar;
+
         ClubLoadViewHolder(@NonNull View itemView) {
             super(itemView);
             progressBar = itemView.findViewById(R.id.prog_bar);

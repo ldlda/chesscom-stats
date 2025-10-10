@@ -2,7 +2,6 @@ package com.ldlda.chesscom_stats.ui.playerdetail;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,16 +34,14 @@ import java.util.concurrent.CompletableFuture;
 
 public class PlayerDetailActivity extends AppCompatActivity {
     private final String TAG = "PlayerDetailActivity";
+    boolean isFavorited = false;
     private ChessRepoAdapterJava repo;
     private CompletableFuture<Void> inFlight;
-
     private ActivityPlayerDetailBinding binding;
-
-    boolean isFavorited = false;
     private String username;
     private ImageView avatar;
     private TextView usernameView;
-    private  TextView nameView;
+    private TextView nameView;
     private TextView statsView;
 
     private Button addFavoriteBtn;
@@ -81,54 +78,51 @@ public class PlayerDetailActivity extends AppCompatActivity {
                     break;
                 }
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
 
-        addFavoriteBtn.setText(isFavorited? R.string.remove_fav : R.string.add_fav);
+        addFavoriteBtn.setText(isFavorited ? R.string.remove_fav : R.string.add_fav);
 
-        addFavoriteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isFavorited)  // Remove fav
-                {
-                    try {
-                        FileInputStream fis = openFileInput("favorites.txt");
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
-                        List<String> favorites = new ArrayList<>();
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            if (!line.trim().equalsIgnoreCase(username)) {
-                                favorites.add(line.trim());
-                            }
+        addFavoriteBtn.setOnClickListener(v -> {
+            if (isFavorited)  // Remove fav
+            {
+                try {
+                    FileInputStream fis = openFileInput("favorites.txt");
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+                    List<String> favorites = new ArrayList<>();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        if (!line.trim().equalsIgnoreCase(username)) {
+                            favorites.add(line.trim());
                         }
-                        reader.close();
-
-                        FileOutputStream fos = openFileOutput("favorites.txt", MODE_PRIVATE);
-                        for (String fav : favorites) {
-                            fos.write((fav + "\n").getBytes());
-                        }
-                        fos.close();
-
-                        isFavorited = false;
-                        Toast.makeText(PlayerDetailActivity.this, "Removed from favorites", Toast.LENGTH_SHORT).show();
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
+                    reader.close();
 
-                }
-                else {
-                    // Add fav
-                    try (FileOutputStream fos = openFileOutput("favorites.txt", MODE_APPEND)) {
-                        fos.write((username + "\n").getBytes());
-                        isFavorited = true;
-                        Toast.makeText(PlayerDetailActivity.this, "Added to favorites", Toast.LENGTH_SHORT).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    FileOutputStream fos = openFileOutput("favorites.txt", MODE_PRIVATE);
+                    for (String fav : favorites) {
+                        fos.write((fav + "\n").getBytes());
                     }
+                    fos.close();
+
+                    isFavorited = false;
+                    Toast.makeText(PlayerDetailActivity.this, "Removed from favorites", Toast.LENGTH_SHORT).show();
+
+                } catch (IOException e) {
+                    Log.e(TAG, "onClick: addFavoriteBtn.setOnClickListener isFavorited", e);
                 }
 
-                addFavoriteBtn.setText(isFavorited? R.string.remove_fav : R.string.add_fav);
+            } else {
+                // Add fav
+                try (FileOutputStream fos = openFileOutput("favorites.txt", MODE_APPEND)) {
+                    fos.write((username + "\n").getBytes());
+                    isFavorited = true;
+                    Toast.makeText(PlayerDetailActivity.this, "Added to favorites", Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    Log.e(TAG, "onClick: addFavoriteBtn.setOnClickListener !isFavorited", e);
+                }
             }
+
+            addFavoriteBtn.setText(isFavorited ? R.string.remove_fav : R.string.add_fav);
         });
 
         if (username == null) {
@@ -141,7 +135,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         fetchPlayerData();
     }
 
-    private void fetchPlayerData(){
+    private void fetchPlayerData() {
         repo = new ChessRepoAdapterJava();
         inFlight = repo.getCompletePlayerAsync(username)
                 .thenAccept(player -> {

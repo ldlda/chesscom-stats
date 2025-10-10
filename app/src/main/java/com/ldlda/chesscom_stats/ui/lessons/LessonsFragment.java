@@ -12,12 +12,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ldlda.chesscom_stats.adapter.LessonAdapter;
+import com.ldlda.chesscom_stats.R;
 
 import java.util.Arrays;
 import java.util.List;
-
-import com.ldlda.chesscom_stats.R;
 
 public class LessonsFragment extends Fragment {
 

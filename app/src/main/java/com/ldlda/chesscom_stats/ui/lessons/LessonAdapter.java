@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.adapter;
+package com.ldlda.chesscom_stats.ui.lessons;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,16 +8,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List; // Added for List
+import java.util.List;
 
 public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonViewHolder> {
 
     private final List<String> lessons; // Changed from String[] to List<String>
     private final OnLessonClickListener listener;
-
-    public interface OnLessonClickListener {
-        void onLessonClick(int position);
-    }
 
     public LessonAdapter(List<String> lessons, OnLessonClickListener listener) { // Changed from String[] to List<String>
         this.lessons = lessons;
@@ -43,7 +39,11 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
         return lessons.size(); // Changed from lessons.length to lessons.size()
     }
 
-    static class LessonViewHolder extends RecyclerView.ViewHolder {
+    public interface OnLessonClickListener {
+        void onLessonClick(int position);
+    }
+
+    public static class LessonViewHolder extends RecyclerView.ViewHolder {
         TextView title;
 
         LessonViewHolder(View itemView) {

@@ -47,17 +47,17 @@
             android:id="@+id/add_to_fav_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/add_fav_bg"
             android:text="@string/add_fav"
             android:textColor="@color/transparent_black"
             android:textSize="24sp"
+            app:backgroundTint="@null"
+            app:icon="@drawable/ic_favorite"
+            app:iconSize="120px"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:background="@drawable/add_fav_bg"
-            app:backgroundTint="@null"
-            app:icon="@drawable/ic_favorite"
-            app:iconSize="120px" />
+            app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>
 </ScrollView>
 

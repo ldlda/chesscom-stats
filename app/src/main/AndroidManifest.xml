@@ -27,9 +27,6 @@
             android:theme="@style/Theme.StatsForChesscom">
 
         </activity>
-        <activity
-            android:name=".PlayerDetailActivity"
-            android:exported="false" />
     </application>
     <attribution
         android:label="@string/audio_playback_attribution_label"

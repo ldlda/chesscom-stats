@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.adapter;
+package com.ldlda.chesscom_stats.ui.clubs;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;
