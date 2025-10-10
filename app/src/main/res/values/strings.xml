@@ -66,8 +66,6 @@
     <string name="player_status">Status</string>
     <string name="audio_playback_attribution_label">This app plays audio</string>
     <string name="player_stats">Stats</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!--Recycler view stuff-->
     <string name="loading">Loading…</string>

@@ -62,7 +62,6 @@
 
     <!-- Placeholder -->
     <string name="player_stats">Thống kê</string>
-    <string name="hello_blank_fragment">Xin chào fragment trống</string>
     <string name="bullet_score">Điểm Bullet</string>
     <string name="clubMember">Thành viên</string>
     <string name="clubPublic">Mở</string>

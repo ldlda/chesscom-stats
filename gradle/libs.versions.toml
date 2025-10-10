@@ -1,5 +1,6 @@
 [versions]
 agp = "8.13.0"
+coreSplashscreen = "1.0.1"
 desugar_jdk_libs = "2.1.5"
 glide = "5.0.5"
 gson = "2.13.2"
@@ -32,6 +33,7 @@ navigationSafeArgsGradlePlugin = "2.9.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
