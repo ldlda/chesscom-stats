@@ -1,8 +1,10 @@
 package com.ldlda.chesscom_stats.api.data
 
+import com.ldlda.chesscom_stats.util.checkFn
 import com.ldlda.chesscom_stats.util.invalidUrlBase
-import com.ldlda.chesscom_stats.util.ldaCheckThis
 import com.ldlda.chesscom_stats.util.malformedUrl
+import com.ldlda.chesscom_stats.util.requiredNotNullOr
+import com.ldlda.chesscom_stats.util.requiredOr
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -33,33 +35,31 @@ data class CountryInfo(
             countryUrl: String,
             check: Boolean = false
         ): String {
-            val base = requireNotNull(base.toHttpUrlOrNull(), malformedUrl)
-            val countryUrl = requireNotNull(countryUrl.toHttpUrlOrNull(), malformedUrl)
+
+            val base = base.toHttpUrlOrNull() requiredNotNullOr malformedUrl
+            val countryUrl = countryUrl.toHttpUrlOrNull() requiredNotNullOr malformedUrl
+//            val checkFn: (() -> Unit) -> Unit = { if (check) it() }
+            val checkFn = checkFn(check)
             val cs = countryUrl.encodedPathSegments
             val bs = base.encodedPathSegments.let {
-                ldaCheckThis(check, strict = true) { require(it.last().isBlank(), invalidUrlBase) }
+                checkFn { it.last().isBlank() requiredOr invalidUrlBase }
                 it.subList(0, it.size - 1)
             }
-            ldaCheckThis(check, strict = true) {
-                require(
-                    base.host == countryUrl.host && base.port == countryUrl.port,
-                    malformedUrl
-                )
-                require(
-                    cs.size >= bs.size + 2,
-                    malformedUrl
-                ) // country and code (and maybe players)
-                require(cs.subList(0, bs.size) == bs, invalidUrlBase)
-                require(cs.getOrNull(bs.size) == "country", malformedUrl)
+            checkFn {
+                (base.host == countryUrl.host
+                        && base.port == countryUrl.port) requiredOr malformedUrl
+
+                (cs.size >= bs.size + 2) requiredOr malformedUrl
+                // country and code (and maybe players)
+                (cs.subList(0, bs.size) == bs) requiredOr invalidUrlBase
+                (cs.getOrNull(bs.size) == "country") requiredOr malformedUrl
             }
             val ret = cs.getOrNull(bs.size + 1)
-            ldaCheckThis(check, strict = true) {
-                requireNotNull(
-                    ret?.takeIf { it.isNotBlank() },
-                    malformedUrl
-                )
+            checkFn {
+                ret?.takeIf { it.isNotBlank() } requiredNotNullOr
+                        malformedUrl
             }
-            return requireNotNull(ret, malformedUrl)
+            return ret requiredNotNullOr malformedUrl
         }
         /*
          cs.strip_prefix(bs)

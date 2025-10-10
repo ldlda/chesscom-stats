@@ -1,11 +1,9 @@
 package com.ldlda.chesscom_stats.util
 
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
-import java.util.concurrent.CompletableFuture
+import kotlinx.coroutines.future.future
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -27,17 +25,6 @@ object Futures {
     fun <T> eager(
         context: CoroutineContext = Dispatchers.IO,
         block: suspend CoroutineScope.() -> T
-    ) = CompletableFuture<T>().also { cf ->
-        val scope = CoroutineScope(SupervisorJob() + context)
-        val job = scope.launch { // this runs even after returns
-            try {
-                cf.complete(block())
-            } catch (ce: CancellationException) {
-                cf.cancel(true)
-            } catch (t: Throwable) {
-                cf.completeExceptionally(t)
-            }
-        }
-        cf.whenComplete { _, _ -> if (cf.isCancelled) job.cancel() }
-    }
+    ) = CoroutineScope(SupervisorJob() + context).future { block() }
+
 }

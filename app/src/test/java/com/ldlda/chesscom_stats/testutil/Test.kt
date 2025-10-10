@@ -1,8 +1,5 @@
 package com.ldlda.chesscom_stats.testutil
 
-import kotlinx.coroutines.future.await
-import java.util.concurrent.CompletableFuture
-
 fun String.real() = "real af: $this"
 // java invocation with TestKt.real(str) AHHHH why cant i do the reverse
 
@@ -10,22 +7,22 @@ fun <T> goodThing(real: () -> T) = object : Real<T> {
     override fun y() = real()
     override fun n() = try {
         real()
-    } catch (e: IllegalArgumentException) {
+    } catch (_: IllegalArgumentException) {
         null
-    } catch (e: IllegalStateException) {
+    } catch (_: IllegalStateException) {
         null
     }
 }
 
 interface Real<T> {
-    fun y(): T;
+    fun y(): T
     fun n(): T?
 
     fun d(y: Boolean): T? = if (y) y() else n()
 }
 
 abstract class Cool<T, U>(val block: () -> T) {
-    abstract fun check(): U;
+    abstract fun check(): U
 }
 
 class Raise<T>(block: () -> T) : Cool<T, T>(block) {

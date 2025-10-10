@@ -4,9 +4,21 @@ package com.ldlda.chesscom_stats.util
  * ldaCheck { it().getOrThrow()} {what()}
  */
 
-typealias Strategy<T, R> = (() -> Result<T>) -> R
-typealias StratEval<T, R> = (() -> T) -> R
-typealias StratEvalExtension<A, T, R> = (A.() -> T) -> R
+// lowk this stays the same
+typealias Strategy<T, R> = (StrategyArg<T>) -> R
+typealias StrategyArg<T> = () -> Result<T>
+
+typealias StratEval<T, R> = (StratEvalArg<T>) -> R
+typealias StratEvalArg<T> = () -> T
+
+typealias StratEvalExtension<E, T, R> = (StratEvalExtensionArg<E, T>) -> R
+typealias StratEvalExtensionArg<E, T> = (E.() -> T)
+
+// typealias StrategyArgWithArguments<A, T> = (A) -> Result<T>
+// typealias StratEvalExtensionArgWithArguments<E, A, T> = (E.(A) -> T)
+// you can supply args here even but i cant bro what the fuck
+// ts a whole class of type bro
+// lowk tedious
 
 /**
  * This is a function that goes as follows.
@@ -25,6 +37,12 @@ typealias StratEvalExtension<A, T, R> = (A.() -> T) -> R
 inline fun <B, C> ldaCheck(crossinline strategy: Strategy<B, C>): StratEval<B, C> =
     { strategy { runCatching(it) } }
 
+inline fun <B, C> ldaCheck(
+    crossinline strategy: Strategy<B, C>,
+    crossinline toEval: StratEvalArg<B>
+): C =
+    strategy { runCatching(toEval) }
+
 /**
  * refer to [ldaCheck][ldaCheck as Function1<*, *>]
  *
@@ -36,23 +54,39 @@ inline fun <B, C> ldaCheck(crossinline strategy: Strategy<B, C>): StratEval<B, C
  * @receiver any; will be passed in the second call as this
  */
 inline fun <A, B, C> A.ldaCheck(crossinline strategy: Strategy<B, C>): StratEvalExtension<A, B, C> =
-    { strategy { runCatching { this.it() } } }
+    { strategy { runCatching(it) } }
 
+inline fun <A, B, C> A.ldaCheck(
+    crossinline strategy: Strategy<B, C>,
+    crossinline toEval: StratEvalExtensionArg<A, B>
+): C =
+    strategy { runCatching(toEval) }
 
-fun <B> ldaCheckThis(check: Boolean, strict: Boolean, block: () -> B): B? {
-    val that: Strategy<B, B?> = check bih strict
+fun <B> ldaCheckThis(check: Boolean, strict: Boolean, block: StratEvalArg<B>): B? {
+    val that: Strategy<B, B?> = bih(check, strict)
 
-    return ldaCheck(that)(block)
+    return ldaCheck(that, block)
 }
 
-fun <A, B> A.ldaCheckThis(check: Boolean, strict: Boolean, block: A.() -> B): B? {
-    val that: Strategy<B, B?> = check bih strict
+fun <A, B> A.ldaCheckThis(check: Boolean, strict: Boolean, block: StratEvalExtensionArg<A, B>): B? {
+    val that: Strategy<B, B?> = bih(check, strict)
 
-    return this.ldaCheck(that)(block)
+    return this.ldaCheck(that, block)
 }
 
-private infix fun <B> Boolean.bih(that: Boolean): Strategy<B, B?> =
-    when (this to that) {
+fun <B> ldaCheckThis(check: Boolean, strict: Boolean): StratEval<B, B?> {
+    val that: Strategy<B, B?> = bih(check, strict)
+
+    return ldaCheck(that)
+}
+
+fun <A, B> A.ldaCheckThis(check: Boolean, strict: Boolean): StratEvalExtension<A, B, B?> {
+    val that: Strategy<B, B?> = bih(check, strict)
+    return this.ldaCheck(that)
+}
+
+private fun <B> bih(a: Boolean, b: Boolean): Strategy<B, B?> =
+    when (a to b) {
         (true to false) -> {
             { null }
         }
@@ -71,3 +105,48 @@ private infix fun <B> Boolean.bih(that: Boolean): Strategy<B, B?> =
 inline fun requireNot(ifTrue: Boolean, raiseMsg: () -> Any) = require(!ifTrue, raiseMsg)
 
 fun requireNot(ifTrue: Boolean) = require(!ifTrue)
+
+infix fun Boolean.requiredOr(e: () -> Any) = require(this, e)
+infix fun Boolean.requiredNotOr(e: () -> Any) = requireNot(this, e)
+infix fun <T> T?.requiredNotNullOr(e: () -> Any) = requireNotNull(this, e)
+
+
+class LdaOn<T, U, V>(override val carriedThis: T, override val strategy: Strategy<U, V>) :
+    LdaOnTrait<T, U, V>
+
+interface LdaOnTrait<T, U, V> {
+    val carriedThis: T
+    val strategy: Strategy<U, V>
+    infix fun on(toBeEval: StratEvalExtensionArg<T, U>): V =
+        carriedThis.ldaCheck(strategy, toBeEval)
+}
+
+/**
+ * call:
+ * ```
+ * objectT.ldaRun {
+ *  // this takes () -> Result<U> and returns V
+ *  // what the fuck is () -> Result<U>
+ *      it().getOrNull()?.toV()
+ *  // in this case this returns V? the type
+ * } on {
+ *   this.TFunctions() // this is (hopefully) objectT
+ *   // this returns U. the above got a { runCatching(this lambda) }
+ * }
+ * ```
+ *
+ * # why
+ *
+ * why not run
+ * ```
+ * strategy { this.runCatching(toBeEval) }
+ * ```
+ * directly? idk
+ *
+ * @param strategy i call it strategy but its just applying
+the fn that you supply to [on][LdaOnTrait.on]
+ * @return a thing of [LdaOnTrait] that you run [on][LdaOnTrait.on] on
+ */
+fun <T, U, V> T.ldaRun(strategy: Strategy<U, V>): LdaOn<T, U, V> = LdaOn(this, strategy)
+
+val checkFn = { check: Boolean -> ldaCheckThis<Unit>(check, true) }

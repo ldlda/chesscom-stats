@@ -8,14 +8,18 @@ import com.ldlda.chesscom_stats.testutil.Damn
 import com.ldlda.chesscom_stats.testutil.dispatch
 import com.ldlda.chesscom_stats.testutil.goodThing
 import com.ldlda.chesscom_stats.testutil.real
+import com.ldlda.chesscom_stats.util.StratEvalExtensionArg
+import com.ldlda.chesscom_stats.util.Strategy
+import com.ldlda.chesscom_stats.util.ldaCheck
 import com.ldlda.chesscom_stats.util.ldaCheckThis
+import com.ldlda.chesscom_stats.util.ldaRun
 import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
 import org.junit.Test
 import java.time.Instant
+import kotlin.math.pow
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -52,7 +56,7 @@ class ExampleUnitTest {
         val what = goodThing(baby)
         try {
             what.y()
-            fail("you fuhhed up son")
+            // fail("you fuhhed up son") // kotlin is smart
         } catch (e: IllegalArgumentException) {
             assertEquals("nothing lowk", e.message)
         }
@@ -62,7 +66,7 @@ class ExampleUnitTest {
         val real = cuh.check() // what the FUCK is Any?
         println(real)
 
-        println(ldaCheckThis<Any, Any>(check = true, strict = false){})
+        println(ldaCheckThis<Any, Any>(check = true, strict = false) {})
     }
 
     @Test
@@ -77,10 +81,11 @@ class ExampleUnitTest {
         assertEquals(uh2, lda2.toHttpUrl().encodedPathSegments) // wym
     }
 
+    val jsonIUK = Json { ignoreUnknownKeys = true }
+
     @Test
     fun lowk_ass() {
-        fun Any.println() = println(this)
-        Json{ignoreUnknownKeys = true}.decodeFromString<Game>(
+        val low = jsonIUK.decodeFromString<Game>(
             """
          {
           "win": 3062,
@@ -90,6 +95,27 @@ class ExampleUnitTest {
           "timeout_percent": 0
           }   
         """.trimIndent()
-        ).println()
+        ).also(::println)
+        assertEquals(3062, low.win)
+    }
+
+    @Test
+    fun out_of_everything() {
+        val a: Strategy<Double, Double> = { t ->
+            val low = t()
+            low.getOrElse {
+                3.1
+            }
+        }
+        val b: StratEvalExtensionArg<String, Double> = {
+            this.toDouble()
+        }
+        val threePointOne: Double = "lowk".ldaRun(a) on b
+        val also3p1: Double = "lowk".ldaCheck(a)(b)
+        val twopointeight = "2.8".ldaCheck(a, b)
+        val toosmall = 10.0.pow(-15)
+        assertEquals(3.1, threePointOne, toosmall)
+        assertEquals(3.1, also3p1, toosmall)
+        assertEquals(2.8, twopointeight, toosmall)
     }
 }

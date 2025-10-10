@@ -14,7 +14,8 @@ val invalidUrlBase = { "Invalid URL base" }
 
 fun Boolean.checkBaseAndTarget(base: HttpUrl, target: HttpUrl) =
     ldaCheckThis(check = this, strict = true) {
-        require(base.host == target.host && base.port == target.port, invalidUrlBase)
-        require(base.encodedPathSegments.size <= target.encodedPathSegments.size, invalidUrlBase)
-        requireNot(base.encodedPathSegments.last().isBlank(), invalidUrlBase)
+        (base.host == target.host && base.port == target.port) requiredOr invalidUrlBase
+        (base.encodedPathSegments.size <= target.encodedPathSegments.size) requiredOr malformedUrl
+        (base.encodedPathSegments.last().isBlank()) requiredOr invalidUrlBase
     }
+

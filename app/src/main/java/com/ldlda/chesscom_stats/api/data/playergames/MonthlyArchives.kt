@@ -2,10 +2,12 @@
 
 package com.ldlda.chesscom_stats.api.data.playergames
 
+import com.ldlda.chesscom_stats.util.checkFn
 import com.ldlda.chesscom_stats.util.invalidUrlBase
-import com.ldlda.chesscom_stats.util.ldaCheckThis
 import com.ldlda.chesscom_stats.util.malformedUrl
-import com.ldlda.chesscom_stats.util.requireNot
+import com.ldlda.chesscom_stats.util.requiredNotNullOr
+import com.ldlda.chesscom_stats.util.requiredNotOr
+import com.ldlda.chesscom_stats.util.requiredOr
 import com.ldlda.chesscom_stats.util.serialize.tostring.URISerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -15,13 +17,10 @@ import java.net.URI
 
 @Serializable
 data class MonthlyArchives(val archives: List<URI> = emptyList()) {
-    fun iterator(): MonthlyArchivesIterator = MonthlyArchivesIterator(this)
-
     data class Detail(val username: String, val year: String, val month: String)
 
 
     fun archivesDetail(baseUrl: HttpUrl, check: Boolean = false): List<Detail> {
-//        val chesscom =
         return archives.mapNotNull { el ->
             el.toHttpUrlOrNull()
                 ?.runCatching {
@@ -47,8 +46,9 @@ data class MonthlyArchives(val archives: List<URI> = emptyList()) {
             // commented out code is some validation shit. ima priv this so i dont have to check
             val base = baseUrl
             val target = this
+            val checkFn = checkFn(true)
             val bs = base.encodedPathSegments.let {
-                ldaCheckThis(check, strict = true) {
+                checkFn {
                     require(
                         it.last().isBlank(),
                         invalidUrlBase
@@ -57,34 +57,30 @@ data class MonthlyArchives(val archives: List<URI> = emptyList()) {
                 it.subList(0, it.size - 1)
             }
             val ts = target.encodedPathSegments
-            ldaCheckThis(check, strict = true) {
-                require(base.host == target.host && base.port == target.port, invalidUrlBase)
-                requireNot(
-                    ts.size < bs.size + 5,
-                    malformedUrl
-                ) // "player" {username} "games" yyyy MM vs /
-                requireNot(
-                    ts.size > bs.size + 5 // username must not be spaces, nothing after this is fine
-                            && ts.subList(bs.size + 5, ts.size).any { !it.isBlank() },
-                    malformedUrl
-                ) // malformed in url
-                require(ts.subList(0, bs.size) == bs, invalidUrlBase)
-                require(ts.getOrNull(bs.size) == "player", malformedUrl)
-                require(ts.getOrNull(bs.size + 2) == "games", malformedUrl)
+            checkFn {
+                (base.host == target.host && base.port == target.port) requiredOr invalidUrlBase
+                (ts.size < bs.size + 5) requiredNotOr malformedUrl // "player" {username} "games" yyyy MM vs /
+                (ts.size > bs.size + 5 // username must not be spaces, nothing after this is fine
+                        && ts.subList(bs.size + 5, ts.size).any { !it.isBlank() }
+                        ) requiredNotOr malformedUrl
+                // malformed in url
+                (ts.subList(0, bs.size) == bs) requiredOr invalidUrlBase
+                (ts.getOrNull(bs.size) == "player") requiredOr malformedUrl
+                (ts.getOrNull(bs.size + 2) == "games") requiredOr malformedUrl
             }
-            val username = requireNotNull(ts.getOrNull(bs.size + 1), malformedUrl)
-            val year = requireNotNull(ts.getOrNull(bs.size + 3), malformedUrl)
-            val month = requireNotNull(ts.getOrNull(bs.size + 4), malformedUrl)
-            ldaCheckThis(check, strict = true) {
-                requireNotNull(username.takeIf { it.isNotBlank() }, malformedUrl)
-                requireNotNull(
-                    year.takeIf { year -> year.length == 4 && year.all { it.isDigit() } },
-                    malformedUrl
-                )
-                requireNotNull(
-                    month.takeIf { month -> month.length == 2 && month.all { it.isDigit() } },
-                    malformedUrl
-                )
+            val username = ts.getOrNull(bs.size + 1) requiredNotNullOr malformedUrl
+            val year = ts.getOrNull(bs.size + 3) requiredNotNullOr malformedUrl
+            val month = ts.getOrNull(bs.size + 4) requiredNotNullOr malformedUrl
+            checkFn {
+                username.takeIf { it.isNotBlank() } requiredNotNullOr malformedUrl
+
+                year.takeIf { year -> year.length == 4 && year.all { it.isDigit() } } requiredNotNullOr
+                        malformedUrl
+
+
+                month.takeIf { month -> month.length == 2 && month.all { it.isDigit() } } requiredNotNullOr
+                        malformedUrl
+
             }
             return Detail(username, year, month)
         }

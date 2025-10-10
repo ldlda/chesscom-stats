@@ -19,6 +19,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import retrofit2.create
 import java.net.URI
 import java.util.concurrent.CompletableFuture
 
@@ -28,11 +29,13 @@ import java.util.concurrent.CompletableFuture
 class ChessApiClient : ChessApiBackend {
     companion object {
         const val CHESS_API_URL = "https://api.chess.com/pub/"
-        val defaultOkHttp = OkHttpClient.Builder()
-            //  TODO: This are not enabled for now, enable when ETag caching is fleshed out
+        val defaultOkHttp by lazy {
+            OkHttpClient.Builder()
+                //  TODO: This are not enabled for now, enable when ETag caching is fleshed out
 //            .addInterceptor(AddIfNoneMatchInterceptor())
 //            .addNetworkInterceptor(CaptureEtagAndServe304FromCacheInterceptor())
-            .build()
+                .build()
+        }
 
         private fun OkHttpClient.buildRetrofit(baseUrl: String): Retrofit {
             val okHttp = this
@@ -48,19 +51,22 @@ class ChessApiClient : ChessApiBackend {
                 .build()
         }
 
-        val defaultRetrofit: Retrofit = defaultOkHttp.buildRetrofit(CHESS_API_URL)
+        val defaultRetrofit: Retrofit by lazy {
+            defaultOkHttp.buildRetrofit(CHESS_API_URL)
+        }
 
         private fun Retrofit.buildService(): ChessApiService =
-            this.create(ChessApiService::class.java)
+            this.create()
 
-        val defaultService: ChessApiService = defaultRetrofit.buildService()
-
+        val defaultService: ChessApiService by lazy {
+            defaultRetrofit.buildService()
+        }
         val defaultInstance = ChessApiClient()
     }
 
     val baseUrl: String
     val retrofit: Retrofit
-    val service: ChessApiService
+    val service: ChessApiService by lazy { retrofit.buildService() }
 
     @JvmOverloads
     constructor(
@@ -69,7 +75,6 @@ class ChessApiClient : ChessApiBackend {
     ) {
         this.baseUrl = baseUrl
         retrofit = okHttp.buildRetrofit(baseUrl)
-        service = retrofit.buildService()
     }
 
     constructor(
@@ -77,9 +82,7 @@ class ChessApiClient : ChessApiBackend {
     ) {
         this.retrofit = retrofit
         baseUrl = retrofit.baseUrl().toString()
-        service = retrofit.buildService()
     }
-
 
     @Throws(ChessApiException::class)
     suspend fun <T> execute(get: suspend (ChessApiService) -> T): T {

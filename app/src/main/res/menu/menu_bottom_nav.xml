@@ -2,20 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/home"
-        android:title="@string/home"
-        android:icon="@drawable/outline_home_24"/>
+        android:icon="@drawable/outline_home_24"
+        android:title="@string/home" />
     <item
         android:id="@+id/leaderboards"
-        android:title="@string/hall_of_fame"
         android:icon="@drawable/outline_leaderboard_24"
-        />
+        android:title="@string/hall_of_fame" />
     <item
         android:id="@+id/favorites"
-        android:title="@string/fav"
         android:icon="@drawable/outline_favorite_border_24"
-        />
+        android:title="@string/fav" />
     <item
         android:id="@+id/lessons"
-        android:title="@string/lesson"
-        android:icon="@drawable/outline_book_24"/>
+        android:icon="@drawable/outline_book_24"
+        android:title="@string/lesson" />
 </menu>

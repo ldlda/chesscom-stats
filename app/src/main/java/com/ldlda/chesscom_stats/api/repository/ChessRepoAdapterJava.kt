@@ -7,9 +7,9 @@ import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
 import com.ldlda.chesscom_stats.api.data.search.ChessSearchItem
 import com.ldlda.chesscom_stats.api.fetch.ChessApiException
+import com.ldlda.chesscom_stats.util.Futures.eager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.future.future
@@ -34,7 +34,7 @@ class ChessRepoAdapterJava @JvmOverloads constructor(
         runBlocking(context, task)
 
     private fun <T> runAsyncLda(task: suspend CoroutineScope.() -> T) =
-        CoroutineScope(SupervisorJob() + context).future(block = task)
+        eager(context, task)
 
     private fun <T> runAsyncLda(scope: CoroutineScope, task: suspend CoroutineScope.() -> T) =
         scope.future(block = task)

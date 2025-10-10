@@ -3,7 +3,7 @@ package com.ldlda.chesscom_stats.api.fetch
 import com.ldlda.chesscom_stats.api.data.CountryInfo
 import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
-import com.ldlda.chesscom_stats.api.data.playergames.MonthlyArchive
+import com.ldlda.chesscom_stats.api.data.playergames.GameList
 import com.ldlda.chesscom_stats.api.data.playergames.MonthlyArchives
 import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
 import com.ldlda.chesscom_stats.api.data.search.ChessSearchRequest
@@ -39,10 +39,10 @@ interface ChessApiService {
         @Path("username") username: String,
         @Path("year") year: String,
         @Path("month") month: String
-    ): MonthlyArchive
+    ): GameList
 
     @GET
-    suspend fun monthlyArchivesByUrl(@Url url: String): MonthlyArchive
+    suspend fun monthlyArchivesByUrl(@Url url: String): GameList
 
     // not supporting live/base/increment because if you query hikaru it will 503
 

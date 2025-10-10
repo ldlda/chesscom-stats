@@ -58,7 +58,7 @@ public class ChessDataclassesUnitTest {
         @Language(value = "json") String jsonstr;
         try {
             jsonstr = NetworkRequestExample
-            .fetchData("https://api.chess.com/pub/player/hikaru");
+                    .fetchData("https://api.chess.com/pub/player/hikaru");
         } catch (Exception e) {
             fail(e.getMessage());
             return;
