@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+// club/{name} NOT ID
 public class ClubData {
     @SerializedName("@id")
     public String id;

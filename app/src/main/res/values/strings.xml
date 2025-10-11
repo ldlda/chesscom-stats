@@ -18,7 +18,7 @@
     <string name="refresh_too_soon">Please wait a few seconds before refreshing again.</string>
     <string name="home">Home</string>
     <string name="fav">Favorites</string>
-    <string name="hall_fame">Hall of Fame</string>
+    <string name="hall_of_fame">Hall of Fame</string>
     <string name="lesson">Lessons</string>
 
     <string name="add_fav">Add to favorite</string>
@@ -65,9 +65,8 @@
     <string name="player_last_online">Last Online</string>
     <string name="player_status">Status</string>
     <string name="audio_playback_attribution_label">This app plays audio</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="player_stats">Stats</string>
 
     <!--Recycler view stuff-->
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
 </resources>

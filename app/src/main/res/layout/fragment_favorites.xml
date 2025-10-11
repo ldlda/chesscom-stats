@@ -2,22 +2,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_fav">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:layout_gravity="center"
         android:text="@string/fav"
-        android:textSize="24sp"
-        android:layout_centerInParent="true"/>
+        android:textSize="24sp" />
 
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favRecycler"
-        android:layoutAnimation="@anim/recycler_layout_anim"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layoutAnimation="@anim/recycler_layout_anim"
         android:padding="8dp" />
 
 </RelativeLayout>

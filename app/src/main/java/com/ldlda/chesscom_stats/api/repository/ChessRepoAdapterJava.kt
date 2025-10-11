@@ -1,22 +1,22 @@
 package com.ldlda.chesscom_stats.api.repository
 
 import androidx.annotation.WorkerThread
-import com.ldlda.chesscom_stats.api.data.CountryInfo
-import com.ldlda.chesscom_stats.api.data.Leaderboards
-import com.ldlda.chesscom_stats.api.data.Player
-import com.ldlda.chesscom_stats.api.data.PlayerStats
-import com.ldlda.chesscom_stats.api.data.search.ChessSearchItem
+import com.ldlda.chesscom_stats.api.data.country.CountryInfo
+import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
+import com.ldlda.chesscom_stats.api.data.player.Player
+import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
+import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import com.ldlda.chesscom_stats.api.fetch.ChessApiException
+import com.ldlda.chesscom_stats.util.Futures.eager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.runBlocking
-import java.net.URI
+import okhttp3.HttpUrl
 import java.util.concurrent.CompletableFuture
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Java-friendly adapter around ChessRepository.
@@ -27,14 +27,16 @@ import java.util.concurrent.CompletableFuture
  * - also includes some convenient functions
  */
 class ChessRepoAdapterJava @JvmOverloads constructor(
-    private val repo: ChessRepository = ChessRepositoryTimedCache(),
-    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val repo: ChessRepository = ChessRepositoryTimedCache.defaultInstance,
+    private val context: CoroutineContext = Dispatchers.IO
 ) {
-
     private fun <T> runBlockingLda(task: suspend CoroutineScope.() -> T) =
-        runBlocking(scope.coroutineContext, task)
+        runBlocking(context, task)
 
     private fun <T> runAsyncLda(task: suspend CoroutineScope.() -> T) =
+        eager(context, task)
+
+    private fun <T> runAsyncLda(scope: CoroutineScope, task: suspend CoroutineScope.() -> T) =
         scope.future(block = task)
 
     @WorkerThread
@@ -63,13 +65,13 @@ class ChessRepoAdapterJava @JvmOverloads constructor(
 
     @WorkerThread
     @Throws(ChessApiException::class)
-    fun getCountryByUrlBlocking(url: URI): CountryInfo =
-        runBlockingLda { repo.getCountry(url) }
+    fun getCountryByUrlBlocking(url: HttpUrl): CountryInfo =
+        runBlockingLda { repo.getCountryByUrl(url) }
 
-    fun getCountryByUrlAsync(url: URI): CompletableFuture<CountryInfo> =
-        runAsyncLda { repo.getCountry(url) }
+    fun getCountryByUrlAsync(url: HttpUrl): CompletableFuture<CountryInfo> =
+        runAsyncLda { repo.getCountryByUrl(url) }
 
-    fun getUsernameSuggestionsAsync(prefix: String): CompletableFuture<List<ChessSearchItem>> =
+    fun getUsernameSuggestionsAsync(prefix: String): CompletableFuture<List<SearchItem>> =
         runAsyncLda { repo.searchPlayers(prefix) }
 
     /* convenience functions */
@@ -97,11 +99,6 @@ class ChessRepoAdapterJava @JvmOverloads constructor(
             )
             player
         }
-
-    /** Call in test teardown if needed to stop any in-flight work. */
-    fun close() {
-        scope.cancel()
-    }
 }
 
 

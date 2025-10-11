@@ -1,22 +1,25 @@
 package com.ldlda.chesscom_stats.api.repository
 
 import androidx.annotation.VisibleForTesting
-import com.ldlda.chesscom_stats.api.data.CountryInfo
-import com.ldlda.chesscom_stats.api.data.Leaderboards
-import com.ldlda.chesscom_stats.api.data.Player
-import com.ldlda.chesscom_stats.api.data.PlayerStats
+import com.ldlda.chesscom_stats.api.data.country.CountryInfo
+import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
+import com.ldlda.chesscom_stats.api.data.player.Player
+import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient
-import com.ldlda.chesscom_stats.utils.cache.TimedCache
-import java.net.URI
+import com.ldlda.chesscom_stats.util.cache.TimedCache
+import com.ldlda.chesscom_stats.util.cache.TimedCacheProvider
+import okhttp3.HttpUrl
 
 class ChessRepositoryTimedCache(
-    client: ChessApiClient = ChessApiClient(),
-    private val playerCache: TimedCache<Player> = TimedCache(ttlMillis = 5 * 60_000L), // 5 min
-    private val statsCache: TimedCache<PlayerStats> = TimedCache(ttlMillis = 2 * 60_000L), // 2 min
-    private val leaderboardsCache: TimedCache<Leaderboards> = TimedCache(ttlMillis = 15 * 60_000L), // 15 min
-    private val countryCache: TimedCache<CountryInfo> = TimedCache(ttlMillis = 24 * 60 * 60_000L), // 24h
+    client: ChessApiClient = ChessApiClient.defaultInstance,
+    private val playerCache: TimedCache<Player> = TimedCacheProvider.defaultPlayerCache,
+    private val statsCache: TimedCache<PlayerStats> = TimedCacheProvider.defaultStatsCache,
+    private val leaderboardsCache: TimedCache<Leaderboards> = TimedCacheProvider.defaultLeaderboardsCache,
+    private val countryCache: TimedCache<CountryInfo> = TimedCacheProvider.defaultCountryCache,
 ) : ChessRepositoryImpl(client) {
-    private companion object {
+    companion object {
+        @JvmStatic
+        val defaultInstance = ChessRepositoryTimedCache()
         private const val LEADERBOARDS_KEY = "leaderboards"
     }
 
@@ -44,10 +47,10 @@ class ChessRepositoryTimedCache(
     }
 
 
-    override suspend fun getCountry(countryUrl: URI): CountryInfo {
+    override suspend fun getCountryByUrl(countryUrl: HttpUrl): CountryInfo {
         val url = countryUrl.toString()
         countryCache.get(url)?.let { return it }
-        val info = super.getCountry(countryUrl)
+        val info = super.getCountryByUrl(countryUrl)
         countryCache.put(url, info)
         return info
     }

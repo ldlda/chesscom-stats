@@ -11,9 +11,7 @@
     <!-- Default state -->
     <item>
         <shape>
-            <gradient
-                android:startColor="@color/blue"
-                android:endColor="@color/purple" />
+            <gradient android:endColor="@color/purple" android:startColor="@color/blue" />
 
             <corners android:radius="16dp" />
         </shape>

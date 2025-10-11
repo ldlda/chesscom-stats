@@ -5,8 +5,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.ldlda.chesscom_stats.api.data.Player;
-import com.ldlda.chesscom_stats.api.data.PlayerStats;
+import com.ldlda.chesscom_stats.api.data.player.Player;
+import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats;
 import com.ldlda.chesscom_stats.testutil.NetworkRequestExample;
 
 import org.intellij.lang.annotations.Language;
@@ -57,13 +57,14 @@ public class ChessDataclassesUnitTest {
     public void testPlayer2() {
         @Language(value = "json") String jsonstr;
         try {
-            jsonstr = NetworkRequestExample.fetchData("https://api.chess.com/pub/player/hikaru");
+            jsonstr = NetworkRequestExample
+                    .fetchData("https://api.chess.com/pub/player/hikaru");
         } catch (Exception e) {
             fail(e.getMessage());
             return;
         }
         Player hikaru = Player.fromJSON(jsonstr);
-        assertEquals("GM", hikaru.getTitle());
+        assertEquals("GM", Objects.requireNonNull(hikaru.getTitle()).toString());
         assertEquals("Hikaru Nakamura", hikaru.getName());
         /// https://www.timestamp-converter.com/ // "2014-01-06T21:20:58Z"
         assertEquals(1389043258, hikaru.getJoined().getEpochSecond());
@@ -79,7 +80,7 @@ public class ChessDataclassesUnitTest {
             return;
         }
         PlayerStats hikaruStats = PlayerStats.fromJSON(jsonstr);
-        assertTrue(123 <= Objects.requireNonNull(hikaruStats.getPuzzleRush()).getBest().getScore());
+        assertTrue(123 <= Objects.requireNonNull(Objects.requireNonNull(hikaruStats.getPuzzleRush()).getBest()).getScore());
         assertTrue(hikaruStats.getFide() > 2700); // i hope he dont fall off
         /// https://www.timestamp-converter.com/ // "2014-01-06T21:20:58Z"
     }

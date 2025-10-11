@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".PlayerSearchFragment">
+    tools:context=".ui.playersearch.PlayerSearchFragment">
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/all_plr_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:queryHint="Search for a username"
         android:background="@drawable/search_bg"
-        android:iconifiedByDefault="false"/>
+        android:iconifiedByDefault="false"
+        android:queryHint="Search for a username" />
 
     <ProgressBar
         android:id="@+id/prog_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/avatar"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_below="@id/all_plr_search"
-        android:layout_marginTop="15dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/outline_book_24"/>
+        android:layout_marginTop="15dp"
+        android:src="@drawable/outline_book_24" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/fav_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/avatar"
         android:layout_above="@id/join_date"
-        android:layout_marginBottom="30dp"
         android:layout_marginStart="15dp"
+        android:layout_marginBottom="30dp"
+        android:layout_toLeftOf="@id/avatar"
         android:background="@drawable/add_fav_bg"
         app:backgroundTint="@null"
         app:icon="@drawable/ic_favorite"
-        app:iconSize="120px"/>
+        app:iconSize="60dp" />
 
     <TextView
         android:id="@+id/title"
@@ -49,115 +49,115 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/avatar"
         android:layout_centerHorizontal="true"
-        android:textSize="15sp"
+        android:background="@drawable/title_bg"
+        android:padding="10dp"
         android:text="@string/none"
         android:textColor="@color/white"
-        android:background="@drawable/title_bg"
-        android:padding="10dp"/>
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/account_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/unknown_acc"
-        android:layout_toEndOf="@id/avatar"
         android:layout_alignBottom="@id/avatar"
+        android:layout_toEndOf="@id/avatar"
+        android:gravity="center"
+        android:text="@string/unknown_acc"
         android:textStyle="bold"
-        android:drawableEnd="@drawable/ic_person"
-        android:gravity="center"/>
+        app:drawableEndCompat="@drawable/ic_person" />
 
     <TextView
         android:id="@+id/join_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="italic"
-        android:text="@string/join_date"
+        android:layout_below="@id/title"
         android:layout_marginStart="15dp"
+        android:text="@string/join_date"
         android:textSize="15sp"
-        android:layout_below="@id/title"/>
+        android:textStyle="italic" />
 
     <TextView
         android:id="@+id/last_onl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="italic"
+        android:layout_below="@id/title"
+        android:layout_toEndOf="@id/avatar"
         android:text="@string/lastOnline_date"
         android:textSize="15sp"
-        android:layout_toEndOf="@id/avatar"
-        android:layout_below="@id/title"/>
+        android:textStyle="italic" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/title"
-        android:layout_marginTop="70dp"
-        android:padding="12dp"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/bg_chess_stat">
+        android:layout_marginTop="70dp"
+        android:background="@drawable/bg_chess_stat"
+        android:padding="12dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3"
+            android:baselineAligned="false"
             android:gravity="center"
->
+            android:orientation="horizontal"
+            android:weightSum="3">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="12dp"
                 android:layout_margin="4dp"
-                android:background="@drawable/bg_column_shape">
+                android:layout_weight="1"
+                android:background="@drawable/bg_column_shape"
+                android:orientation="vertical"
+                android:padding="12dp">
 
                 <TextView
                     android:id="@+id/bullet_stats"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
                     android:text="@string/bullet_score"
-                    android:textStyle="bold"
-                    android:paddingBottom="8dp"/>
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="12dp"
+                android:layout_gravity="center"
                 android:layout_margin="4dp"
+                android:layout_weight="1"
                 android:background="@drawable/bg_column_shape"
-                android:layout_gravity="center">
+                android:orientation="vertical"
+                android:padding="12dp">
 
                 <TextView
                     android:id="@+id/blitz_stats"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
                     android:text="@string/blitz_score"
-                    android:textStyle="bold"
-                    android:paddingBottom="8dp"/>
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="12dp"
                 android:layout_margin="4dp"
-                android:background="@drawable/bg_column_shape">
+                android:layout_weight="1"
+                android:background="@drawable/bg_column_shape"
+                android:orientation="vertical"
+                android:padding="12dp">
 
                 <TextView
                     android:id="@+id/rapid_stats"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
                     android:text="@string/rapid_score"
-                    android:textStyle="bold"
-                    android:paddingBottom="8dp"/>
+                    android:textStyle="bold" />
 
             </LinearLayout>
 

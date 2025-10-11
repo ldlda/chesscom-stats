@@ -11,7 +11,7 @@
     <string name="refresh_too_soon">Tải lại quá sớm</string>
     <string name="home">Trang chủ</string>
     <string name="fav">Yêu thích</string>
-    <string name="hall_fame">Bảng danh vọng</string>
+    <string name="hall_of_fame">Bảng danh vọng</string>
     <string name="lesson">Bài học</string>
 
     <string name="add_fav">Thêm vào yêu thích</string>
@@ -61,11 +61,11 @@
     <string name="about">Về chúng tôi</string>
 
     <!-- Placeholder -->
-    <string name="hello_blank_fragment">Xin chào fragment trống</string>
+    <string name="player_stats">Thống kê</string>
     <string name="bullet_score">Điểm Bullet</string>
     <string name="clubMember">Thành viên</string>
     <string name="clubPublic">Mở</string>
-    <string name="loading">Đang tải...</string>
+    <string name="loading">Đang tải…</string>
     <string name="failed_to_fetch_leaderboard">Không thể lấy dữ liệu xếp hạng</string>
     <string name="failed_to_load_player_data">Không thể tải data người chơi</string>
 </resources>

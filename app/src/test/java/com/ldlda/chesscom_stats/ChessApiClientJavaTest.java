@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.ldlda.chesscom_stats.api.data.Player;
+import com.ldlda.chesscom_stats.api.data.player.Player;
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient;
 import com.ldlda.chesscom_stats.api.fetch.ChessApiException;
 
@@ -14,8 +14,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -37,6 +39,15 @@ public class ChessApiClientJavaTest {
     @After
     public void tearDown() throws Exception {
         server.shutdown();
+        client.close();
+    }
+
+    @Test
+    public void baseUrl() throws Exception {
+        var cuh = HttpUrl.parse(client.getBaseUrl());
+        assertNotNull(cuh);
+        var list = cuh.encodedPathSegments();
+        assertEquals(List.of(""), list);
     }
 
     @Test
@@ -59,11 +70,12 @@ public class ChessApiClientJavaTest {
         Player p = client.getPlayerSync("hikaru");
         assertNotNull(p);
         assertEquals(15448422L, p.getPlayerId());
+        assertEquals(1000000, p.getFollowers());
 
         RecordedRequest recorded = server.takeRequest(5, TimeUnit.SECONDS);
         assertNotNull(recorded);
         System.out.println("[TEST] Recorded path: " + recorded.getPath());
-        assertEquals("/pub/player/hikaru", recorded.getPath());
+        assertEquals("/player/hikaru", recorded.getPath());
     }
 
     @Test
@@ -76,13 +88,14 @@ public class ChessApiClientJavaTest {
             client.getPlayerSync("does-not-exist");
             fail("Expected ChessApiException.NotFound");
         } catch (ChessApiException e) {
+            System.out.println(e.getClass().getName());
             assertTrue(e instanceof ChessApiException.NotFound);
         }
 
         RecordedRequest recorded = server.takeRequest(5, TimeUnit.SECONDS);
         assertNotNull(recorded);
         System.out.println("[TEST] Recorded path: " + recorded.getPath());
-        assertEquals("/pub/player/does-not-exist", recorded.getPath());
+        assertEquals("/player/does-not-exist", recorded.getPath());
     }
 
     @Test
@@ -103,6 +116,6 @@ public class ChessApiClientJavaTest {
         RecordedRequest recorded = server.takeRequest(5, TimeUnit.SECONDS);
         assertNotNull(recorded);
         System.out.println("[TEST] Recorded path: " + recorded.getPath());
-        assertEquals("/pub/player/someone", recorded.getPath());
+        assertEquals("/player/someone", recorded.getPath());
     }
 }

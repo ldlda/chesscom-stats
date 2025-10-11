@@ -20,7 +20,7 @@
 
     <string name="home">Accueil</string>
     <string name="fav">Favoris</string>
-    <string name="hall_fame">Temple de la renommée</string>
+    <string name="hall_of_fame">Temple de la renommée</string>
     <string name="lesson">Leçons</string>
 
     <string name="add_fav">Ajouter aux favoris</string>
@@ -63,9 +63,9 @@
     <string name="audio_playback_attribution_label">Cette application lit de l\’audio</string>
 
     <!-- Placeholder -->
-    <string name="hello_blank_fragment">Bonjour fragment vide</string>
+    <string name="player_stats">Stats</string>
     <string name="bullet_score">Rapport de Bullet</string>
     <string name="clubMember">Membre du club</string>
     <string name="clubPublic">public</string>
-    <string name="loading">Chargement...</string>
+    <string name="loading">Chargement…</string>
 </resources>

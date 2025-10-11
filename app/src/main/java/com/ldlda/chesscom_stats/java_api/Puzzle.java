@@ -6,6 +6,7 @@ import retrofit2.http.GET;
 public interface Puzzle {
     @GET("puzzle")
     Call<PuzzleData> getDailyPuzzleData();
+
     @GET("puzzle/random")
     Call<PuzzleData> getRandomPuzzleData();
 }
