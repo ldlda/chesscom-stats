@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.api.data.playergames
+package com.ldlda.chesscom_stats.api.data.player.games
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

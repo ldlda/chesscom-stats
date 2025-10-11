@@ -1,10 +1,10 @@
 package com.ldlda.chesscom_stats.api.repository
 
 import androidx.annotation.WorkerThread
-import com.ldlda.chesscom_stats.api.data.CountryInfo
+import com.ldlda.chesscom_stats.api.data.country.CountryInfo
 import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
-import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
+import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import com.ldlda.chesscom_stats.api.fetch.ChessApiException
 import com.ldlda.chesscom_stats.util.Futures.eager
@@ -14,7 +14,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.runBlocking
-import java.net.URI
+import okhttp3.HttpUrl
 import java.util.concurrent.CompletableFuture
 import kotlin.coroutines.CoroutineContext
 
@@ -65,10 +65,10 @@ class ChessRepoAdapterJava @JvmOverloads constructor(
 
     @WorkerThread
     @Throws(ChessApiException::class)
-    fun getCountryByUrlBlocking(url: URI): CountryInfo =
+    fun getCountryByUrlBlocking(url: HttpUrl): CountryInfo =
         runBlockingLda { repo.getCountryByUrl(url) }
 
-    fun getCountryByUrlAsync(url: URI): CompletableFuture<CountryInfo> =
+    fun getCountryByUrlAsync(url: HttpUrl): CompletableFuture<CountryInfo> =
         runAsyncLda { repo.getCountryByUrl(url) }
 
     fun getUsernameSuggestionsAsync(prefix: String): CompletableFuture<List<SearchItem>> =

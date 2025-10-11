@@ -1,18 +1,18 @@
-@file:UseSerializers(InstantEpochSecondSerializer::class, URISerializer::class)
+@file:UseSerializers(InstantEpochSecondSerializer::class, HttpUrlSerializer::class)
 
 package com.ldlda.chesscom_stats.api.data.player
 
-import com.ldlda.chesscom_stats.api.data.CountryInfo
-import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
+import com.ldlda.chesscom_stats.api.data.country.CountryInfo
+import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
 import com.ldlda.chesscom_stats.util.ldaCheckThis
 import com.ldlda.chesscom_stats.util.serialize.InstantEpochSecondSerializer
-import com.ldlda.chesscom_stats.util.serialize.tostring.URISerializer
+import com.ldlda.chesscom_stats.util.serialize.tostring.HttpUrlSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
-import java.net.URI
+import okhttp3.HttpUrl
 import java.time.Instant
 
 /**
@@ -26,10 +26,10 @@ data class Player(
     val username: String,
 
     @SerialName("url")
-    val profilePage: URI,
+    val profilePage: HttpUrl,
 
     @SerialName("country")
-    val countryUrl: URI,
+    val countryUrl: HttpUrl,
 
     // not the country tho Fuhh
     val location: String? = null,
@@ -45,7 +45,7 @@ data class Player(
     val followers: Int,
 
     @SerialName("avatar")
-    val avatarUrl: URI? = null,
+    val avatarUrl: HttpUrl? = null,
 
     val title: Title? = null,
 

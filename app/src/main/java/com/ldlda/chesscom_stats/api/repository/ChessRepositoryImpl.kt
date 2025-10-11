@@ -1,12 +1,12 @@
 package com.ldlda.chesscom_stats.api.repository
 
-import com.ldlda.chesscom_stats.api.data.CountryInfo
+import com.ldlda.chesscom_stats.api.data.country.CountryInfo
 import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
-import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
+import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient
-import java.net.URI
+import okhttp3.HttpUrl
 
 /**
  * Basic implementation of [ChessRepository] that delegates all API calls to the provided [ChessApiClient].
@@ -21,7 +21,7 @@ open class ChessRepositoryImpl(val client: ChessApiClient) : ChessRepository {
 
     override suspend fun getLeaderboards(): Leaderboards = client.getLeaderboards()
 
-    override suspend fun getCountryByUrl(countryUrl: URI): CountryInfo =
+    override suspend fun getCountryByUrl(countryUrl: HttpUrl): CountryInfo =
         client.getCountryByUrl(countryUrl.toString())
 
     override suspend fun searchPlayers(prefix: String): List<SearchItem> =

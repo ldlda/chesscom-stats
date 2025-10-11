@@ -1,22 +1,23 @@
-@file:UseSerializers(InstantEpochSecondSerializer::class, URISerializer::class)
+@file:UseSerializers(HttpUrlSerializer::class, InstantEpochSecondSerializer::class)
 
-package com.ldlda.chesscom_stats.api.data.playergames
+package com.ldlda.chesscom_stats.api.data.player.games.monthly
 
+import com.ldlda.chesscom_stats.api.data.player.games.GameResult
 import com.ldlda.chesscom_stats.util.serialize.InstantEpochSecondSerializer
-import com.ldlda.chesscom_stats.util.serialize.tostring.URISerializer
+import com.ldlda.chesscom_stats.util.serialize.tostring.HttpUrlSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
-import java.net.URI
+import okhttp3.HttpUrl
 import java.time.Instant
 
+// specifically Game from MonthlyArchives. there are multiple shapes of ts? WHY?
 @Serializable
-
-data class Game(
+data class MonthlyGame(
     val white: Player,
     val black: Player,
     val accuracies: Accuracies,
-    val url: URI,
+    val url: HttpUrl,
 
     val fen: String,
     val pgn: String,
@@ -40,7 +41,7 @@ data class Game(
     data class Player(
         val username: String,
         @SerialName("@id")
-        val playerAPIEndpoint: URI,
+        val playerAPIEndpoint: HttpUrl,
         @SerialName("rating")
         val ratingThen: Int,
         val result: GameResult = GameResult.Lose
@@ -53,4 +54,3 @@ data class Game(
     )
 // double: kotlin.Double is the new float: kotlin.Float
 }
-

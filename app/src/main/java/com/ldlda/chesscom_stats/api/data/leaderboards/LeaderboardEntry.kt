@@ -1,17 +1,17 @@
-@file:UseSerializers(InstantEpochSecondSerializer::class, URISerializer::class)
+@file:UseSerializers(InstantEpochSecondSerializer::class, HttpUrlSerializer::class)
 
 package com.ldlda.chesscom_stats.api.data.leaderboards
 
 import com.ldlda.chesscom_stats.api.data.player.Title
-import com.ldlda.chesscom_stats.api.data.playerstats.Game
+import com.ldlda.chesscom_stats.api.data.player.stats.Record
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
 import com.ldlda.chesscom_stats.util.serialize.InstantEpochSecondSerializer
-import com.ldlda.chesscom_stats.util.serialize.tostring.URISerializer
+import com.ldlda.chesscom_stats.util.serialize.tostring.HttpUrlSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
-import java.net.URI
+import okhttp3.HttpUrl
 
 /**
  *
@@ -63,19 +63,19 @@ data class LeaderboardEntry(
     @SerialName("draw_count") val drawCount: Int? = null,
 
 
-    @SerialName("url") val profilePage: URI,
-    @SerialName("country") val countryUrl: URI? = null,
+    @SerialName("url") val profilePage: HttpUrl,
+    @SerialName("country") val countryUrl: HttpUrl? = null,
     val status: String? = null,
     val title: Title? = null,
     val name: String? = null,
-    @SerialName("avatar") val avatarUrl: URI? = null, // URI("https://www.chess.com/bundles/web/images/noavatar_l.84a92436.gif"),
+    @SerialName("avatar") val avatarUrl: HttpUrl? = null, // HttpUrl("https://www.chess.com/bundles/web/images/noavatar_l.84a92436.gif"),
 ) {
     val elo = score
     val gameRecord
         get() =
             (winCount ?: drawCount ?: lossCount)
                 ?.let {
-                    Game(
+                    Record(
                         win = winCount ?: 0,
                         draw = drawCount ?: 0,
                         loss = lossCount ?: 0,

@@ -1,14 +1,14 @@
 package com.ldlda.chesscom_stats.api.repository
 
 import androidx.annotation.VisibleForTesting
-import com.ldlda.chesscom_stats.api.data.CountryInfo
+import com.ldlda.chesscom_stats.api.data.country.CountryInfo
 import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
-import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
+import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient
 import com.ldlda.chesscom_stats.util.cache.TimedCache
 import com.ldlda.chesscom_stats.util.cache.TimedCacheProvider
-import java.net.URI
+import okhttp3.HttpUrl
 
 class ChessRepositoryTimedCache(
     client: ChessApiClient = ChessApiClient.defaultInstance,
@@ -47,7 +47,7 @@ class ChessRepositoryTimedCache(
     }
 
 
-    override suspend fun getCountryByUrl(countryUrl: URI): CountryInfo {
+    override suspend fun getCountryByUrl(countryUrl: HttpUrl): CountryInfo {
         val url = countryUrl.toString()
         countryCache.get(url)?.let { return it }
         val info = super.getCountryByUrl(countryUrl)

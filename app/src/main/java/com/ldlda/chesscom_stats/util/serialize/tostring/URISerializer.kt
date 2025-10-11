@@ -5,6 +5,13 @@ import java.net.URI
 import java.net.URISyntaxException
 
 /// uri is a safer url. it also doesn't do anything to verify the url (namely doing some dns resolves)
+@Deprecated(
+    "use HttpUrlSerializer instead",
+    ReplaceWith(
+        "HttpUrlSerializer",
+        "com.ldlda.chesscom_stats.util.serialize.tostring.HttpUrlSerializer"
+    )
+)
 object URISerializer : ToStringSerializer<URI>("URI") {
     override fun fromString(string: String): URI {
         return try {

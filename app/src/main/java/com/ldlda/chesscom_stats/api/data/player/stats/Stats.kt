@@ -1,6 +1,6 @@
 @file:UseSerializers(InstantEpochSecondSerializer::class, URISerializer::class)
 
-package com.ldlda.chesscom_stats.api.data.playerstats
+package com.ldlda.chesscom_stats.api.data.player.stats
 
 import com.ldlda.chesscom_stats.util.serialize.InstantEpochSecondSerializer
 import com.ldlda.chesscom_stats.util.serialize.tostring.URISerializer
@@ -10,7 +10,7 @@ import java.net.URI
 import java.time.Instant
 
 @Serializable
-data class Stats<T>(
+data class Stats<T : BaseRecord>(
     val last: LastRecord,
     val best: BestRecord? = null,
     val record: T,

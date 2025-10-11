@@ -1,15 +1,15 @@
-@file:UseSerializers(URISerializer::class)
+@file:UseSerializers(HttpUrlSerializer::class)
 
 package com.ldlda.chesscom_stats.api.data
 
 import com.ldlda.chesscom_stats.api.data.leaderboards.LeaderboardEntry
 import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.player.Title
-import com.ldlda.chesscom_stats.util.serialize.tostring.URISerializer
+import com.ldlda.chesscom_stats.util.serialize.tostring.HttpUrlSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
-import java.net.URI
+import okhttp3.HttpUrl
 
 
 /* demo
@@ -26,12 +26,12 @@ fun ChessSearchItem.toPlayerPreview() = PlayerPreview(
 data class PlayerPreview(
     @SerialName("player_id") val playerId: Long,
     val username: String,
-    @SerialName("url") val profilePage: URI? = null,
-    @SerialName("country") val countryUrl: URI? = null,
+    @SerialName("url") val profilePage: HttpUrl? = null,
+    @SerialName("country") val countryUrl: HttpUrl? = null,
     val status: String? = null,
     val title: Title? = null,
     val name: String? = null,
-    @SerialName("avatar") val avatarUrl: URI? = null,
+    @SerialName("avatar") val avatarUrl: HttpUrl? = null,
 ) {
     // Lightweight view with the fields leaderboards actually provides
     fun Player.toPlayerPreview() = PlayerPreview(

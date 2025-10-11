@@ -16,6 +16,7 @@ class ClubViewModel extends AndroidViewModel {
 
     private final MutableLiveData<List<String>> clubUrls = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<ClubData>> clubList = new MutableLiveData<>(new ArrayList<>());
+
     public ClubViewModel(@NonNull Application application) {
         super(application);
     }

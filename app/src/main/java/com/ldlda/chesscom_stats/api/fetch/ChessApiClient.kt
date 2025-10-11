@@ -1,11 +1,11 @@
 package com.ldlda.chesscom_stats.api.fetch
 
 import androidx.annotation.WorkerThread
-import com.ldlda.chesscom_stats.api.data.CountryInfo
+import com.ldlda.chesscom_stats.api.data.country.CountryInfo
 import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
-import com.ldlda.chesscom_stats.api.data.playergames.Game
-import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats
+import com.ldlda.chesscom_stats.api.data.player.games.monthly.MonthlyGame
+import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchRequest
 import kotlinx.coroutines.CoroutineScope
@@ -15,12 +15,12 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.create
-import java.net.URI
 import java.util.concurrent.CompletableFuture
 
 /*
@@ -111,10 +111,14 @@ class ChessApiClient : ChessApiBackend {
     suspend fun searchPlayers(request: SearchRequest): List<SearchItem> =
         execute { it.autocompleteUsername(request).suggestions }
 
-    override suspend fun getMonthlyArchivesList(username: String): List<URI> =
+    override suspend fun getMonthlyArchivesList(username: String): List<HttpUrl> =
         execute { it.monthlyArchivesList(username).archives }
 
-    override suspend fun getMonthlyArchives(username: String, year: Int, month: Int): List<Game> {
+    override suspend fun getMonthlyArchives(
+        username: String,
+        year: Int,
+        month: Int
+    ): List<MonthlyGame> {
         require(year > 0)
         require(month > 0 && month <= 12)
         return execute {

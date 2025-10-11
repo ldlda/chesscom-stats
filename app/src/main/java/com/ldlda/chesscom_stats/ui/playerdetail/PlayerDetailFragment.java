@@ -17,10 +17,11 @@ import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.databinding.FragmentPlayerDetailBinding;
 import com.squareup.picasso.Picasso;
 
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import okhttp3.HttpUrl;
 
 public class PlayerDetailFragment extends Fragment {
     public static final String ARG_USERNAME = "username";
@@ -58,7 +59,7 @@ public class PlayerDetailFragment extends Fragment {
             if (player == null) return;
             usernameView.setText(player.getUsername());
             // Avatar
-            URI avatarUri = player.getAvatarUrl();
+            HttpUrl avatarUri = player.getAvatarUrl();
             if (avatarUri != null) {
                 Picasso.get()
                         .load(avatarUri.toString())

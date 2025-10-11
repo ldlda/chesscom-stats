@@ -1,7 +1,7 @@
 package com.ldlda.chesscom_stats.api.data.search.autocomplete
 
-import com.ldlda.chesscom_stats.api.data.search.autocomplete.UserView.URISurrogate
-import com.ldlda.chesscom_stats.api.data.timeclass.Class
+import com.ldlda.chesscom_stats.api.data.search.autocomplete.UserView.AvatarSurrogate
+import com.ldlda.chesscom_stats.api.data.timeclass.Rule
 import com.ldlda.chesscom_stats.api.data.timeclass.Time
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -12,7 +12,7 @@ import kotlinx.serialization.encoding.Encoder
 @Serializable
 data class Rating(
     val variantTime: Time,
-    val variantClass: Class,
+    val variantClass: Rule,
     val rating: Int,
 ) {
     @Serializable
@@ -22,7 +22,7 @@ data class Rating(
     )
 
     class RatingSerializer : KSerializer<Rating> {
-        override val descriptor = URISurrogate.serializer().descriptor
+        override val descriptor = AvatarSurrogate.serializer().descriptor
         override fun deserialize(decoder: Decoder): Rating {
             val surrogate = decoder.decodeSerializableValue(RatingSurrogate.serializer())
             val regex = Regex("^FRIENDS_SEARCH_VARIANT_TIMECLASS_(\\w+)_(\\w+)$")
@@ -30,7 +30,7 @@ data class Rating(
                 ?: throw SerializationException("oh noes. it doesnt match! i got $surrogate")
             val (classStr, timeStr) = maybe.destructured
             val (classType, time) = runCatching {
-                Class.goodValueOf(classStr) to Time.goodValueOf(timeStr)
+                Rule.goodValueOf(classStr) to Time.goodValueOf(timeStr)
             }.getOrElse { exception ->
                 throw SerializationException(
                     "can not recognize type",

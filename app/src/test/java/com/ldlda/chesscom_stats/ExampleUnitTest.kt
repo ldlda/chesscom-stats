@@ -1,9 +1,9 @@
 package com.ldlda.chesscom_stats
 
-import com.ldlda.chesscom_stats.api.data.CountryInfo.Companion.extractCountryCodeFromUrl
-import com.ldlda.chesscom_stats.api.data.playergames.MonthlyArchives
-import com.ldlda.chesscom_stats.api.data.playergames.MonthlyArchives.Companion.mapMonthlyArchivesDetail
-import com.ldlda.chesscom_stats.api.data.playerstats.Game
+import com.ldlda.chesscom_stats.api.data.country.CountryInfo.Companion.extractCountryCodeFromUrl
+import com.ldlda.chesscom_stats.api.data.player.games.monthly.MonthlyArchives
+import com.ldlda.chesscom_stats.api.data.player.games.monthly.MonthlyArchives.Companion.mapMonthlyArchivesDetail
+import com.ldlda.chesscom_stats.api.data.player.stats.Record
 import com.ldlda.chesscom_stats.testutil.Damn
 import com.ldlda.chesscom_stats.testutil.dispatch
 import com.ldlda.chesscom_stats.testutil.goodThing
@@ -85,7 +85,7 @@ class ExampleUnitTest {
 
     @Test
     fun lowk_ass() {
-        val low = jsonIUK.decodeFromString<Game>(
+        val low = jsonIUK.decodeFromString<Record>(
             """
          {
           "win": 3062,
@@ -117,7 +117,7 @@ class ExampleUnitTest {
         assertEquals(3.1, threePointOne, toosmall)
         assertEquals(3.1, also3p1, toosmall)
         assertEquals(2.8, twopointeight, toosmall)
-        val o = jsonIUK.decodeFromString<Game>(
+        val o = jsonIUK.decodeFromString<Record>(
             """
          {
           "win": 3062,
@@ -128,7 +128,7 @@ class ExampleUnitTest {
           }   
         """.trimIndent()
         )
-        val lowk: Int = o.ldaRun<Game, Int, Int> { it().getOrThrow() } on {
+        val lowk: Int = o.ldaRun<Record, Int, Int> { it().getOrThrow() } on {
             this.loss
         }
         val lowk2: Int = o.ldaCheck({ it().getOrThrow() }) {

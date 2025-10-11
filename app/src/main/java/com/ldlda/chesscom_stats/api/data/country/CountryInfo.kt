@@ -1,4 +1,4 @@
-package com.ldlda.chesscom_stats.api.data
+package com.ldlda.chesscom_stats.api.data.country
 
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient
 import com.ldlda.chesscom_stats.util.checkFn
@@ -32,7 +32,7 @@ data class CountryInfo(
         @JvmStatic
         @Throws(IllegalArgumentException::class)
         fun extractCountryCodeFromUrl(
-            base: String = ChessApiClient.CHESS_API_URL,
+            base: String = ChessApiClient.Companion.CHESS_API_URL,
             countryUrl: String,
             check: Boolean = false
         ): String {
@@ -49,12 +49,11 @@ data class CountryInfo(
             }
             checkFn {
                 (base.host == countryUrl.host
-                        && base.port == countryUrl.port) requiredOr malformedUrl
-
-                (cs.size >= bs.size + 2) requiredOr malformedUrl
+                        && base.port == countryUrl.port
+                        && cs.subList(0, bs.size) == bs) requiredOr invalidUrlBase
+                (cs.size >= bs.size + 2 &&
+                        cs.getOrNull(bs.size) == "country") requiredOr malformedUrl
                 // country and code (and maybe players)
-                (cs.subList(0, bs.size) == bs) requiredOr invalidUrlBase
-                (cs.getOrNull(bs.size) == "country") requiredOr malformedUrl
             }
             val ret = cs.getOrNull(bs.size + 1)
             checkFn {

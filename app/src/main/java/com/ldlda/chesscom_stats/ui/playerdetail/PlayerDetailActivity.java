@@ -11,9 +11,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ldlda.chesscom_stats.R;
-import com.ldlda.chesscom_stats.api.data.CountryInfo;
+import com.ldlda.chesscom_stats.api.data.country.CountryInfo;
 import com.ldlda.chesscom_stats.api.data.player.Title;
-import com.ldlda.chesscom_stats.api.data.playerstats.PlayerStats;
+import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats;
 import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;
 import com.ldlda.chesscom_stats.databinding.ActivityPlayerDetailBinding;
 import com.squareup.picasso.Picasso;
@@ -23,7 +23,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -31,6 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
+
+import okhttp3.HttpUrl;
 
 public class PlayerDetailActivity extends AppCompatActivity {
     private final String TAG = "PlayerDetailActivity";
@@ -143,7 +144,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
                     if (isFinishing() || isDestroyed()) return;
                     runOnUiThread(() -> {
                         // Avatar (null/placeholder-safe)
-                        URI avatarUri = player.getAvatarUrl();
+                        HttpUrl avatarUri = player.getAvatarUrl();
                         if (avatarUri != null) {
                             Picasso.get()
                                     .load(avatarUri.toString())
