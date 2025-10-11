@@ -30,6 +30,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 public class ClubFragment extends Fragment {
+    public static final String TAG = "ClubFragment";
     private static final int BATCH_SIZE = 10;
     private final Club clubApi = ApiClient.getClient().create(Club.class);
     private final Country api = ApiClient.getClient().create(Country.class);
@@ -37,7 +38,7 @@ public class ClubFragment extends Fragment {
     private final List<String> clubUrls = new ArrayList<>();
     private ProgressBar searchProg;
     private RecyclerView recyclerView;
-    private ClubAdapter clubAdapter;
+    private ClubItemAdapter clubItemAdapter;
     private boolean isLoading = false;
 
     @Override
@@ -48,11 +49,25 @@ public class ClubFragment extends Fragment {
         searchProg = view.findViewById(R.id.prog_bar);
         recyclerView = view.findViewById(R.id.club_list);
 
-        clubAdapter = new ClubAdapter();
+        clubItemAdapter = new ClubItemAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        recyclerView.setAdapter(clubAdapter);
+        recyclerView.setAdapter(clubItemAdapter);
 
-        initScrollListener();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView1, int dx, int dy) {
+                super.onScrolled(recyclerView1, dx, dy);
+
+                LinearLayoutManager manager = (LinearLayoutManager) recyclerView1.getLayoutManager();
+                if (!isLoading && manager != null &&
+                        manager.findLastVisibleItemPosition() == clubList.size() - 1) {
+                    if (clubList.size() < BATCH_SIZE) return;
+                    Toast.makeText(requireContext(), "Loading more items", Toast.LENGTH_SHORT).show();
+                    isLoading = true;
+                    loadMore();
+                }
+            }
+        });
 
         CountrySpinnerAdapter adapter = new CountrySpinnerAdapter(requireContext());
         spinner.setAdapter(adapter);
@@ -73,25 +88,8 @@ public class ClubFragment extends Fragment {
         return view;
     }
 
-    private void initScrollListener() {
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (!isLoading && manager != null &&
-                        manager.findLastVisibleItemPosition() == clubList.size() - 1) {
-                    if (clubList.size() < BATCH_SIZE) return;
-                    Toast.makeText(requireContext(), "Loading more items", Toast.LENGTH_SHORT).show();
-                    loadMore();
-                    isLoading = true;
-                }
-            }
-        });
-    }
-
     private void loadCountryClubs(String isoCode) {
+        Log.d(TAG, "loadCountryClubs: " + isoCode);
         searchProg.setVisibility(View.VISIBLE);
         api.getClubsFromCountry(isoCode).enqueue(new retrofit2.Callback<>() {
             @Override
@@ -100,16 +98,18 @@ public class ClubFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     CountryClubs clubs = response.body();
                     if (clubs.clubUrlIDs == null || clubs.clubUrlIDs.isEmpty()) {
-                        Log.e("CountryClub", "This country has ZERO clubs lmao");
+                        Log.d(TAG, "This country has ZERO clubs lmao");
                         return;
                     }
 
                     clubUrls.clear();
                     clubList.clear();
-                    clubAdapter.setClubs(clubList);
+                    Log.d(TAG, "onResponse: cleared");
+                    clubItemAdapter.submitList(new ArrayList<>(clubList));
+                    assert clubItemAdapter.getCurrentList().isEmpty();
 
                     clubUrls.addAll(clubs.clubUrlIDs);
-
+                    Log.d(TAG, "onResponse: loaded country code");
                     loadBatch(0, Math.min(BATCH_SIZE, clubUrls.size()));
                 }
             }
@@ -117,15 +117,15 @@ public class ClubFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<CountryClubs> call, @NonNull Throwable t) {
                 searchProg.setVisibility(View.GONE);
-                Log.e("CountryClub", "Error: " + t.getMessage());
+                Log.e(TAG, "Error: " + t.getMessage());
             }
         });
     }
 
     private void loadBatch(int start, int end) {
-        for (int i = start; i < end; i++) {
-            String url = clubUrls.get(i);
-            if (url == null) continue;
+        if (start >= clubUrls.size()) throw new IllegalArgumentException("never happening");
+        clubUrls.subList(start, Math.min(end, clubUrls.size())).parallelStream().forEach(url -> {
+            if (url == null) return;
             String urlID = url.substring(url.lastIndexOf("/") + 1);
 
             clubApi.getClubProfile(urlID).enqueue(new retrofit2.Callback<>() {
@@ -133,26 +133,23 @@ public class ClubFragment extends Fragment {
                 public void onResponse(@NonNull Call<ClubData> call, @NonNull Response<ClubData> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         clubList.add(response.body());
-                        clubAdapter.setClubs(new ArrayList<>(clubList));
+                        clubItemAdapter.submitList(new ArrayList<>(clubList)); // ass https://stackoverflow.com/questions/49726385/listadapter-not-updating-item-in-recyclerview
+                        Log.d(TAG, "onResponse: submitted " + urlID); //, its " + clubItemAdapter.getCurrentList());
+                        // lowk setclubs extreme
                     }
                 }
 
                 @Override
                 public void onFailure(@NonNull Call<ClubData> call, @NonNull Throwable t) {
-                    Log.e("Club", "Failed to fetch club: " + t.getMessage());
+                    Log.e(TAG, "Failed to fetch club: " + t.getMessage());
                 }
             });
-        }
+        });
         isLoading = false;
+        // bro really thought this runs after those
     }
 
     private void loadMore() {
-        /*
-        This part was supposed to make a loading item, but it lowk messed with the OutOfBoundException, I'm ignoring it for now
-        //clubList.add(null);
-        //clubAdapter.notifyItemInserted(clubList.size() - 1);
-         */
-
         // A debounce to keep things sync lmao
         // preventing multiple overlapping callbacks when isLoading == false
         new Handler().postDelayed(() -> {
@@ -160,7 +157,7 @@ public class ClubFragment extends Fragment {
             int end = Math.min(start + BATCH_SIZE, clubUrls.size());
 
             loadBatch(start, end);
-        }, 1500);
+        }, 500);
 
     }
 

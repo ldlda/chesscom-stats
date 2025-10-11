@@ -6,25 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".ui.clubs.ClubFragment">
 
-
-    <Spinner
-        android:id="@+id/select_country"
-        android:layout_width="100dp"
-        android:layout_height="32dp"
-        android:background="@drawable/bg_spinner"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/club_list"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="15dp"
-        android:fitsSystemWindows="true"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/select_country" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Spinner
+            android:id="@+id/select_country"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_spinner" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/club_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true" />
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/prog_bar"

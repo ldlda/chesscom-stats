@@ -13,52 +13,61 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.ldlda.chesscom_stats.R;
+import com.ldlda.chesscom_stats.databinding.ItemClubBinding;
+import com.ldlda.chesscom_stats.databinding.ItemClubLoadingBinding;
 import com.ldlda.chesscom_stats.java_api.ClubData;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ClubItemAdapter extends ListAdapter<ClubData, RecyclerView.ViewHolder> {
+    private static final DiffUtil.ItemCallback<ClubData> DIFF =
+            new DiffUtil.ItemCallback<>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull ClubData a, @NonNull ClubData b) {
+                    return a.clubId == b.clubId;
+                }
 
-public class ClubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+                @Override
+                public boolean areContentsTheSame(@NonNull ClubData a, @NonNull ClubData b) {
+                    return a.membersCount == b.membersCount || a.lastActivity == b.lastActivity;
+                }
+            };
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
-    private final List<ClubData> clubs = new ArrayList<>();
 
-    public void setClubs(List<ClubData> clubList) {
-        clubs.clear();
-        clubs.addAll(clubList);
-        notifyDataSetChanged();
-    }
-
-    public void addClub(ClubData club) {
-        clubs.add(club);
-        notifyItemInserted(clubs.size() - 1);
+    public ClubItemAdapter() {
+        super(DIFF);
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
+        var LI = LayoutInflater.from(parent.getContext());
         if (viewType == VIEW_TYPE_ITEM) {
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_club, parent, false);
+            view = ItemClubBinding
+                    .inflate(LI, parent, false)
+                    .getRoot();
             return new ClubViewHolder(view);
         } else {
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_club_loading, parent, false);
+            view = ItemClubLoadingBinding
+                    .inflate(LI, parent, false)
+                    .getRoot();
             return new ClubLoadViewHolder(view);
         }
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Context context = holder.itemView.getContext();
         if (holder instanceof ClubViewHolder vh) {
-            ClubData club = clubs.get(position);
+            ClubData club = getItem(position);
             if (club != null) {
 
                 vh.clubName.setText(club.name);
@@ -70,20 +79,16 @@ public class ClubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 vh.clubMembersCount.setText(memberCountTxt);
 
-                // Hacky  lol
-                String clubVisTxt = club.visibility.equals("public") ?
-                        context.getResources().getString(R.string.clubPublic) :
-                        context.getResources().getString(R.string.clubPrivate);
+                boolean isPublic = club.visibility.equals("public");
 
+                vh.clubVisibility.setText(isPublic
+                        ? context.getResources().getString(R.string.clubPublic)
+                        : context.getResources().getString(R.string.clubPrivate));
 
-                vh.clubVisibility.setText(clubVisTxt);
+                vh.clubVisibility.setTextColor(isPublic
+                        ? context.getResources().getColor(R.color.green)
+                        : context.getResources().getColor(R.color.red));
 
-                // Could have done better but I'm too lazy
-                if (clubVisTxt.equals("Public")) {
-                    vh.clubVisibility.setTextColor(context.getResources().getColor(R.color.green));
-                } else {
-                    vh.clubVisibility.setTextColor(context.getResources().getColor(R.color.red));
-                }
 
                 vh.clubURI.setOnClickListener(v -> {
                     try {
@@ -95,7 +100,7 @@ public class ClubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     }
                 });
 
-
+                // we using everything atp
                 Glide.with(context)
                         .load(club.icon)
                         .placeholder(R.drawable.baseline_home_24)
@@ -110,14 +115,8 @@ public class ClubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public int getItemCount() {
-        return clubs.size();
-    }
-
-
-    @Override
     public int getItemViewType(int position) {
-        return clubs.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
+        return getItem(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
     static class ClubViewHolder extends RecyclerView.ViewHolder {
@@ -137,6 +136,7 @@ public class ClubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    // wdym loading element as an item
     static class ClubLoadViewHolder extends RecyclerView.ViewHolder {
         ProgressBar progressBar;
 

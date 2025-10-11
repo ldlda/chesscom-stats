@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.api.data.leaderboards.LeaderboardEntry;
+import com.ldlda.chesscom_stats.databinding.ItemPlayerBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
@@ -42,7 +43,7 @@ public class LeaderboardsAdapter extends ListAdapter<LeaderboardEntry, Leaderboa
     @NonNull
     @Override
     public PlayerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_player, parent, false);
+        View v = ItemPlayerBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false).getRoot();
         return new PlayerViewHolder(v);
     }
 

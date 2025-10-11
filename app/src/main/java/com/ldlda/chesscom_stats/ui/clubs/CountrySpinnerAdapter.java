@@ -1,42 +1,40 @@
 package com.ldlda.chesscom_stats.ui.clubs;
 
+import static com.ldlda.chesscom_stats.util.Countries.COUNTRY_CODE;
+
 import android.content.Context;
+import android.util.Pair;
 import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 
-import com.ldlda.chesscom_stats.util.Countries;
-
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class CountrySpinnerAdapter extends ArrayAdapter<String> {
 
-    private final List<String> countryList;
+    private static final List<Pair<String, String>> countryMap = low();
 
     public CountrySpinnerAdapter(@NonNull Context context) {
         super(context, android.R.layout.simple_spinner_item, getCountryList());
         setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        this.countryList = getCountryList();
+    }
+
+    private static List<Pair<String, String>> low() {
+        return COUNTRY_CODE.entrySet().stream().map(e -> Pair.create(e.getKey(), e.getValue())).sorted(Comparator.comparing(o -> o.second)).toList();
     }
 
     private static List<String> getCountryList() {
-        List<String> list = new ArrayList<>();
-        list.add("Country");
-        list.addAll(Countries.COUNTRY_CODE.values());
-        Collections.sort(list.subList(1, list.size()));
-        return list;
+        return Stream.concat(
+                Stream.of("Country"),
+                countryMap.stream().map(s -> s.second)
+        ).toList();
     }
 
     public String getCountryCode(int position) {
         // Find ISO code by value
-        String selectedCountry = countryList.get(position);
-        for (var entry : Countries.COUNTRY_CODE.entrySet()) {
-            if (entry.getValue().equals(selectedCountry)) {
-                return entry.getKey();
-            }
-        }
-        return null;
+        if (position == 0) return null;
+        return countryMap.get(position - 1).first;
     }
 }
