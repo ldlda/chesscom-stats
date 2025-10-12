@@ -1,24 +1,27 @@
 package com.ldlda.chesscom_stats.api.fetch
 
+import com.ldlda.chesscom_stats.api.data.club.Club
+import com.ldlda.chesscom_stats.api.data.country.CountryClubs
 import com.ldlda.chesscom_stats.api.data.country.CountryInfo
+import com.ldlda.chesscom_stats.api.data.country.CountryPlayers
 import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
+import com.ldlda.chesscom_stats.api.data.player.clubs.PlayerClubs
 import com.ldlda.chesscom_stats.api.data.player.games.monthly.MonthlyArchives
 import com.ldlda.chesscom_stats.api.data.player.games.monthly.MonthlyGameList
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
-import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchRequest
-import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchResult
-import com.ldlda.chesscom_stats.java_api.ClubData
 import com.ldlda.chesscom_stats.java_api.PuzzleData
-import retrofit2.http.Body
+import okhttp3.HttpUrl
 import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Url
-import com.ldlda.chesscom_stats.api.data.country.Clubs as CountryClubs
-import com.ldlda.chesscom_stats.api.data.country.Players as CountryPlayers
 
+
+/**
+ * this uses the minimally processed data in and produces the minimally processed data out
+ *
+ * (for example [monthlyArchives] no one cant tell you you cant supply a random ahh string)
+ */
 interface ChessApiService {
     @GET("player/{username}")
     suspend fun player(@Path("username") username: String): Player
@@ -26,21 +29,28 @@ interface ChessApiService {
     @GET("player/{username}/stats")
     suspend fun playerStats(@Path("username") username: String): PlayerStats
 
+    @GET("player/{username}/clubs")
+    suspend fun playerClubs(@Path("username") username: String): PlayerClubs
+
     @GET("leaderboards")
     suspend fun leaderboards(): Leaderboards
+
+
+    //region Cuntry
 
     @GET("country/{code}")
     suspend fun country(@Path("code") countryCode: String): CountryInfo
 
     @GET
-    suspend fun countryByUrl(@Url url: String): CountryInfo
+    suspend fun country(@Url url: HttpUrl): CountryInfo
 
     @GET("country/{code}/players")
     suspend fun countryPlayers(@Path("code") countryCode: String): CountryPlayers
 
     @GET("country/{code}/clubs")
-    suspend fun ountryClubs(@Path("code") countryCode: String): CountryClubs
+    suspend fun countryClubs(@Path("code") countryCode: String): CountryClubs
 
+    //endregion
 
     @GET("player/{username}/games/archives")
     suspend fun monthlyArchivesList(@Path("username") username: String): MonthlyArchives
@@ -53,10 +63,14 @@ interface ChessApiService {
     ): MonthlyGameList
 
     @GET
-    suspend fun monthlyArchivesByUrl(@Url url: String): MonthlyGameList
+    suspend fun monthlyArchives(@Url url: HttpUrl): MonthlyGameList
+
+    @GET
+    suspend fun club(@Url url: HttpUrl): Club
+
 
     @GET("club/{nameId}")
-    suspend fun club(@Path("nameId") nameId: String): ClubData
+    suspend fun club(@Path("nameId") nameId: String): Club
 
     @GET("puzzle")
     suspend fun dailyPuzzle(): PuzzleData
@@ -66,12 +80,4 @@ interface ChessApiService {
 
     // not supporting live/base/increment because if you query hikaru it will 503
     // there are more that hits 503
-    // may pluck this into a separate interface
-    // This (or something of the sort) must be present or else the endpoint wont work
-    @Headers("Content-Type: application/json")
-    /**
-     * this is not an official endpoint. it can break at any point.
-     */
-    @POST("https://www.chess.com/service/friends-search/idl/chesscom.friends_search.v1.FriendsSearchService/Autocomplete")
-    suspend fun autocompleteUsername(@Body searchRequest: SearchRequest): SearchResult
 }

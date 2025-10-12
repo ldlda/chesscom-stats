@@ -33,7 +33,7 @@ public class ClubFragment extends Fragment {
     public static final String TAG = "ClubFragment";
     private static final int BATCH_SIZE = 10;
     private final Club clubApi = ApiClient.getClient().create(Club.class);
-    private final Country api = ApiClient.getClient().create(Country.class);
+    private final Country countryApi = ApiClient.getClient().create(Country.class);
     private final List<ClubData> clubList = new ArrayList<>();
     private final List<String> clubUrls = new ArrayList<>();
     private ProgressBar searchProg;
@@ -91,7 +91,7 @@ public class ClubFragment extends Fragment {
     private void loadCountryClubs(String isoCode) {
         Log.d(TAG, "loadCountryClubs: " + isoCode);
         searchProg.setVisibility(View.VISIBLE);
-        api.getClubsFromCountry(isoCode).enqueue(new retrofit2.Callback<>() {
+        countryApi.getClubsFromCountry(isoCode).enqueue(new retrofit2.Callback<>() {
             @Override
             public void onResponse(@NonNull Call<CountryClubs> call, @NonNull Response<CountryClubs> response) {
                 searchProg.setVisibility(View.GONE);

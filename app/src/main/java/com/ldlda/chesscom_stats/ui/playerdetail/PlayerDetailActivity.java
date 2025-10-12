@@ -1,5 +1,7 @@
 package com.ldlda.chesscom_stats.ui.playerdetail;
 
+import static androidx.lifecycle.LifecycleKt.getCoroutineScope;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -15,6 +17,7 @@ import com.ldlda.chesscom_stats.api.data.country.CountryInfo;
 import com.ldlda.chesscom_stats.api.data.player.Title;
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats;
 import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;
+import com.ldlda.chesscom_stats.api.repository.ChessRepositoryTimedCache;
 import com.ldlda.chesscom_stats.databinding.ActivityPlayerDetailBinding;
 import com.squareup.picasso.Picasso;
 
@@ -36,8 +39,8 @@ import okhttp3.HttpUrl;
 public class PlayerDetailActivity extends AppCompatActivity {
     private final String TAG = "PlayerDetailActivity";
     boolean isFavorited = false;
-    private ChessRepoAdapterJava repo;
-    private CompletableFuture<Void> inFlight;
+    private ChessRepoAdapterJava<ChessRepositoryTimedCache> repo;
+    private CompletableFuture inFlight;
     private ActivityPlayerDetailBinding binding;
     private String username;
     private ImageView avatar;
@@ -137,7 +140,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
     }
 
     private void fetchPlayerData() {
-        repo = new ChessRepoAdapterJava();
+        repo = ChessRepoAdapterJava.getAdapterJava(new ChessRepositoryTimedCache(),
+                getCoroutineScope(getLifecycle()));
         inFlight = repo.getCompletePlayerAsync(username)
                 .thenAccept(player -> {
 //                    Log.d(TAG, "onCreate: Constructed Player: " + player.toJSON());

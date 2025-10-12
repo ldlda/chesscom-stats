@@ -4,4 +4,4 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Clubs(@SerialName("clubs") val clubsURL: List<PlayerClub> = emptyList())
+data class PlayerClubs(@SerialName("clubs") val playerClubs: List<PlayerClub> = emptyList())

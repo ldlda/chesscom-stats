@@ -9,4 +9,4 @@ import kotlinx.serialization.UseSerializers
 import okhttp3.HttpUrl
 
 @Serializable
-data class Clubs(@SerialName("clubs") val clubURLs: List<HttpUrl> = emptyList())
+data class CountryClubs(@SerialName("clubs") val clubURLs: List<HttpUrl> = emptyList())

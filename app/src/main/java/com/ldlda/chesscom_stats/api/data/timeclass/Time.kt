@@ -21,5 +21,7 @@ enum class Time {
     companion object {
         fun goodValueOf(value: String) =
             Time.valueOf(value.lowercase().replaceFirstChar { it.titlecase() })
+
+
     }
 }

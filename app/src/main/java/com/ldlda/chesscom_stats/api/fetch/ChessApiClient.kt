@@ -1,6 +1,7 @@
 package com.ldlda.chesscom_stats.api.fetch
 
 import androidx.annotation.WorkerThread
+import com.ldlda.chesscom_stats.api.data.club.Club
 import com.ldlda.chesscom_stats.api.data.country.CountryInfo
 import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
@@ -8,6 +9,8 @@ import com.ldlda.chesscom_stats.api.data.player.games.monthly.MonthlyGame
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchRequest
+import com.ldlda.chesscom_stats.api.repository.ChessRepository
+import com.ldlda.chesscom_stats.api.repository.JavaChessRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -26,8 +29,17 @@ import java.util.concurrent.CompletableFuture
 /*
     what is this bullshit
  */
-class ChessApiClient : ChessApiBackend {
+@Deprecated("Use ChessRepositoryImpl or its subclasses")
+class ChessApiClient : ChessRepository, JavaChessRepository {
     companion object {
+        @Throws(ChessApiException::class)
+        suspend fun <T, U> U.callApi(get: suspend (U) -> T): T {
+            try {
+                return get(this)
+            } catch (e: Exception) {
+                throw ChessApiException.build(e)
+            }
+        }
         const val CHESS_API_URL = "https://api.chess.com/pub/"
         val defaultOkHttp by lazy {
             OkHttpClient.Builder()
@@ -55,18 +67,20 @@ class ChessApiClient : ChessApiBackend {
             defaultOkHttp.buildRetrofit(CHESS_API_URL)
         }
 
-        private fun Retrofit.buildService(): ChessApiService =
-            this.create()
 
-        val defaultService: ChessApiService by lazy {
-            defaultRetrofit.buildService()
+        val defaultPublicService: ChessApiService by lazy {
+            defaultRetrofit.create()
         }
         val defaultInstance = ChessApiClient()
     }
 
     val baseUrl: String
-    val retrofit: Retrofit
-    val service: ChessApiService by lazy { retrofit.buildService() }
+    val publicRetrofit: Retrofit
+    val privateRetrofit: Retrofit
+
+    val publicService: ChessApiService by lazy { publicRetrofit.create() }
+
+    val privateService: PrivateApiService by lazy { publicRetrofit.create() }
 
     @JvmOverloads
     constructor(
@@ -74,46 +88,62 @@ class ChessApiClient : ChessApiBackend {
         okHttp: OkHttpClient = defaultOkHttp,
     ) {
         this.baseUrl = baseUrl
-        retrofit = okHttp.buildRetrofit(baseUrl)
+        publicRetrofit = okHttp.buildRetrofit(baseUrl)
+        privateRetrofit = publicRetrofit
     }
 
     constructor(
         retrofit: Retrofit = defaultRetrofit
     ) {
-        this.retrofit = retrofit
+        this.publicRetrofit = retrofit
         baseUrl = retrofit.baseUrl().toString()
+        privateRetrofit = publicRetrofit
     }
 
-    @Throws(ChessApiException::class)
-    suspend fun <T> execute(get: suspend (ChessApiService) -> T): T {
-        try {
-            return get(service)
-        } catch (e: Exception) {
-            throw ChessApiException.build(e)
-        }
+    constructor(
+        publicRetrofit: Retrofit,
+        privateRetrofit: Retrofit
+    ) {
+        this.publicRetrofit = publicRetrofit
+        this.privateRetrofit = privateRetrofit
+        baseUrl = publicRetrofit.baseUrl().toString()
     }
+
+
 
     // kotlin interface
+    @Deprecated("use ChessRepositoryImpl")
+    override suspend fun getLeaderboards(): Leaderboards =
+        publicService.callApi { it.leaderboards() }
 
-    override suspend fun getLeaderboards(): Leaderboards = execute { it.leaderboards() }
-    override suspend fun getPlayer(username: String): Player = execute { it.player(username) }
+    @Deprecated("use ChessRepositoryImpl")
+    override suspend fun getPlayer(username: String): Player =
+        publicService.callApi { it.player(username) }
+
+    @Deprecated("use ChessRepositoryImpl")
     override suspend fun getPlayerStats(username: String): PlayerStats =
-        execute { it.playerStats(username) }
+        publicService.callApi { it.playerStats(username) }
 
-    override suspend fun getCountry(code: String): CountryInfo = execute { it.country(code) }
+    @Deprecated("use ChessRepositoryImpl")
+    override suspend fun getCountry(code: String): CountryInfo =
+        publicService.callApi { it.country(code) }
 
-    override suspend fun getCountryByUrl(url: String): CountryInfo =
-        execute { it.countryByUrl(url) }
+    @Deprecated("use ChessRepositoryImpl")
+    override suspend fun getCountry(countryUrl: HttpUrl): CountryInfo =
+        publicService.callApi { it.country(countryUrl) }
 
+    @Deprecated("use ChessRepositoryImpl")
     override suspend fun searchPlayers(prefix: String): List<SearchItem> =
-        execute { it.autocompleteUsername(SearchRequest(prefix)).suggestions }
+        privateService.callApi { it.autocompleteUsername(SearchRequest(prefix)).suggestions }
 
-    suspend fun searchPlayers(request: SearchRequest): List<SearchItem> =
-        execute { it.autocompleteUsername(request).suggestions }
+    override suspend fun searchPlayers(request: SearchRequest): List<SearchItem> =
+        privateService.callApi { it.autocompleteUsername(request).suggestions }
 
+    @Deprecated("use ChessRepositoryImpl")
     override suspend fun getMonthlyArchivesList(username: String): List<HttpUrl> =
-        execute { it.monthlyArchivesList(username).archives }
+        publicService.callApi { it.monthlyArchivesList(username).archives }
 
+    @Deprecated("use ChessRepositoryImpl")
     override suspend fun getMonthlyArchives(
         username: String,
         year: Int,
@@ -121,7 +151,7 @@ class ChessApiClient : ChessApiBackend {
     ): List<MonthlyGame> {
         require(year > 0)
         require(month > 0 && month <= 12)
-        return execute {
+        return publicService.callApi {
             it.monthlyArchives(
                 username,
                 "%04d".format(year),
@@ -130,19 +160,35 @@ class ChessApiClient : ChessApiBackend {
         }
     }
 
-    override suspend fun getMonthlyArchivesByUrl(url: String) =
-        execute { it.monthlyArchivesByUrl(url).games }
+    @Deprecated("use ChessRepositoryImpl")
+    override suspend fun getMonthlyArchives(url: HttpUrl) =
+        publicService.callApi { it.monthlyArchives(url).games }
+
+    override suspend fun getCountryClubs(code: String): List<HttpUrl> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getClub(url: HttpUrl): Club {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getClub(nameId: String): Club {
+        TODO("Not yet implemented")
+    }
 
     // deprecated
-
+    @Deprecated("use ChessRepository instead")
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    @Deprecated("use ChessRepository instead")
     fun close() = scope.cancel()
 
+    @Deprecated("use ChessRepository instead")
     // ok
     private fun <T> getAsync(get: suspend CoroutineScope.() -> T): CompletableFuture<T> =
         scope.future(block = get)
 
-
+    @Deprecated("use ChessRepository instead")
     @WorkerThread
     private fun <T> getSync(get: suspend CoroutineScope.() -> T): T =
         runBlocking(scope.coroutineContext, get)
@@ -167,7 +213,7 @@ class ChessApiClient : ChessApiBackend {
     @Deprecated("use ChessRepository instead")
     @WorkerThread
     @Throws(ChessApiException::class)
-    fun getCountryByUrlSync(url: String): CountryInfo = getSync { getCountryByUrl(url) }
+    fun getCountryByUrlSync(url: HttpUrl): CountryInfo = getSync { getCountry(url) }
 
     @Deprecated("use ChessRepository instead. Direct country fetching by code is discouraged.")
     @WorkerThread
@@ -178,22 +224,35 @@ class ChessApiClient : ChessApiBackend {
     // Java-friendly async wrappers (recommended for UI)
 
     @Deprecated("use ChessRepository instead")
-    fun getPlayerAsync(username: String): CompletableFuture<Player> =
+    override fun getPlayerAsync(username: String): CompletableFuture<Player> =
         getAsync { getPlayer(username) }
 
     @Deprecated("use ChessRepository instead")
-    fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
+    override fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
         getAsync { getPlayerStats(username) }
 
     @Deprecated("use ChessRepository instead")
-    fun getLeaderboardsAsync(): CompletableFuture<Leaderboards> = getAsync { getLeaderboards() }
+    override fun getLeaderboardsAsync(): CompletableFuture<Leaderboards> =
+        getAsync { getLeaderboards() }
 
     @Deprecated("use ChessRepository instead")
-    fun getCountryByUrlAsync(url: String): CompletableFuture<CountryInfo> =
-        getAsync { getCountryByUrl(url) }
+    override fun getCountryByUrlAsync(url: HttpUrl): CompletableFuture<CountryInfo> =
+        getAsync { getCountry(url) }
 
     @Deprecated("use ChessRepository instead")
     @Throws(ChessApiException::class)
-    fun searchPlayersAsync(username: String): CompletableFuture<List<SearchItem>> =
+    override fun searchPlayersAsync(username: String): CompletableFuture<List<SearchItem>> =
         getAsync { searchPlayers(username) }
+
+    override fun getClubAsync(nameId: String): CompletableFuture<Club> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getClubAsync(clubUrl: HttpUrl): CompletableFuture<Club> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getCountryClubsAsync(code: String): CompletableFuture<List<HttpUrl>> {
+        TODO("Not yet implemented")
+    }
 }

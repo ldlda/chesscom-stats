@@ -1,6 +1,7 @@
 package com.ldlda.chesscom_stats.api.repository
 
 import androidx.annotation.WorkerThread
+import com.ldlda.chesscom_stats.api.data.club.Club
 import com.ldlda.chesscom_stats.api.data.country.CountryInfo
 import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
@@ -9,42 +10,61 @@ import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import com.ldlda.chesscom_stats.api.fetch.ChessApiException
 import com.ldlda.chesscom_stats.util.Futures.eager
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.runBlocking
 import okhttp3.HttpUrl
 import java.util.concurrent.CompletableFuture
-import kotlin.coroutines.CoroutineContext
 
 /**
  * Java-friendly adapter around ChessRepository.
+ *
+ * @deprecated Use {@link JavaChessRepository} instead. That interface is designed for Java
+ * callers and returns CompletableFuture directly without exposing coroutines. The default
+ * implementation {@link ChessRepositoryTimedCache} already implements both interfaces.
+ * <p>
+ * Migration example:
+ * <pre>{@code
+ * // Old (this class):
+ * ChessRepoAdapterJava adapter = new ChessRepoAdapterJava();
+ * adapter.getPlayerAsync("hikaru").thenAccept(...);
+ *
+ * // New (JavaChessRepository):
+ * JavaChessRepository repo = ChessRepositoryTimedCache.getDefaultInstance();
+ * repo.getPlayer("hikaru").thenAccept(...);
+ * }</pre>
+ * <p>
+ * This class will be removed in the future.
  *
  * - get*Blocking: call from worker thread in tests or background code.
  * - get*Async: CompletableFuture for Java async tests/UI.
  *
  * - also includes some convenient functions
  */
-class ChessRepoAdapterJava @JvmOverloads constructor(
-    private val repo: ChessRepository = ChessRepositoryTimedCache.defaultInstance,
-    private val context: CoroutineContext = Dispatchers.IO
-) {
+
+class ChessRepoAdapterJava<CR>(
+    val repo: CR,
+    val scope: CoroutineScope
+) : JavaChessRepository where CR : ChessRepository {
     private fun <T> runBlockingLda(task: suspend CoroutineScope.() -> T) =
-        runBlocking(context, task)
+        runBlocking(scope.coroutineContext, task)
+
+    private fun <T> runAsyncLda2(task: suspend CoroutineScope.() -> T) =
+        eager(scope.coroutineContext, task)
 
     private fun <T> runAsyncLda(task: suspend CoroutineScope.() -> T) =
-        eager(context, task)
-
-    private fun <T> runAsyncLda(scope: CoroutineScope, task: suspend CoroutineScope.() -> T) =
         scope.future(block = task)
+
+    fun close() = scope.cancel()
 
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getPlayerBlocking(username: String): Player =
         runBlockingLda { repo.getPlayer(username) }
 
-    fun getPlayerAsync(username: String): CompletableFuture<Player> =
+    override fun getPlayerAsync(username: String): CompletableFuture<Player> =
         runAsyncLda { repo.getPlayer(username) }
 
     @WorkerThread
@@ -52,7 +72,7 @@ class ChessRepoAdapterJava @JvmOverloads constructor(
     fun getPlayerStatsBlocking(username: String): PlayerStats =
         runBlockingLda { repo.getPlayerStats(username) }
 
-    fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
+    override fun getPlayerStatsAsync(username: String): CompletableFuture<PlayerStats> =
         runAsyncLda { repo.getPlayerStats(username) }
 
     @WorkerThread
@@ -60,19 +80,31 @@ class ChessRepoAdapterJava @JvmOverloads constructor(
     fun getLeaderboardsBlocking(): Leaderboards =
         runBlockingLda { repo.getLeaderboards() }
 
-    fun getLeaderboardsAsync(): CompletableFuture<Leaderboards> =
+    override fun getLeaderboardsAsync(): CompletableFuture<Leaderboards> =
         runAsyncLda { repo.getLeaderboards() }
 
     @WorkerThread
     @Throws(ChessApiException::class)
     fun getCountryByUrlBlocking(url: HttpUrl): CountryInfo =
-        runBlockingLda { repo.getCountryByUrl(url) }
+        runBlockingLda { repo.getCountry(url) }
 
-    fun getCountryByUrlAsync(url: HttpUrl): CompletableFuture<CountryInfo> =
-        runAsyncLda { repo.getCountryByUrl(url) }
+    override fun getCountryByUrlAsync(url: HttpUrl): CompletableFuture<CountryInfo> =
+        runAsyncLda { repo.getCountry(url) }
 
-    fun getUsernameSuggestionsAsync(prefix: String): CompletableFuture<List<SearchItem>> =
+
+    override fun searchPlayersAsync(prefix: String): CompletableFuture<List<SearchItem>> =
         runAsyncLda { repo.searchPlayers(prefix) }
+
+
+    override fun getClubAsync(nameId: String): CompletableFuture<Club> =
+        runAsyncLda { repo.getClub(nameId) }
+
+    override fun getClubAsync(clubUrl: HttpUrl): CompletableFuture<Club> =
+        runAsyncLda { repo.getClub(clubUrl) }
+
+
+    override fun getCountryClubsAsync(code: String): CompletableFuture<List<HttpUrl>> =
+        runAsyncLda { repo.getCountryClubs(code) }
 
     /* convenience functions */
     @WorkerThread
@@ -99,6 +131,14 @@ class ChessRepoAdapterJava @JvmOverloads constructor(
             )
             player
         }
+
+    // ridiculously convenient
+    companion object {
+        @JvmStatic
+        @JvmSuppressWildcards
+        fun <T : ChessRepository> T.getAdapterJava(scope: CoroutineScope) =
+            ChessRepoAdapterJava(this, scope)
+    }
 }
 
 

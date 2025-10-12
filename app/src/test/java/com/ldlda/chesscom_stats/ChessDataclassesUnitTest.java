@@ -16,6 +16,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
+import okhttp3.HttpUrl;
+
 public class ChessDataclassesUnitTest {
     @Test
     public void testPlayer() {
@@ -48,7 +50,7 @@ public class ChessDataclassesUnitTest {
 
         assertEquals(174596871, player.getPlayerId());
 
-        assertEquals(playerProfilePage, player.getProfilePage());
+        assertEquals(HttpUrl.get(playerProfilePage), player.getProfilePage());
         assertNull(player.getAvatarUrl());
     }
 

@@ -9,7 +9,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-@Serializable
+@Serializable(with = Rating.RatingSerializer::class)
 data class Rating(
     val variantTime: Time,
     val variantClass: Rule,

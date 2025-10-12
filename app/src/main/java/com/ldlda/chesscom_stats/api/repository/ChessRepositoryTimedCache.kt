@@ -1,7 +1,9 @@
 package com.ldlda.chesscom_stats.api.repository
 
 import androidx.annotation.VisibleForTesting
+import com.ldlda.chesscom_stats.api.data.country.CountryClubs
 import com.ldlda.chesscom_stats.api.data.country.CountryInfo
+import com.ldlda.chesscom_stats.api.data.country.CountryPlayers
 import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
@@ -16,8 +18,28 @@ class ChessRepositoryTimedCache(
     private val statsCache: TimedCache<PlayerStats> = TimedCacheProvider.defaultStatsCache,
     private val leaderboardsCache: TimedCache<Leaderboards> = TimedCacheProvider.defaultLeaderboardsCache,
     private val countryCache: TimedCache<CountryInfo> = TimedCacheProvider.defaultCountryCache,
-) : ChessRepositoryImpl(client) {
+    private val countryPlayerCache: TimedCache<CountryPlayers> = TimedCache(15 * 60_000),
+    private val countryClubCache: TimedCache<CountryClubs> = TimedCache(15 * 60_000),
+
+    ) : ChessRepositoryImpl(client) {
     companion object {
+        /**
+         * Default singleton instance with 2-minute TTL cache.
+         *
+         * Kotlin usage:
+         * ```kotlin
+         * val repo: ChessRepository = ChessRepositoryTimedCache.defaultInstance
+         * val player = repo.getPlayer("hikaru") // suspend
+         * ```
+         *
+         * Java usage (casts to JavaChessRepository):
+         * ```java
+         * JavaChessRepository repo = ChessRepositoryTimedCache.getDefaultInstance();
+         * repo.getPlayerAsync("hikaru").thenAccept(player -> {
+         *     // use player
+         * });
+         * ```
+         */
         @JvmStatic
         val defaultInstance = ChessRepositoryTimedCache()
         private const val LEADERBOARDS_KEY = "leaderboards"
@@ -47,10 +69,10 @@ class ChessRepositoryTimedCache(
     }
 
 
-    override suspend fun getCountryByUrl(countryUrl: HttpUrl): CountryInfo {
+    override suspend fun getCountry(countryUrl: HttpUrl): CountryInfo {
         val url = countryUrl.toString()
         countryCache.get(url)?.let { return it }
-        val info = super.getCountryByUrl(countryUrl)
+        val info = super.getCountry(countryUrl)
         countryCache.put(url, info)
         return info
     }

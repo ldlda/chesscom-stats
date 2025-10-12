@@ -8,4 +8,4 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
 @Serializable
-data class Players(@SerialName("players") val playerUsernames: List<String> = emptyList())
+data class CountryPlayers(@SerialName("players") val playerUsernames: List<String> = emptyList())

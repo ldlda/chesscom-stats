@@ -67,7 +67,7 @@ data class Player(
 
     suspend fun fetchCountryInfo(repo: ChessRepository): CountryInfo {
         countryInfo?.let { return it }
-        val countryInfo = repo.getCountryByUrl(countryUrl)
+        val countryInfo = repo.getCountry(countryUrl)
         this.countryInfo = countryInfo
         return countryInfo
     }
