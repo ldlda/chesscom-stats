@@ -4,7 +4,7 @@ public class Lesson {
 
     private String dataTitle;
     private int dataDesc;
-    private String dataLang;
+    private String dataLevel;
     private int dataImage;
 
     public String getDataTitle() {
@@ -16,7 +16,7 @@ public class Lesson {
     }
 
     public String getDataLang() {
-        return dataLang;
+        return dataLevel;
     }
 
     public int getDataImage() {
@@ -26,7 +26,7 @@ public class Lesson {
     public Lesson(String dataTitle, int dataDesc, String dataLang, int dataImage) {
         this.dataTitle = dataTitle;
         this.dataDesc = dataDesc;
-        this.dataLang = dataLang;
+        this.dataLevel = dataLang;
         this.dataImage = dataImage;
     }
 }

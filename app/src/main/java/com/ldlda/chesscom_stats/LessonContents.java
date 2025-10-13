@@ -80,11 +80,11 @@ public class LessonContents extends Fragment {
 
     private void setupLessonList() {
         lessonsList = new ArrayList<>();
-        lessonsList.add(new Lesson("Lesson 1", R.string.about, "Beginner", R.drawable.list_detail));
-        lessonsList.add(new Lesson("Lesson 2", R.string.about, "Beginner", R.drawable.list_detail));
-        lessonsList.add(new Lesson("Lesson 3", R.string.about, "Intermidiate", R.drawable.list_detail));
-        lessonsList.add(new Lesson("Lesson 4", R.string.about, "Advance", R.drawable.list_detail));
-        lessonsList.add(new Lesson("Lesson 5", R.string.about, "Advance", R.drawable.list_detail));
+        lessonsList.add(new Lesson("Lesson 1", R.string.lesson1_desc, "Beginner", R.drawable.lesson_1));
+        lessonsList.add(new Lesson("Lesson 2", R.string.lesson2_desc, "Intermidiate", R.drawable.lesson_2));
+        lessonsList.add(new Lesson("Lesson 3", R.string.lesson3_desc, "Intermidiate", R.drawable.lesson_3));
+        lessonsList.add(new Lesson("Lesson 4", R.string.lesson4_desc, "Advance", R.drawable.lesson_4));
+        lessonsList.add(new Lesson("Lesson 5", R.string.lesson5_desc, "Advance", R.drawable.lesson_5));
     }
 
     private void showLesson(int index) {

@@ -64,11 +64,11 @@ public class LessonsFragment extends Fragment {
     }
 
     private void populateData() {
-        dataList.add(new Lesson("Lesson 1", R.string.about, "Beginner", R.drawable.list_detail));
-        dataList.add(new Lesson("RecyclerView", R.string.about, "Kotlin", R.drawable.list_detail));
-        dataList.add(new Lesson("Date Picker", R.string.about, "Java", R.drawable.list_detail));
-        dataList.add(new Lesson("EditText", R.string.about, "Kotlin", R.drawable.list_detail));
-        dataList.add(new Lesson("Rating Bar", R.string.about, "Java", R.drawable.list_detail));
+        dataList.add(new Lesson("Lesson 1", R.string.lesson1_desc, "Beginner", R.drawable.lesson_1));
+        dataList.add(new Lesson("Lesson 2", R.string.lesson2_desc, "Intermidiate", R.drawable.lesson_2));
+        dataList.add(new Lesson("Lesson 3", R.string.lesson3_desc, "Intermidiate", R.drawable.lesson_3));
+        dataList.add(new Lesson("Lesson 4", R.string.lesson4_desc, "Advance", R.drawable.lesson_4));
+        dataList.add(new Lesson("Lesson 5", R.string.lesson5_desc, "Advance", R.drawable.lesson_5));
     }
 
     private void searchList(String text) {
