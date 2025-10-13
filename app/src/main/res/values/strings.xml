@@ -55,7 +55,8 @@
     <string name="clubPrivate">Private</string>
 
     <!--Home fragment stuff-->
-    <string name="home_txt">Welcome Home</string>
+    <string name="home_txt">Welcome</string>
+    <string name="extra_txt">Explore chess with us</string>
     <string name="plr_search"> Search for a player </string>
     <string name="club_find"> Find a club </string>
 
