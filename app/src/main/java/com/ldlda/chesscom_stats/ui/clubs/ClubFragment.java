@@ -31,6 +31,7 @@ public class ClubFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(ClubViewModel.class);
         requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
 
+
         setupRecyclerView();
         setupSpinner();
         observeViewModel();
@@ -119,6 +120,7 @@ public class ClubFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
         super.onDestroyView();
         binding = null;
 

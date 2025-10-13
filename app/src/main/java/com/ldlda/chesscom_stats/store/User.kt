@@ -7,10 +7,10 @@ import androidx.room.PrimaryKey
 import java.util.Date
 
 @Fts4
-@Entity(tableName = "users")
+@Entity(tableName = "users") // you cant unique when fts4 :(
 data class User(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "rowid") val id: Int = 0,
-    @ColumnInfo(name = "player_id") val playerId: Long?, // fuck some places dont
+    @PrimaryKey(autoGenerate = true) val rowid: Int = 0,
+    @ColumnInfo(name = "player_id") val playerId: Long, // fuck some places dont
     @ColumnInfo(name = "username") val username: String,
     @ColumnInfo("favorite_since") val favoriteSince: Date = Date(System.currentTimeMillis()),
 )
