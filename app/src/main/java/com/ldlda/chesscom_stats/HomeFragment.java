@@ -48,6 +48,22 @@ public class HomeFragment extends Fragment {
                         .commit();
             }
         });
+
+        Button predict_fide = view.findViewById(R.id.fide_prediction);
+        predict_fide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
+
+                FidePredictFragment fidePredictFragment = new FidePredictFragment();
+
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, fidePredictFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
         return view;
     }
 }
