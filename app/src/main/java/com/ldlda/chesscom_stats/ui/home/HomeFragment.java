@@ -36,7 +36,6 @@ public class HomeFragment extends Fragment {
 
         Button club_finder = view.findViewById(R.id.club_finder);
         club_finder.setOnClickListener(v -> {
-            requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
 
             ClubFragment clubFragment = new ClubFragment();
 

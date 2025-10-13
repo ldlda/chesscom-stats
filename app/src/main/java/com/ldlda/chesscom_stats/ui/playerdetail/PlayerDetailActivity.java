@@ -1,6 +1,7 @@
 package com.ldlda.chesscom_stats.ui.playerdetail;
 
 import static androidx.lifecycle.LifecycleKt.getCoroutineScope;
+import static com.ldlda.chesscom_stats.store.GlobalDB.initDb;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -125,7 +126,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
                     Log.e(TAG, "onClick: addFavoriteBtn.setOnClickListener !isFavorited", e);
                 }
             }
-
+            initDb(getApplicationContext());
             addFavoriteBtn.setText(isFavorited ? R.string.remove_fav : R.string.add_fav);
         });
 
@@ -218,6 +219,6 @@ public class PlayerDetailActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (inFlight != null) inFlight.cancel(true);
-//        if (repo != null) repo.close();
+        if (repo != null) repo.close();
     }
 }

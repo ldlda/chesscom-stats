@@ -8,7 +8,6 @@ import kotlinx.serialization.UseSerializers
 import okhttp3.HttpUrl
 
 @Serializable
-@JvmRecord
 data class Puzzle(
     val title: String,
     val url: HttpUrl,

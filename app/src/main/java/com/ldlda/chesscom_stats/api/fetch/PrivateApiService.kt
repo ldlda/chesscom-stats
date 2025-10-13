@@ -15,5 +15,4 @@ interface PrivateApiService {
      */
     @POST("https://www.chess.com/service/friends-search/idl/chesscom.friends_search.v1.FriendsSearchService/Autocomplete")
     suspend fun autocompleteUsername(@Body searchRequest: SearchRequest): SearchResult
-
 }

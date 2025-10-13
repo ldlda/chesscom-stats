@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
         backgroundSong = MediaPlayer.create(context, R.raw.open_sky);
         backgroundSong.setLooping(true);
+
+
     }
 
     @Override

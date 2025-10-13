@@ -18,3 +18,14 @@ fun Boolean.checkBaseAndTarget(base: HttpUrl, target: HttpUrl) =
         (base.encodedPathSegments.size <= target.encodedPathSegments.size) requiredOr malformedUrl
         (base.encodedPathSegments.last().isBlank()) requiredOr invalidUrlBase
     }
+
+/**
+ * @param fen valid fen (no need prior encoding)
+ * @param size enum: 0 (default) 1 2 3
+ */
+fun buildIconLink(fen: String, size: Int? = null) =
+    HttpUrl.Builder().scheme("https").host("www.chess.com")
+        .addPathSegment("dynboard")
+        .addQueryParameter("fen", fen)
+        .apply { size?.let { this.addQueryParameter("size", size.toString()) } }
+        .build()

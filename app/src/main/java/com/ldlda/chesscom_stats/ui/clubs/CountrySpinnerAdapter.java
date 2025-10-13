@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class CountrySpinnerAdapter extends ArrayAdapter<String> {
-
     private static final List<Pair<String, String>> countryMap = low();
 
     public CountrySpinnerAdapter(@NonNull Context context) {
@@ -22,7 +21,10 @@ public class CountrySpinnerAdapter extends ArrayAdapter<String> {
     }
 
     private static List<Pair<String, String>> low() {
-        return COUNTRY_CODE.entrySet().stream().map(e -> Pair.create(e.getKey(), e.getValue())).sorted(Comparator.comparing(o -> o.second)).toList();
+        return COUNTRY_CODE.entrySet().stream()
+                .map(e -> Pair.create(e.getKey(), e.getValue()))
+                .sorted(Comparator.comparing(o -> o.second))
+                .toList();
     }
 
     private static List<String> getCountryList() {

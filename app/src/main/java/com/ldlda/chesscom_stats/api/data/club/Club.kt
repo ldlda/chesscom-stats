@@ -7,25 +7,28 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import okhttp3.HttpUrl
+import org.intellij.lang.annotations.Language
 
 @Serializable
 data class Club(
     @SerialName("@id") val id: HttpUrl,
-    val name: String?,
+    val name: String,
 
     @SerialName("club_id") val clubId: Long,
 
-    val icon: String?,
+    val icon: String? = null,
 
-    val country: HttpUrl?,
+    val country: HttpUrl,
     @SerialName("average_daily_rating") val averageDailyRating: Int,
-    @SerialName("members_count") val membersCount: Int,
+    @SerialName("members_count") val memberCount: Int,
 
     val created: Long,
     @SerialName("last_activity") val lastActivity: Long,
-    val visibility: String?,
-    @SerialName("join_request") val joinRequest: HttpUrl?,  // URL to join page
+    val visibility: String,
+    @SerialName("join_request") val joinRequest: HttpUrl,  // URL to join page
 
-    val admin: List<HttpUrl>?,  // list of player profile URLs
-    val description: String? // plain text or HTML description
+    val admin: List<HttpUrl> = emptyList(),  // list of player profile URLs
+
+    @field:Language("html")
+    val description: String? = null // plain text or HTML description
 )

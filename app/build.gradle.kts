@@ -6,7 +6,8 @@ plugins {
 
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.androidx.navigation.safeargs)
-//    alias(libs.plugins)
+    alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.androidx.room)
 }
 
 android {
@@ -40,6 +41,19 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    testOptions {
+//        unitTests.isReturnDefaultValues = true
+    }
+
+    configurations.all {
+        exclude(group = "com.intellij", module = "annotations") // WHO
+    }
+
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
+
 }
 kotlin {
     compilerOptions {
@@ -88,4 +102,20 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.glide)
     implementation(libs.androidx.core.splashscreen)
+
+
+    implementation(libs.androidx.room.runtime)
+
+    // Note: Choose only one of ksp or annotationProcessor. Don't include both.
+
+    // If this project uses any Kotlin source, use Kotlin Symbol Processing (KSP)
+    // See Add the KSP plugin to your project
+    ksp(libs.androidx.room.compiler)
+
+//     If this project only uses Java source, use the Java annotationProcessor
+//     No additional plugins are necessary
+//    annotationProcessor(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
+
 }

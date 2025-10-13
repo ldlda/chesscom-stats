@@ -20,21 +20,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.ldlda.chesscom_stats.R;
+import com.ldlda.chesscom_stats.api.data.club.Club;
 import com.ldlda.chesscom_stats.databinding.ItemClubBinding;
 import com.ldlda.chesscom_stats.databinding.ItemClubLoadingBinding;
-import com.ldlda.chesscom_stats.java_api.ClubData;
 
-public class ClubItemAdapter extends ListAdapter<ClubData, RecyclerView.ViewHolder> {
-    private static final DiffUtil.ItemCallback<ClubData> DIFF =
+public class ClubItemAdapter extends ListAdapter<Club, RecyclerView.ViewHolder> {
+    private static final DiffUtil.ItemCallback<Club> DIFF =
             new DiffUtil.ItemCallback<>() {
                 @Override
-                public boolean areItemsTheSame(@NonNull ClubData a, @NonNull ClubData b) {
-                    return a.clubId == b.clubId;
+                public boolean areItemsTheSame(@NonNull Club a, @NonNull Club b) {
+                    return a.getClubId() == b.getClubId();
                 }
 
                 @Override
-                public boolean areContentsTheSame(@NonNull ClubData a, @NonNull ClubData b) {
-                    return a.membersCount == b.membersCount || a.lastActivity == b.lastActivity;
+                public boolean areContentsTheSame(@NonNull Club a, @NonNull Club b) {
+                    return a.getMemberCount() == b.getMemberCount() || a.getLastActivity() == b.getLastActivity();
                 }
             };
     private final int VIEW_TYPE_ITEM = 0;
@@ -67,19 +67,19 @@ public class ClubItemAdapter extends ListAdapter<ClubData, RecyclerView.ViewHold
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Context context = holder.itemView.getContext();
         if (holder instanceof ClubViewHolder vh) {
-            ClubData club = getItem(position);
+            Club club = getItem(position);
             if (club != null) {
 
-                vh.clubName.setText(club.name);
+                vh.clubName.setText(club.getName());
 
                 String memberCountTxt =
                         context.getResources().getString(R.string.clubMember) +
                                 ": " +
-                                club.membersCount;
+                                club.getMemberCount();
 
                 vh.clubMembersCount.setText(memberCountTxt);
 
-                boolean isPublic = club.visibility.equals("public");
+                boolean isPublic = club.getVisibility().equals("public");
 
                 vh.clubVisibility.setText(isPublic
                         ? context.getResources().getString(R.string.clubPublic)
@@ -92,25 +92,26 @@ public class ClubItemAdapter extends ListAdapter<ClubData, RecyclerView.ViewHold
 
                 vh.clubURI.setOnClickListener(v -> {
                     try {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(club.joinRequest));
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(club.getJoinRequest().toString()));
                         context.startActivity(intent);
                     } catch (Exception e) {
                         Toast.makeText(context, "Can't redirect to club", Toast.LENGTH_SHORT).show();
-                        Log.e("ClubAdapter", "Invalid club URL: " + club.joinRequest, e);
+                        Log.e("ClubAdapter", "Invalid club URL: " + club.getJoinRequest(), e);
                     }
                 });
 
                 // we using everything atp
                 Glide.with(context)
-                        .load(club.icon)
+                        .load(club.getIcon())
                         .placeholder(R.drawable.baseline_home_24)
                         .error(R.drawable.ic_community)
                         .into(vh.clubAvatar);
 
             }
-        } else {
+        } /* ts runs on every item brother
+        else {
             Toast.makeText(holder.itemView.getContext(), "CHILL", Toast.LENGTH_SHORT).show();
-        }
+        } */
 
     }
 

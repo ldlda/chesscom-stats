@@ -1,6 +1,7 @@
 package com.ldlda.chesscom_stats.util.serialize.tostring
 
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -10,6 +11,7 @@ import kotlinx.serialization.encoding.Encoder
 abstract class ToStringSerializer<T>(
     val name: String,
 ) : KSerializer<T> {
+    @Throws(SerializationException::class)
     abstract fun fromString(string: String): T
 
     override val descriptor: SerialDescriptor =

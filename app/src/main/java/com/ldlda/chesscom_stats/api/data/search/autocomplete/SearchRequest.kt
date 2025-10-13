@@ -32,6 +32,7 @@ data class SearchRequest(
     val includeSuggestions: Boolean = true,
     /**
      * this is used to somewhat control the length of responses
+     *
      * 5 by default, if we dont have this key explicitly
      */
     @EncodeDefault

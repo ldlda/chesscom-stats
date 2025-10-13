@@ -40,6 +40,7 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
                 throw ChessApiException.build(e)
             }
         }
+
         const val CHESS_API_URL = "https://api.chess.com/pub/"
         val defaultOkHttp by lazy {
             OkHttpClient.Builder()
@@ -49,16 +50,16 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
                 .build()
         }
 
-        private fun OkHttpClient.buildRetrofit(baseUrl: String): Retrofit {
-            val okHttp = this
-            val json = Json {
-                ignoreUnknownKeys = true
+        val json = Json {
+            ignoreUnknownKeys = true
 //                encodeDefaults = true
-                /* this or [ChessSearchRequest] has to have every keys serialized */
-            }
+            /* this or [ChessSearchRequest] has to have every keys serialized */
+        }
+
+        private fun OkHttpClient.buildRetrofit(baseUrl: String): Retrofit {
             val contentType = "application/json".toMediaType()
             return Retrofit.Builder().baseUrl(baseUrl)
-                .client(okHttp)
+                .client(this)
                 .addConverterFactory(json.asConverterFactory(contentType))
                 .build()
         }
@@ -108,7 +109,6 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
         this.privateRetrofit = privateRetrofit
         baseUrl = publicRetrofit.baseUrl().toString()
     }
-
 
 
     // kotlin interface
