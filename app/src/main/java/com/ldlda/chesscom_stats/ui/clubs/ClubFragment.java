@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.databinding.FragmentClubBinding;
 
 import java.util.ArrayList;
@@ -122,8 +123,8 @@ public class ClubFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-//        requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
         super.onDestroyView();
+        requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
         binding = null;
 
     }
