@@ -4,17 +4,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.appcompat.widget.SearchView; // Correct import
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ldlda.chesscom_stats.R;
-import com.ldlda.chesscom_stats.Lesson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +56,7 @@ public class LessonsFragment extends Fragment {
         dataList = new ArrayList<>();
         populateData();
 
-        adapter = new LessonAdapter(requireContext(), dataList);
+        adapter = new LessonAdapter(requireContext(), dataList, this::showLessonContent);
         recyclerView.setAdapter(adapter);
 
         return view;
@@ -83,5 +82,21 @@ public class LessonsFragment extends Fragment {
         } else {
             adapter.setSearchList(dataSearchList);
         }
+    }
+
+    public void showLessonContent(Bundle args) {
+        var lessonContentFragment = new LessonContentsFragment();
+        lessonContentFragment.setArguments(args);
+        var syfm = requireActivity().getSupportFragmentManager();
+        syfm.beginTransaction()
+                .setCustomAnimations(
+                        R.anim.slide_in_right,
+                        R.anim.slide_out_left,
+                        R.anim.slide_in_left,
+                        R.anim.slide_out_right
+                )
+                .replace(R.id.fragment_container, lessonContentFragment)
+                .addToBackStack("lesson_content_back")
+                .commit();
     }
 }

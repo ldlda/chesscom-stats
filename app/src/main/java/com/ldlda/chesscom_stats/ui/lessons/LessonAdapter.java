@@ -1,7 +1,6 @@
 package com.ldlda.chesscom_stats.ui.lessons;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,14 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ldlda.chesscom_stats.LessonContents;
-import com.ldlda.chesscom_stats.MainActivity;
 import com.ldlda.chesscom_stats.R;
-import com.ldlda.chesscom_stats.Lesson;
 
 import java.util.List;
 
@@ -25,21 +20,18 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.MyViewHold
 
     private final Context context;
     private List<Lesson> dataList;
-
+    private final ToLessonContent listener;
     public void setSearchList(List<Lesson> dataSearchList) {
         this.dataList = dataSearchList;
         notifyDataSetChanged();
     }
 
-    public LessonAdapter(Context context, List<Lesson> dataList) {
+    public LessonAdapter(Context context, List<Lesson> dataList, ToLessonContent listener) {
         this.context = context;
         this.dataList = dataList;
-    }
-
-    public LessonAdapter(List<String> lessons, OnLessonClickListener listener) { // Changed from String[] to List<String>
-        this.lessons = lessons;
         this.listener = listener;
     }
+
 
     @NonNull
     @Override
@@ -59,13 +51,11 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.MyViewHold
             int currentPosition = holder.getBindingAdapterPosition();
             if (currentPosition != RecyclerView.NO_POSITION) {
                 Bundle args = new Bundle();
-                args.putInt("Image", dataList.get(currentPosition).getDataImage());
-                args.putString("Title", dataList.get(currentPosition).getDataTitle());
-                args.putInt("Desc", dataList.get(currentPosition).getDataDesc());
-                AppCompatActivity activity = (AppCompatActivity) view.getContext();
-                if (activity instanceof MainActivity) {
-                    ((MainActivity) activity).showLessonContent(args);
-                }
+                Lesson lesson = dataList.get(currentPosition);
+                args.putInt("Image", lesson.getDataImage());
+                args.putString("Title", lesson.getDataTitle());
+                args.putInt("Desc", lesson.getDataDesc());
+                listener.toLessonContent(args);
             }
         });
     }
@@ -75,8 +65,8 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.MyViewHold
         return dataList.size();
     }
 
-    public interface OnLessonClickListener {
-        void onLessonClick(int position);
+    public interface ToLessonContent {
+        void toLessonContent(Bundle arg);
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -95,4 +85,7 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.MyViewHold
             recCard = itemView.findViewById(R.id.recCard);
         }
     }
+
+
 }
+

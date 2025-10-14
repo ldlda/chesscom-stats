@@ -38,10 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
-    private static final String TAG_LESSON_CONTENT = "tab:lesson_content";
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SplashScreen s = SplashScreen.installSplashScreen(this);
@@ -170,52 +166,6 @@ public class MainActivity extends AppCompatActivity {
                 .setReorderingAllowed(true)
                 .replace(R.id.fragment_container, fragment)
                 .commit();
-    private void ensureFragments() {
-        var fm = getSupportFragmentManager();
-        var tx = fm.beginTransaction();
-
-        homeFragment = fm.findFragmentByTag(TAG_HOME);
-        hallFragment = fm.findFragmentByTag(TAG_HALL);
-        favoritesFragment = fm.findFragmentByTag(TAG_FAV);
-        lessonsFragment = fm.findFragmentByTag(TAG_LESSONS);
-        lessonContentFragment = fm.findFragmentByTag(TAG_LESSON_CONTENT);
-
-
-        if (homeFragment == null) {
-            homeFragment = new HomeFragment();
-            tx.add(R.id.fragment_container, homeFragment, TAG_HOME).hide(homeFragment);
-        }
-        if (hallFragment == null) {
-            hallFragment = new HallOfFameFragment();
-            tx.add(R.id.fragment_container, hallFragment, TAG_HALL).hide(hallFragment);
-        }
-        if (favoritesFragment == null) {
-            favoritesFragment = new FavoritesFragment();
-            tx.add(R.id.fragment_container, favoritesFragment, TAG_FAV).hide(favoritesFragment);
-        }
-        if (lessonsFragment == null) {
-            lessonsFragment = new LessonsFragment();
-            tx.add(R.id.fragment_container, lessonsFragment, TAG_LESSONS).hide(lessonsFragment);
-        }
-        if (lessonContentFragment == null) {
-            lessonContentFragment = new LessonContents();
-            tx.add(R.id.fragment_container, lessonContentFragment, TAG_LESSON_CONTENT)
-                    .hide(lessonContentFragment);
-        }
-        tx.commitNow();
-    }
-
-    private void showSelected(int menuId) {
-        Fragment target = fragmentFor(menuId);
-        if (target == null) target = homeFragment;
-        var tx = getSupportFragmentManager().beginTransaction();
-        if (homeFragment != null) tx.hide(homeFragment);
-        if (hallFragment != null) tx.hide(hallFragment);
-        if (favoritesFragment != null) tx.hide(favoritesFragment);
-        if (lessonsFragment != null) tx.hide(lessonsFragment);
-        if (lessonContentFragment != null) tx.hide(lessonContentFragment);   //added
-        tx.show(target).commitNow();
-        currentFragment = target;
     }
 
     private Fragment fragmentFor(int menuId) {
@@ -242,42 +192,5 @@ public class MainActivity extends AppCompatActivity {
         } else {
             return super.onOptionsItemSelected(item);
         }
-    }
-    public void showLessonContent(Bundle args) {
-        if (lessonContentFragment == null) {
-            lessonContentFragment = new LessonContents();
-            lessonContentFragment.setArguments(args);
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .setCustomAnimations(
-                            R.anim.slide_in_right,
-                            R.anim.slide_out_left,
-                            R.anim.slide_in_left,
-                            R.anim.slide_out_right
-                    )
-                    .hide(currentFragment)
-                    .add(R.id.fragment_container, lessonContentFragment, TAG_LESSON_CONTENT)
-                    .show(lessonContentFragment)
-                    .addToBackStack("lesson_content_back")
-                    .commit();
-        } else {
-            // DO NOT call setArguments() on an already added fragment
-            if (lessonContentFragment instanceof LessonContents) {
-                ((LessonContents) lessonContentFragment).updateContent(args);
-            }
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .setCustomAnimations(
-                            R.anim.slide_in_right,
-                            R.anim.slide_out_left,
-                            R.anim.slide_in_left,
-                            R.anim.slide_out_right
-                    )
-                    .hide(currentFragment)
-                    .show(lessonContentFragment)
-                    .addToBackStack("lesson_content_back")
-                    .commit();
-        }
-        currentFragment = lessonContentFragment;
     }
 }

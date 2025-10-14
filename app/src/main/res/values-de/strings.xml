@@ -18,7 +18,7 @@
     <string name="refresh_too_soon">Bitte warten Sie einige Sekunden, bevor Sie erneut aktualisieren.</string>
     <string name="home">Startseite</string>
     <string name="fav">Favoriten</string>
-    <string name="hall_fame">Ruhmeshalle</string>
+    <string name="hall_of_fame">Ruhmeshalle</string>
     <string name="lesson">Lektionen</string>
 
     <string name="add_fav">Zu Favoriten hinzufügen</string>

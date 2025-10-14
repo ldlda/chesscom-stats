@@ -8,9 +8,8 @@ plugins {
     alias(libs.plugins.androidx.navigation.safeargs)
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.androidx.room)
-    id("kotlin-parcelize")
+    alias(libs.plugins.kotlin.parcelize)
 }
-
 android {
     namespace = "com.ldlda.chesscom_stats"
     compileSdk = 36

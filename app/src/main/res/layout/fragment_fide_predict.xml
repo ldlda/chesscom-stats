@@ -7,7 +7,7 @@
     android:padding="24dp"
     android:background="@drawable/bg_estimate_fide"
 
-    tools:context=".FidePredictFragment">
+    tools:context=".ui.ai.FidePredictFragment">
 
     <!-- Horizontal row of EditTexts -->
     <LinearLayout

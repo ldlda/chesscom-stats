@@ -85,4 +85,5 @@ kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", vers
 androidx-navigation-safeargs = { id = "androidx.navigation.safeargs", version.ref = "navigationSafeArgsGradlePlugin" }
 androidx-room = { id = "androidx.room", version.ref = "room" }
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "comGoogleDevtoolsKspGradlePlugin" }
+kotlin-parcelize = { id = "kotlin-parcelize" }
 

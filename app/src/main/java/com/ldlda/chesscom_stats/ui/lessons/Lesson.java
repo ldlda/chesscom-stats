@@ -1,11 +1,11 @@
-package com.ldlda.chesscom_stats;
+package com.ldlda.chesscom_stats.ui.lessons;
 
 public class Lesson {
 
-    private String dataTitle;
-    private int dataDesc;
-    private String dataLevel;
-    private int dataImage;
+    private final String dataTitle;
+    private final int dataDesc;
+    private final String dataLevel;
+    private final int dataImage;
 
     public String getDataTitle() {
         return dataTitle;
