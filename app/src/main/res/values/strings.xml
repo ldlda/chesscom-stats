@@ -119,4 +119,6 @@
     <a href="https://www.chess.com/lessons/advanced-endgames">Press here to show the full lesson</a>
 </string>
     <string name="search_hint">Search lessons, topics, or level…</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
