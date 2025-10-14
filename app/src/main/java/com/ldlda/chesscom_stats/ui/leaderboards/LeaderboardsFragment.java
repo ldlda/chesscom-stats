@@ -6,6 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,9 +23,12 @@ import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.api.data.leaderboards.LeaderboardEntry;
 import com.ldlda.chesscom_stats.databinding.FragmentHallOfFameBinding;
 import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailActivity;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.HttpUrl;
 
 public class LeaderboardsFragment extends Fragment {
     private static final String TAG = "LeaderboardsFragment";
@@ -35,9 +41,26 @@ public class LeaderboardsFragment extends Fragment {
 
     private FragmentHallOfFameBinding binding;
 
+    // Podium views
+    private LinearLayout podiumFirst, podiumSecond, podiumThird;
+    private ImageView avatarFirst, avatarSecond, avatarThird;
+    private TextView usernameFirst, usernameSecond, usernameThird;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHallOfFameBinding.inflate(inflater, container, false);
+
+        // Bind podium views
+        podiumFirst = binding.podiumFirst;
+        podiumSecond = binding.podiumSecond;
+        podiumThird = binding.podiumThird;
+        avatarFirst = binding.avatarFirst;
+        avatarSecond = binding.avatarSecond;
+        avatarThird = binding.avatarThird;
+        usernameFirst = binding.usernameFirst;
+        usernameSecond = binding.usernameSecond;
+        usernameThird = binding.usernameThird;
+
         SwipeRefreshLayout swipeRefreshLayout = binding.leaderboardSwipeRefresh;
         RecyclerView recyclerView = binding.hallOfFameRecycler;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -73,12 +96,19 @@ public class LeaderboardsFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
-                List<LeaderboardEntry> filtered = allPlayers
-                        .stream()
-                        .filter(player -> player.getUsername().toLowerCase()
-                                .contains(newText.toLowerCase()))
-                        .toList();
-                adapter.submitList(filtered);
+                if (newText.isBlank()) {
+                    List<LeaderboardEntry> rest = allPlayers.size() > 3
+                            ? allPlayers.subList(3, allPlayers.size())
+                            : new ArrayList<>();
+                    adapter.submitList(new ArrayList<>(rest));
+                } else {
+                    List<LeaderboardEntry> filtered = allPlayers
+                            .stream()
+                            .filter(player -> player.getUsername().toLowerCase()
+                                    .contains(newText.toLowerCase()))
+                            .toList();
+                    adapter.submitList(filtered);
+                }
                 return true;
             }
 
@@ -92,7 +122,17 @@ public class LeaderboardsFragment extends Fragment {
         viewModel.getData().observe(getViewLifecycleOwner(), boards -> {
             List<LeaderboardEntry> blitz = boards.getBlitz();
             allPlayers = new ArrayList<>(blitz);
-            adapter.submitList(new ArrayList<>(allPlayers));
+
+            // Update podium (top 3)
+            if (allPlayers.size() >= 3) {
+                updatePodium(allPlayers.get(0), allPlayers.get(1), allPlayers.get(2));
+            }
+
+            // Show rest in RecyclerView (skip top 3)
+            List<LeaderboardEntry> rest = allPlayers.size() > 3
+                    ? allPlayers.subList(3, allPlayers.size())
+                    : new ArrayList<>();
+            adapter.submitList(new ArrayList<>(rest));
             lastRefreshAt = System.currentTimeMillis();
         });
         viewModel.getError().observe(getViewLifecycleOwner(), err -> {
@@ -103,6 +143,42 @@ public class LeaderboardsFragment extends Fragment {
         });
 
         return binding.getRoot();
+    }
+
+    private void updatePodium(LeaderboardEntry first, LeaderboardEntry second, LeaderboardEntry third) {
+        // First place
+        usernameFirst.setText(first.getUsername());
+        loadAvatar(avatarFirst, first.getAvatarUrl());
+        podiumFirst.setOnClickListener(v -> launchPlayerDetail(first));
+
+        // Second place
+        usernameSecond.setText(second.getUsername());
+        loadAvatar(avatarSecond, second.getAvatarUrl());
+        podiumSecond.setOnClickListener(v -> launchPlayerDetail(second));
+
+        // Third place
+        usernameThird.setText(third.getUsername());
+        loadAvatar(avatarThird, third.getAvatarUrl());
+        podiumThird.setOnClickListener(v -> launchPlayerDetail(third));
+    }
+
+    private void loadAvatar(ImageView imageView, HttpUrl avatarUrl) {
+        if (avatarUrl != null) {
+            Picasso.get()
+                    .load(avatarUrl.toString())
+                    .placeholder(R.drawable.ic_person)
+                    .error(R.drawable.ic_person)
+                    .into(imageView);
+        } else {
+            imageView.setImageResource(R.drawable.ic_person);
+        }
+    }
+
+    private void launchPlayerDetail(LeaderboardEntry player) {
+        Intent intent = new Intent(getContext(), PlayerDetailActivity.class);
+        intent.putExtra(PlayerDetailActivity.EXTRA_PLAYER_ENTRY, player);
+        intent.putExtra(PlayerDetailActivity.EXTRA_TIMECLASS, "blitz");
+        startActivity(intent);
     }
 
     @Override
