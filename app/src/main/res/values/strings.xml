@@ -60,6 +60,7 @@
     <string name="plr_search"> Search for a player </string>
     <string name="club_find"> Find a club </string>
     <string name="try_puzzle">Try a puzzle</string>
+    <string name="change_lang">Change language</string>
 
     <!--Menu stuff -->
     <string name="about">About us</string>
