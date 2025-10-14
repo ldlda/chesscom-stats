@@ -63,6 +63,8 @@
     <!-- Placeholder -->
     <string name="hello_blank_fragment">Xin chào fragment trống</string>
     <string name="bullet_score">Điểm Bullet</string>
+    <string name="get_fide_res">Dự đoán điểm FIDE</string>
+    <string name="estimate_fide">Điểm dự đoán:</string>
     <string name="clubMember">Thành viên</string>
     <string name="clubPublic">Mở</string>
     <string name="loading">Đang tải...</string>
