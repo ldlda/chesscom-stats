@@ -29,12 +29,18 @@ public class HomeFragment extends Fragment {
         CardView plr_search_btn = view.findViewById(R.id.plr_searcher);
 
         plr_search_btn.setOnClickListener(v -> {
-            requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
+            //requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
 
             PlayerSearchFragment searchFragment = new PlayerSearchFragment();
 
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in_right,  // animation for the new fragment entering
+                            R.anim.slide_out_left,      // animation for the current fragment exiting
+                            R.anim.slide_in_left,   // animation when coming back (pop enter)
+                            R.anim.slide_out_right      // animation when going back (pop exit)
+                    )
                     .replace(R.id.fragment_container, searchFragment)
                     .addToBackStack(null)
                     .commit();
@@ -42,12 +48,18 @@ public class HomeFragment extends Fragment {
 
         CardView club_finder = view.findViewById(R.id.club_finder);
         club_finder.setOnClickListener(v -> {
-            requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
+            //requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
 
             ClubFragment clubFragment = new ClubFragment();
 
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in_right,  // animation for the new fragment entering
+                            R.anim.slide_out_left,      // animation for the current fragment exiting
+                            R.anim.slide_in_left,   // animation when coming back (pop enter)
+                            R.anim.slide_out_right      // animation when going back (pop exit)
+                    )
                     .replace(R.id.fragment_container, clubFragment)
                     .addToBackStack(null)
                     .commit();
@@ -59,6 +71,12 @@ public class HomeFragment extends Fragment {
 
                     requireActivity().getSupportFragmentManager()
                             .beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in_right,  // animation for the new fragment entering
+                                    R.anim.slide_out_left,      // animation for the current fragment exiting
+                                    R.anim.slide_in_left,   // animation when coming back (pop enter)
+                                    R.anim.slide_out_right      // animation when going back (pop exit)
+                            )
                             .replace(R.id.fragment_container, fidePredictFragment)
                             .addToBackStack(null)
                             .commit();
@@ -67,12 +85,18 @@ public class HomeFragment extends Fragment {
 
         CardView puzzle = view.findViewById(R.id.puzzle);
         puzzle.setOnClickListener(v -> {
-            requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
+            //requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
 
             PuzzleFragment puzzleFragment = new PuzzleFragment();
 
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in_right,  // animation for the new fragment entering
+                            R.anim.slide_out_left,      // animation for the current fragment exiting
+                            R.anim.slide_in_left,   // animation when coming back (pop enter)
+                            R.anim.slide_out_right      // animation when going back (pop exit)
+                    )
                     .replace(R.id.fragment_container, puzzleFragment)
                     .addToBackStack(null)
                     .commit();
