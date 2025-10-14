@@ -1,12 +1,13 @@
-package com.ldlda.chesscom_stats;
+package com.ldlda.chesscom_stats.ui.puzzle;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
+
+import com.ldlda.chesscom_stats.R;
 
 public class PuzzleFragment extends Fragment {
     @Override

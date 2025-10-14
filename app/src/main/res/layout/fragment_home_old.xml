@@ -4,27 +4,22 @@
     android:id="@+id/home_fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/home_fragment_container"
     android:background="@android:color/white">
 
     <TextView
         android:id="@+id/welcome_txt"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
         android:text="@string/home_txt"
-        android:textSize="24sp"/>
+        android:textSize="24sp" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/plr_searcher"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="60dp"
         android:layout_below="@id/welcome_txt"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
@@ -32,17 +27,14 @@
         android:paddingHorizontal="60dp"
         android:text="@string/plr_search"
         android:textSize="18sp"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/home_btns_bg"
         app:backgroundTint="@null"
         app:icon="@drawable/ic_about"
-        app:iconGravity="start"/>
+        app:iconGravity="start" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/club_finder"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="60dp"
         android:layout_below="@id/plr_searcher"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
@@ -50,26 +42,24 @@
         android:paddingHorizontal="60dp"
         android:text="@string/club_find"
         android:textSize="18sp"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/home_btns_bg"
         app:backgroundTint="@null"
         app:icon="@drawable/ic_community"
-        app:iconGravity="start"/>
+        app:iconGravity="start" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/fide_prediction"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="60dp"
         android:layout_below="@id/club_finder"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
+        android:background="@drawable/home_btns_bg"
+        android:paddingHorizontal="60dp"
         android:text="@string/get_fide_res"
         android:textSize="18sp"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/home_btns_bg"
         app:backgroundTint="@null"
         app:icon="@drawable/outline_leaderboard_black_20"
-        app:iconGravity="start"/>
+        app:iconGravity="start" />
 
 
 </RelativeLayout>
