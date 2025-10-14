@@ -1,7 +1,6 @@
 package com.ldlda.chesscom_stats.ui.favorites;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,26 +9,21 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ldlda.chesscom_stats.databinding.FragmentFavoritesBinding;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class FavoritesFragment extends Fragment {
     private static final String TAG = "FavoritesFragment";
     private FragmentFavoritesBinding binding;
     private FavoritesAdapter adapter;
-    private List<String> favs = new ArrayList<>();
+    private final List<String> favs = new ArrayList<>();
+    private FavoritesViewModel viewModel;
 
     @Nullable
     @Override
@@ -38,12 +32,13 @@ public class FavoritesFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentFavoritesBinding.inflate(inflater, container, false);
 
+        // Initialize ViewModel
+        viewModel = new ViewModelProvider(this).get(FavoritesViewModel.class);
+
         RecyclerView recycler = binding.favRecycler;
         recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        favs = new ArrayList<>(loadFavorites()); // convert once, keep as List
-
-        adapter = new FavoritesAdapter(favs, new FavoritesAdapter.OnFavoriteClickListener() {
+        adapter = new FavoritesAdapter(new FavoritesAdapter.OnFavoriteClickListener() {
             @Override
             public void onRemoveClicked(String username) {
                 int pos = favs.indexOf(username);
@@ -57,9 +52,8 @@ public class FavoritesFragment extends Fragment {
                             .translationX(view.getWidth())
                             .setDuration(300)
                             .withEndAction(() -> {
-                                favs.remove(pos);
-                                saveFavorites(new HashSet<>(favs));
-                                adapter.notifyItemRemoved(pos);
+                                // Remove via ViewModel (background thread)
+                                viewModel.removeFavoriteByUsername(username);
                             })
                             .start();
                 }
@@ -72,16 +66,25 @@ public class FavoritesFragment extends Fragment {
         });
 
         recycler.setAdapter(adapter);
+
+        // Observe favorites from ViewModel
+        viewModel.getFavorites().observe(getViewLifecycleOwner(), favorites -> {
+            favs.clear();
+            favs.addAll(favorites);
+            adapter.submitList(new ArrayList<>(favs));
+        });
+
+        // Load favorites on creation
+        viewModel.loadFavorites();
+
         return binding.getRoot();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        List<String> updatedFavs = new ArrayList<>(loadFavorites());
-        favs.clear();
-        favs.addAll(updatedFavs);
-        adapter.notifyDataSetChanged();
+        // Reload favorites when returning to this screen
+        viewModel.loadFavorites();
         binding.favRecycler.scheduleLayoutAnimation();
     }
 
@@ -90,34 +93,4 @@ public class FavoritesFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-
-    private File getFavoritesFile() {
-        return new File(requireContext().getFilesDir(), "favorites.txt");
-    }
-
-    private Set<String> loadFavorites() {
-        Set<String> favs = new HashSet<>();
-        File file = getFavoritesFile();
-        if (!file.exists()) return favs;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                favs.add(line.trim());
-            }
-        } catch (Exception e) {
-            Log.e("Favorites", "Error loading favorites: " + e.getMessage());
-        }
-        return favs;
-    }
-
-    private void saveFavorites(Set<String> favs) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(getFavoritesFile(), false))) {
-            for (String name : favs) writer.write(name + "\n");
-        } catch (Exception e) {
-            Log.e("Favorites", "Error saving favorites: " + e.getMessage());
-        }
-    }
-
 }
-

@@ -86,8 +86,8 @@ public class ClubItemAdapter extends ListAdapter<Club, RecyclerView.ViewHolder> 
                         : context.getResources().getString(R.string.clubPrivate));
 
                 vh.clubVisibility.setTextColor(isPublic
-                        ? context.getResources().getColor(R.color.green)
-                        : context.getResources().getColor(R.color.red));
+                        ? context.getResources().getColor(R.color.green, context.getTheme())
+                        : context.getResources().getColor(R.color.red, context.getTheme()));
 
 
                 vh.clubURI.setOnClickListener(v -> {

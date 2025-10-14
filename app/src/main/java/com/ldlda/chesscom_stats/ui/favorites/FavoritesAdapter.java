@@ -7,6 +7,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
@@ -14,13 +16,23 @@ import com.ldlda.chesscom_stats.R;
 
 import java.util.List;
 
-public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.FavViewHolder> {
+public class FavoritesAdapter extends ListAdapter<String, FavoritesAdapter.FavViewHolder> {
 
     private final OnFavoriteClickListener listener;
-    private List<String> favorites;
+    private static final DiffUtil.ItemCallback<String> DIFF = new DiffUtil.ItemCallback<>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull String oldItem, @NonNull String newItem) {
+            return false;
+        }
 
-    public FavoritesAdapter(List<String> favorites, OnFavoriteClickListener listener) {
-        this.favorites = favorites;
+        @Override
+        public boolean areContentsTheSame(@NonNull String oldItem, @NonNull String newItem) {
+            return false;
+        }
+    };
+
+    public FavoritesAdapter(OnFavoriteClickListener listener) {
+        super(DIFF);
         this.listener = listener;
     }
 
@@ -34,7 +46,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.FavV
 
     @Override
     public void onBindViewHolder(@NonNull FavViewHolder holder, int position) {
-        String username = favorites.get(position);
+        String username = getItem(position);
         holder.usernameText.setText(username);
 
         holder.removeBtn.setOnClickListener(v -> listener.onRemoveClicked(username));
@@ -44,14 +56,8 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.FavV
 
     }
 
-    @Override
-    public int getItemCount() {
-        return favorites.size();
-    }
-
     public void updateData(List<String> newFavorites) {
-        this.favorites = newFavorites;
-        notifyDataSetChanged();
+        submitList(newFavorites);
     }
 
     public interface OnFavoriteClickListener {

@@ -7,10 +7,14 @@
 
     <style name="Theme.StatsForChesscom" parent="Base.Theme.StatsForChesscom" />
 
-    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <item name="android:windowIsTranslucent">true</item>
-        <!-- Set the theme of the Activity that directly follows your splash
-        screen. This is required. -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen.IconBackground">
+        <item name="windowSplashScreenIconBackgroundColor">@color/design_default_color_background
+        </item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_knight</item>
+
+        <item name="android:windowTransitionBackgroundFadeDuration">200</item>
+        <!--        <item name="android:windowBackground">@drawable/ic_knight</item>-->
+        <!-- Set the theme of the Activity that directly follows your splash screen -->
         <item name="postSplashScreenTheme">@style/Theme.StatsForChesscom</item>
     </style>
 

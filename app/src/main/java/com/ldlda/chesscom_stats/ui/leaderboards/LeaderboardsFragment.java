@@ -1,6 +1,8 @@
 package com.ldlda.chesscom_stats.ui.leaderboards;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +19,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.api.data.leaderboards.LeaderboardEntry;
 import com.ldlda.chesscom_stats.databinding.FragmentHallOfFameBinding;
-import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailFragment;
+import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +42,10 @@ public class LeaderboardsFragment extends Fragment {
         RecyclerView recyclerView = binding.hallOfFameRecycler;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new LeaderboardsAdapter(player -> {
-            // Navigate to PlayerDetailFragment
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, PlayerDetailFragment.newInstance(player.getUsername()))
-                    .addToBackStack("playerDetail")
-                    .commit();
+            // Launch PlayerDetailActivity with LeaderboardEntry (fast path - no need to refetch data)
+            Intent intent = new Intent(getContext(), PlayerDetailActivity.class);
+            intent.putExtra(PlayerDetailActivity.EXTRA_PLAYER_ENTRY, player);
+            startActivity(intent);
         });
         recyclerView.setAdapter(adapter);
 
@@ -94,6 +94,7 @@ public class LeaderboardsFragment extends Fragment {
         });
         viewModel.getError().observe(getViewLifecycleOwner(), err -> {
             if (err != null && getContext() != null) {
+                Log.e(TAG, "onCreateView: fetch error", err);
                 Toast.makeText(getContext(), R.string.failed_to_fetch_leaderboard, Toast.LENGTH_SHORT).show();
             }
         });

@@ -2,12 +2,18 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "1ddc675ec9d82c4c31411b6d17ee37b7",
+    "identityHash": "f96f0c23f7408832270d5985ae8ab083",
     "entities": [
       {
         "tableName": "users",
-        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`player_id` INTEGER NOT NULL, `username` TEXT NOT NULL, `favorite_since` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `player_id` INTEGER NOT NULL, `username` TEXT NOT NULL, `favorite_since` INTEGER NOT NULL)",
         "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
           {
             "fieldPath": "playerId",
             "columnName": "player_id",
@@ -30,26 +36,26 @@
         "primaryKey": {
           "autoGenerate": true,
           "columnNames": [
-            "rowid"
+            "id"
           ]
         },
-        "ftsVersion": "FTS4",
-        "ftsOptions": {
-          "tokenizer": "simple",
-          "tokenizerArgs": [],
-          "contentTable": "",
-          "languageIdColumnName": "",
-          "matchInfo": "FTS4",
-          "notIndexedColumns": [],
-          "prefixSizes": [],
-          "preferredOrder": "ASC"
-        },
-        "contentSyncTriggers": []
+        "indices": [
+          {
+            "name": "index_users_player_id_username",
+            "unique": true,
+            "columnNames": [
+              "player_id",
+              "username"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_users_player_id_username` ON `${TABLE_NAME}` (`player_id`, `username`)"
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1ddc675ec9d82c4c31411b6d17ee37b7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f96f0c23f7408832270d5985ae8ab083')"
     ]
   }
 }

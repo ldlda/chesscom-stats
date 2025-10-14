@@ -16,30 +16,30 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.ldlda.chesscom_stats.R;
+import com.ldlda.chesscom_stats.databinding.FragmentPlayerSearchBinding;
 import com.ldlda.chesscom_stats.java_api.ApiClient;
 import com.ldlda.chesscom_stats.java_api.PlayerProfile;
 import com.ldlda.chesscom_stats.java_api.PlayerProfileData;
 import com.ldlda.chesscom_stats.java_api.PlayerStatsData;
+import com.ldlda.chesscom_stats.ui.favorites.FavoritesViewModel;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Response;
 
 public class PlayerSearchFragment extends Fragment {
+    public static final String TAG = "PlayerSearchFragment";
     private SearchView endpoints_plr_search;
+
+    private FragmentPlayerSearchBinding binding;
 
     private ProgressBar search_prog;
 
@@ -58,6 +58,8 @@ public class PlayerSearchFragment extends Fragment {
     private TextView rapid_stats;
 
     private String currentUsername = null;
+    private Long currentPlayerId = null;
+    private FavoritesViewModel favoritesViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,40 +69,41 @@ public class PlayerSearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_player_search, container, false);
-        // Components
-        endpoints_plr_search = view.findViewById(R.id.all_plr_search);
-        search_prog = view.findViewById(R.id.prog_bar);
-        title = view.findViewById(R.id.title);
-        account_state = view.findViewById(R.id.account_state);
-        joinDate = view.findViewById(R.id.join_date);
-        lastOnlDate = view.findViewById(R.id.last_onl);
-        fav_btn = view.findViewById(R.id.fav_btn);
+        binding = FragmentPlayerSearchBinding.inflate(getLayoutInflater(), container, false);
 
-        bullet_stats = view.findViewById(R.id.bullet_stats);
-        blitz_stats = view.findViewById(R.id.blitz_stats);
-        rapid_stats = view.findViewById(R.id.rapid_stats);
+        // Initialize ViewModel
+        favoritesViewModel = new ViewModelProvider(this).get(FavoritesViewModel.class);
+
+        // Components
+        // WHY DO THIS WHEN HAVE BINDINGS
+        endpoints_plr_search = binding.allPlrSearch;
+        search_prog = binding.progBar;
+        title = binding.title;
+        account_state = binding.accountState;
+        joinDate = binding.joinDate;
+        lastOnlDate = binding.lastOnl;
+        fav_btn = binding.favBtn;
+
+        bullet_stats = binding.bulletStats;
+        blitz_stats = binding.blitzStats;
+        rapid_stats = binding.rapidStats;
 
         // No favoriting until having searched for a player
         fav_btn.setEnabled(false);
 
         fav_btn.setOnClickListener(v -> {
-            if (currentUsername != null) {
-                Set<String> favs = loadFavorites();
-
-                if (favs.contains(currentUsername)) {
-                    favs.remove(currentUsername);
-                    saveFavorites(favs);
-                    Toast.makeText(requireContext(), "Removed from favorites", Toast.LENGTH_SHORT).show();
-                    updateFavButtonState(false);
-                } else {
-                    favs.add(currentUsername);
-                    saveFavorites(favs);
-                    Toast.makeText(requireContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
-                    updateFavButtonState(true);
-                }
+            if (currentUsername != null && currentPlayerId != null) {
+                favoritesViewModel.toggleFavorite(currentPlayerId, currentUsername, isFav -> {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(requireContext(),
+                                isFav ? "Added to favorites" : "Removed from favorites",
+                                Toast.LENGTH_SHORT).show();
+                        updateFavButtonState(isFav);
+                    });
+                    return null;
+                });
             } else {
-                Log.e("Favoriting", "Tried to favorite unknown player");
+                Log.e(TAG, "Tried to favorite player without playerId");
             }
         });
 
@@ -117,7 +120,7 @@ public class PlayerSearchFragment extends Fragment {
             public boolean onQueryTextSubmit(String query) {
                 String username = query.toLowerCase().trim();
                 search_prog.setVisibility(View.VISIBLE);
-                Log.i("SearchFrag", "Searching for: " + username);
+                Log.i(TAG, "onQueryTextSubmit: Searching for: " + username);
 
                 Call<PlayerProfileData> call = api.getPlayerProfile(username);
 
@@ -134,15 +137,20 @@ public class PlayerSearchFragment extends Fragment {
                             PlayerProfileData data = response.body();
 
                             currentUsername = data.profileUrl.substring(data.profileUrl.lastIndexOf("/") + 1);
+                            currentPlayerId = data.playerId; // Get from API response
 
-                            Set<String> favs = loadFavorites();
-                            updateFavButtonState(favs.contains(currentUsername));
-
+                            // Check if already favorited
+                            favoritesViewModel.isFavorite(currentPlayerId, isFav -> {
+                                requireActivity().runOnUiThread(() -> updateFavButtonState(isFav));
+                                return null;
+                            });
+                            Glide.with(requireContext()).load(data.avatar).placeholder(R.drawable.ic_person).error(R.drawable.ic_person).into(binding.avatar);
                             setAccountTitle(data.title);
                             setAccountState(data.status);
                             setDates(data.joined, data.lastOnline);
 
                             // Calling the chess stats, big L chat
+                            // dont
 
                             Call<PlayerStatsData> statCall = api.getPlayerStats(username);
 
@@ -170,7 +178,7 @@ public class PlayerSearchFragment extends Fragment {
                                                 rapidLast);
 
                                     } else {
-                                        Log.e("SearchFrag_Error", "HTTP " + response.code());
+                                        Log.e(TAG, "onResponse: HTTP " + response.code());
                                         Toast.makeText(requireContext(),
                                                 "Player's stats not found (" + response.code() + ")",
                                                 Toast.LENGTH_SHORT).show();
@@ -179,7 +187,7 @@ public class PlayerSearchFragment extends Fragment {
 
                                 @Override
                                 public void onFailure(@NonNull Call<PlayerStatsData> statCall, @NonNull Throwable t) {
-                                    Log.e("SearchFrag_Failure", "Error: " + t.getMessage());
+                                    Log.e(TAG, "onFailure: Error" + t.getMessage());
                                     Toast.makeText(requireContext(),
                                             "Request failed for stats: " + t.getMessage(),
                                             Toast.LENGTH_SHORT).show();
@@ -189,7 +197,7 @@ public class PlayerSearchFragment extends Fragment {
                             // Invalid player to favorite
                             fav_btn.setEnabled(false);
 
-                            Log.e("SearchFrag_Error", "HTTP " + response.code());
+                            Log.e(TAG, "onResponse: HTTP " + response.code());
                             Toast.makeText(requireContext(),
                                     "Player not found (" + response.code() + ")",
                                     Toast.LENGTH_SHORT).show();
@@ -201,7 +209,7 @@ public class PlayerSearchFragment extends Fragment {
                         // Invalid player to favorite
                         fav_btn.setEnabled(false);
 
-                        Log.e("SearchFrag_Failure", "Error: " + t.getMessage());
+                        Log.e(TAG, "onFailure: " + t.getMessage());
                         Toast.makeText(requireContext(),
                                 "Request failed: " + t.getMessage(),
                                 Toast.LENGTH_SHORT).show();
@@ -212,7 +220,6 @@ public class PlayerSearchFragment extends Fragment {
             }
         });
 
-        endpoints_plr_search = view.findViewById(R.id.all_plr_search);
         endpoints_plr_search.setIconified(false);
         endpoints_plr_search.requestFocus();
 
@@ -221,7 +228,7 @@ public class PlayerSearchFragment extends Fragment {
         InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(endpoints_plr_search, InputMethodManager.SHOW_IMPLICIT);
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -321,34 +328,6 @@ public class PlayerSearchFragment extends Fragment {
         blitz_stats.setText(blitz_txt);
         bullet_stats.setText(bullet_txt);
         rapid_stats.setText(rapid_txt);
-    }
-
-    private File getFavoritesFile() {
-        return new File(requireContext().getFilesDir(), "favorites.txt");
-    }
-
-    private Set<String> loadFavorites() {
-        Set<String> favs = new HashSet<>();
-        File file = getFavoritesFile();
-        if (!file.exists()) return favs;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                favs.add(line.trim());
-            }
-        } catch (Exception e) {
-            Log.e("Favorites", "Error loading favorites: " + e.getMessage());
-        }
-        return favs;
-    }
-
-    private void saveFavorites(Set<String> favs) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(getFavoritesFile(), false))) {
-            for (String name : favs) writer.write(name + "\n");
-        } catch (Exception e) {
-            Log.e("Favorites", "Error saving favorites: " + e.getMessage());
-        }
     }
 
     private void updateFavButtonState(boolean isFavorited) {

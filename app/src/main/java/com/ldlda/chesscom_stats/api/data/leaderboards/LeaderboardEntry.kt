@@ -2,11 +2,18 @@
 
 package com.ldlda.chesscom_stats.api.data.leaderboards
 
+import android.os.Parcelable
 import com.ldlda.chesscom_stats.api.data.player.Title
 import com.ldlda.chesscom_stats.api.data.player.stats.Record
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
+import com.ldlda.chesscom_stats.util.parcelize.httpurl.HttpUrlParceler
+import com.ldlda.chesscom_stats.util.parcelize.httpurl.HttpUrlParcelerNullable
 import com.ldlda.chesscom_stats.util.serialize.InstantEpochSecondSerializer
 import com.ldlda.chesscom_stats.util.serialize.tostring.HttpUrlSerializer
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.TypeParceler
+import kotlinx.parcelize.WriteWith
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -47,6 +54,8 @@ Very suspicious:
 merge of gamerecord and some of players and elo (score) / rank
 player also has: followers lastOnline joined
  */
+@Parcelize
+@TypeParceler<HttpUrl, HttpUrlParceler>()
 @Serializable
 data class LeaderboardEntry(
     val username: String,
@@ -64,12 +73,13 @@ data class LeaderboardEntry(
 
 
     @SerialName("url") val profilePage: HttpUrl,
-    @SerialName("country") val countryUrl: HttpUrl? = null,
+    @SerialName("country") val countryUrl: @WriteWith<HttpUrlParcelerNullable> HttpUrl? = null,
     val status: String? = null,
     val title: Title? = null,
     val name: String? = null,
-    @SerialName("avatar") val avatarUrl: HttpUrl? = null, // HttpUrl("https://www.chess.com/bundles/web/images/noavatar_l.84a92436.gif"),
-) {
+    @SerialName("avatar") val avatarUrl: @WriteWith<HttpUrlParcelerNullable> HttpUrl? = null, // HttpUrl("https://www.chess.com/bundles/web/images/noavatar_l.84a92436.gif"),
+) : Parcelable {
+    @IgnoredOnParcel
     val elo = score
     val gameRecord
         get() =

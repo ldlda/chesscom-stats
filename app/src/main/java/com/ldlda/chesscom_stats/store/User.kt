@@ -2,15 +2,14 @@ package com.ldlda.chesscom_stats.store
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Fts4
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.Date
 
-@Fts4
-@Entity(tableName = "users") // you cant unique when fts4 :(
+@Entity(tableName = "users", indices = [Index("player_id", "username", unique = true)])
 data class User(
-    @PrimaryKey(autoGenerate = true) val rowid: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "player_id") val playerId: Long, // fuck some places dont
-    @ColumnInfo(name = "username") val username: String,
+    val username: String,
     @ColumnInfo("favorite_since") val favoriteSince: Date = Date(System.currentTimeMillis()),
 )

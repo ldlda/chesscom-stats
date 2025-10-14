@@ -1,5 +1,9 @@
 package com.ldlda.chesscom_stats;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -7,15 +11,19 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.fragment.app.Fragment;
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ldlda.chesscom_stats.databinding.ActivityMainBinding;
+import com.ldlda.chesscom_stats.store.GlobalDB;
 import com.ldlda.chesscom_stats.ui.favorites.FavoritesFragment;
 import com.ldlda.chesscom_stats.ui.home.HomeFragment;
 import com.ldlda.chesscom_stats.ui.leaderboards.LeaderboardsFragment;
@@ -32,9 +40,50 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen s = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // Add a callback that's called when the splash screen is animating to the
+        // app content.
+        // on 31 only LMAO
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            getSplashScreen().setOnExitAnimationListener(splashScreenView -> {
+                final ObjectAnimator Zoom = ObjectAnimator.ofFloat(
+                        splashScreenView,
+                        View.SCALE_Y,
+                        1, 5
+                );
+                final ObjectAnimator Zoom2 = ObjectAnimator.ofFloat(
+                        splashScreenView,
+                        View.SCALE_X,
+                        1, 5
+                );
+
+                final ObjectAnimator Fade = ObjectAnimator.ofFloat(
+                        splashScreenView,
+                        View.ALPHA,
+                        1,
+                        0
+                );
+                AnimatorSet anim = new AnimatorSet();
+                anim.play(Zoom2).with(Zoom).with(Fade);
+                anim.setInterpolator(new LinearOutSlowInInterpolator()); // <-- changeable (ts so cool)
+                anim.setDuration(500L);
+
+                // Call SplashScreenView.remove at the end of your custom animation.
+                anim.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        splashScreenView.remove();
+                    }
+                });
+
+                // Run your animation.
+                anim.start();
+            });
+        }
 
         // Set up toolbar
         Toolbar myToolbar = binding.myToolbar;
@@ -52,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             replaceTo(fragmentFor(R.id.home));
         }
+
+        GlobalDB.initDb(getApplicationContext());
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int menuId = item.getItemId();
@@ -72,8 +123,6 @@ public class MainActivity extends AppCompatActivity {
 
         backgroundSong = MediaPlayer.create(context, R.raw.open_sky);
         backgroundSong.setLooping(true);
-
-
     }
 
     @Override

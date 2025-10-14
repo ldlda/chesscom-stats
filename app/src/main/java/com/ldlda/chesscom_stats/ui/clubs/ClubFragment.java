@@ -1,6 +1,7 @@
 package com.ldlda.chesscom_stats.ui.clubs;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.databinding.FragmentClubBinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class ClubFragment extends Fragment {
+    public static final String TAG = "ClubFragment";
     private static final int BATCH_SIZE = 10;
     private FragmentClubBinding binding;
     private ClubViewModel viewModel;
@@ -29,7 +30,7 @@ public class ClubFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentClubBinding.inflate(inflater, container, false);
         viewModel = new ViewModelProvider(this).get(ClubViewModel.class);
-        requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
+//        requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
 
 
         setupRecyclerView();
@@ -105,6 +106,7 @@ public class ClubFragment extends Fragment {
 */
             var l = new ArrayList<>(adapter.getCurrentList());
             int i = l.size() - 1;
+            Log.d(TAG, "observeViewModel: i = " + i);
             if (!loading && i != -1 && l.get(i) == null) {
                 l.remove(i);
                 adapter.submitList(l);
@@ -120,7 +122,7 @@ public class ClubFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
+//        requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
         super.onDestroyView();
         binding = null;
 

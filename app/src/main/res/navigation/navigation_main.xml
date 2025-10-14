@@ -10,8 +10,4 @@
         android:name="com.ldlda.chesscom_stats.MainActivity"
         android:label="activity_main"
         tools:layout="@layout/activity_main" />
-    <activity
-        android:id="@+id/playerDetailActivity"
-        android:name="com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailActivity"
-        android:label="PlayerDetailActivity" />
 </navigation>
