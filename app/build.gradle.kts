@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.androidx.navigation.safeargs)
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.androidx.room)
+    id("kotlin-parcelize")
 }
 
 android {
