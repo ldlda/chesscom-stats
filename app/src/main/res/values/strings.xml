@@ -47,6 +47,7 @@
     <string name="rapid_score">Rapid Stats</string>
 
     <string name="get_fide_res">Estimate FIDE rating</string>
+    <string name="estimate_fide">Estimated FIDE rating:</string>
 
     <!-- Club stuff -->
     <string name="clubMember">Club members</string>

@@ -66,6 +66,7 @@
     <string name="hello_blank_fragment">Bonjour fragment vide</string>
     <string name="bullet_score">Rapport de Bullet</string>
     <string name="get_fide_res">" estimer la note FIDE"</string>
+    <string name="estimate_fide">Note estimée:</string>
     <string name="clubMember">Membre du club</string>
     <string name="clubPublic">public</string>
     <string name="loading">Chargement...</string>
