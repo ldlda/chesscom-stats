@@ -73,4 +73,48 @@
 
     <!--Recycler view stuff-->
     <string name="loading">Loading...</string>
+
+    <!--Lesson Desc-->
+    <string name="lesson1_desc">
+    This beginner-friendly lesson introduces you to the wonderful world of chess.
+    You’ll learn how to set up the board correctly, how each piece moves, and what makes chess such a deep and strategic game.
+    Clear examples and guided exercises help you master the basic rules, from capturing pieces to understanding check and checkmate.
+    Even if you’ve never touched a chessboard before, this course gives you the confidence to start playing real games right away.
+    <a href="https://www.chess.com/lessons/learn-to-play-chess">Press here to show the full lesson</a>
+</string>
+
+    <string name="lesson2_desc">
+    After learning the rules, it’s time to focus on winning!
+    This lesson dives into the art of checkmating your opponent using classic techniques like the ladder mate, back-rank mate, and king-and-queen checkmates.
+    You’ll explore different positions that appear frequently in real games, helping you understand not just how to deliver checkmate but also how to avoid falling into one.
+    With clear examples and puzzles, you’ll start recognizing these patterns naturally during your own matches.
+    <a href="https://www.chess.com/lessons/basic-checkmates-and-more">Press here to show the full lesson</a>
+</string>
+
+    <string name="lesson3_desc">
+    Tactics are where chess becomes truly exciting.
+    In this intermediate lesson, you’ll uncover the hidden opportunities that can turn a losing position into a brilliant victory.
+    You’ll study common tactical themes like forks, pins, skewers, discovered attacks, and double checks — all explained with practical examples and guided exercises.
+    By practicing these ideas, you’ll train your eyes to spot tactical combinations instantly, making your play sharper and more dynamic.
+    <a href="https://www.chess.com/lessons/tactics">Press here to show the full lesson</a>
+</string>
+
+    <string name="lesson4_desc">
+    Once you’ve mastered basic tactics, it’s time to enter the advanced arena.
+    This lesson challenges you with deeper tactical concepts such as sacrifices for long-term gain, interference, deflection, and removing the defender.
+    Through complex puzzles and real grandmaster examples, you’ll learn how to think several moves ahead, calculate efficiently, and create threats your opponent never sees coming.
+    These skills will prepare you to compete confidently at a much higher level.
+    <a href="https://www.chess.com/lessons/advanced-tactics-1">Press here to show the full lesson</a>
+</string>
+
+    <string name="lesson5_desc">
+    The endgame is where champions are made.
+    This advanced course teaches you how to handle simplified positions where precision and understanding matter most.
+    You’ll study essential king and pawn endings, opposition principles, and how to convert small advantages into victory.
+    You’ll also explore complex endings involving rooks, bishops, and knights — learning when to trade, when to defend, and how to force a win even with limited material.
+    By mastering these endings, you’ll gain confidence in every phase of the game.
+    <a href="https://www.chess.com/lessons/advanced-endgames">Press here to show the full lesson</a>
+</string>
+    <string name="search_hint">Search lessons, topics, or level...</string>
+
 </resources>

@@ -28,11 +28,15 @@ public class MainActivity extends AppCompatActivity {
     private MediaPlayer backgroundSong;
 
     // Cached fragment references for show/hide pattern
-    private Fragment homeFragment, hallFragment, favoritesFragment, lessonsFragment, currentFragment;
+    private Fragment homeFragment, hallFragment, favoritesFragment, lessonsFragment, currentFragment, lessonContentFragment;
     private int selectedItemId = R.id.home;
 
     private Context context;
     private ActivityMainBinding binding;
+
+    private static final String TAG_LESSON_CONTENT = "tab:lesson_content";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,19 +56,35 @@ public class MainActivity extends AppCompatActivity {
         }
 
         ensureFragments();
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            Fragment visible = null;
+            if (homeFragment != null && homeFragment.isVisible()) visible = homeFragment;
+            else if (hallFragment != null && hallFragment.isVisible()) visible = hallFragment;
+            else if (favoritesFragment != null && favoritesFragment.isVisible()) visible = favoritesFragment;
+            else if (lessonsFragment != null && lessonsFragment.isVisible()) visible = lessonsFragment;
+            else if (lessonContentFragment != null && lessonContentFragment.isVisible()) visible = lessonContentFragment;
+
+            if (visible != null) currentFragment = visible;
+        });
         showSelected(selectedItemId);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int menuId = item.getItemId();
             Fragment target = fragmentFor(menuId);
             if (target != null && target != currentFragment) {
-                getSupportFragmentManager()
-                        .popBackStack("gay", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .hide(currentFragment)
-                        .show(target)
-                        .commit();
+                var tx = getSupportFragmentManager().beginTransaction();
+
+                // Always hide current fragment
+                if (currentFragment != null) tx.hide(currentFragment);
+
+                // Also hide lessonContentFragment if it's visible
+                if (lessonContentFragment != null && lessonContentFragment.isAdded() && lessonContentFragment.isVisible()) {
+                    tx.hide(lessonContentFragment);
+                    // Clear lesson content from backstack too
+                    getSupportFragmentManager().popBackStack("gay", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
+
+                tx.show(target).commit();
                 currentFragment = target;
                 selectedItemId = menuId;
             }
@@ -126,6 +146,8 @@ public class MainActivity extends AppCompatActivity {
         hallFragment = fm.findFragmentByTag(TAG_HALL);
         favoritesFragment = fm.findFragmentByTag(TAG_FAV);
         lessonsFragment = fm.findFragmentByTag(TAG_LESSONS);
+        lessonContentFragment = fm.findFragmentByTag(TAG_LESSON_CONTENT);
+
 
         if (homeFragment == null) {
             homeFragment = new HomeFragment();
@@ -143,6 +165,11 @@ public class MainActivity extends AppCompatActivity {
             lessonsFragment = new LessonsFragment();
             tx.add(R.id.fragment_container, lessonsFragment, TAG_LESSONS).hide(lessonsFragment);
         }
+        if (lessonContentFragment == null) {
+            lessonContentFragment = new LessonContents();
+            tx.add(R.id.fragment_container, lessonContentFragment, TAG_LESSON_CONTENT)
+                    .hide(lessonContentFragment);
+        }
         tx.commitNow();
     }
 
@@ -154,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
         if (hallFragment != null) tx.hide(hallFragment);
         if (favoritesFragment != null) tx.hide(favoritesFragment);
         if (lessonsFragment != null) tx.hide(lessonsFragment);
+        if (lessonContentFragment != null) tx.hide(lessonContentFragment);   //added
         tx.show(target).commitNow();
         currentFragment = target;
     }
@@ -182,5 +210,42 @@ public class MainActivity extends AppCompatActivity {
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+    public void showLessonContent(Bundle args) {
+        if (lessonContentFragment == null) {
+            lessonContentFragment = new LessonContents();
+            lessonContentFragment.setArguments(args);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in_right,
+                            R.anim.slide_out_left,
+                            R.anim.slide_in_left,
+                            R.anim.slide_out_right
+                    )
+                    .hide(currentFragment)
+                    .add(R.id.fragment_container, lessonContentFragment, TAG_LESSON_CONTENT)
+                    .show(lessonContentFragment)
+                    .addToBackStack("lesson_content_back")
+                    .commit();
+        } else {
+            // DO NOT call setArguments() on an already added fragment
+            if (lessonContentFragment instanceof LessonContents) {
+                ((LessonContents) lessonContentFragment).updateContent(args);
+            }
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in_right,
+                            R.anim.slide_out_left,
+                            R.anim.slide_in_left,
+                            R.anim.slide_out_right
+                    )
+                    .hide(currentFragment)
+                    .show(lessonContentFragment)
+                    .addToBackStack("lesson_content_back")
+                    .commit();
+        }
+        currentFragment = lessonContentFragment;
     }
 }
