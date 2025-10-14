@@ -35,7 +35,9 @@
 
           `docs: update guidelines`
 
-          be flexible. Be water, my friend.
+        - Or you can follow [Conventional Commits](https://www.conventionalcommits.org/)
+
+      be flexible. Be water, my friend.
 
     - dont push to your remote right away. you have the chance to amend yo commit to either fix the
       commit msg or add an author
