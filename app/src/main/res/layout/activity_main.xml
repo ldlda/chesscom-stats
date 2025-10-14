@@ -35,7 +35,7 @@
         android:layout_below="@+id/main_appbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home_old" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
