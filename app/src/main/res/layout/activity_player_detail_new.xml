@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="250dp">
+
+                <ImageView
+                    android:id="@+id/top_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/bg_top_plr_detail" />
+
+                <ImageView
+                    android:id="@+id/player_detail_avatar"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    android:contentDescription="@string/player_avatar_desc"
+                    android:src="@drawable/ic_person"
+                    android:layout_marginStart="15dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/country"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Country"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/player_detail_avatar"
+                    app:layout_constraintEnd_toEndOf="@+id/player_detail_avatar"
+                    app:layout_constraintStart_toStartOf="@+id/player_detail_avatar"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/player_detail_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/player_username"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/top_bg"
+                    app:layout_constraintStart_toEndOf="@+id/player_detail_avatar"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/player_detail_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/player_name"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/player_detail_username"
+                    app:layout_constraintStart_toStartOf="@+id/player_detail_username"
+                    app:layout_constraintTop_toBottomOf="@+id/player_detail_username" />
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/title_bg"
+                    android:padding="10dp"
+                    android:text="@string/none"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toTopOf="@+id/player_detail_username"
+                    app:layout_constraintEnd_toEndOf="@+id/player_detail_username"
+                    app:layout_constraintStart_toStartOf="@+id/player_detail_username"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Joined"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Last Online"
+                    android:gravity="center"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/bullet_scores"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:text="Bullet Stats"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/bg_chess_stat_clay"/>
+
+                <TextView
+                    android:id="@+id/blitz_scores"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:text="Blitz Stats"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/bg_chess_stat_clay"/>
+
+                <TextView
+                    android:id="@+id/rapid_scores"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:text="Rapid Stats"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/bg_chess_stat_clay"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="30dp">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/logo_fide"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/fide_score"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="FIDE: "
+                    android:layout_weight="3"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:gravity="center_vertical"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="45dp">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_mod_acc"
+                    app:tint="@color/green" />
+
+                <TextView
+                    android:id="@+id/follower_count"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center_vertical"
+                    android:text="Followers: "
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="175dp"
+                android:layout_marginTop="35dp"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/add_to_fav_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:text="@string/add_fav"
+                    android:textColor="@color/transparent_black"
+                    android:textSize="24sp"
+                    android:layout_weight="1"
+                    android:layout_marginBottom="15dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:background="@drawable/add_fav_bg"
+                    app:backgroundTint="@null"
+                    app:icon="@drawable/ic_favorite"
+                    app:iconSize="120px" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/profileURI"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:text="Go to player's profile"
+                    android:textColor="@color/transparent_black"
+                    android:textSize="24sp"
+                    android:layout_weight="1"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:icon="@drawable/ic_forward"
+                    app:iconSize="120px" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
