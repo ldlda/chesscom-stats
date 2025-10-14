@@ -54,6 +54,7 @@
 
     <!-- Menu -->
     <string name="club_find">Chercher pour un club</string>
+    <string name="try_puzzle">Résoudre une énigme</string>
     <string name="about">À propos</string>
 
     <string name="player_rating">Classement</string>
