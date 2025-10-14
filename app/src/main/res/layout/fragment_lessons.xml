@@ -1,41 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="#F5F7FA"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <!-- Header -->
-    <LinearLayout
+    <!-- Search Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/searchCard"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="55dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        app:cardElevation="8dp"
+        app:cardCornerRadius="28dp"
+        app:cardUseCompatPadding="true"
+        app:cardBackgroundColor="@android:color/white"> <!-- FIXED: color instead of drawable -->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Our Lessons"
-            android:textColor="#000000"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:queryHint="Search lessons..."
+            android:iconifiedByDefault="false"
+            app:searchIcon="@drawable/ic_search"
+            app:closeIcon="@drawable/close"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:focusable="true"
+            android:layout_gravity="center_vertical"
+            android:hint="@string/search_hint"
+            android:textColor="@color/black"
+            android:textColorHint="#888888"/>
+    </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="In-demand chess courses."
-            android:textColor="#80000000"
-            android:textSize="14sp" />
-    </LinearLayout>
-
-    <!-- RecyclerView to show lessons dynamically -->
+    <!-- RecyclerView for lessons -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:padding="12dp"
-        android:scrollbars="vertical" />
-</LinearLayout>
+        android:layout_marginTop="8dp"
+        android:scrollbars="vertical"
+        android:layout_below="@id/searchCard"/>
+
+</RelativeLayout>

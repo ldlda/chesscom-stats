@@ -46,6 +46,21 @@
         app:icon="@drawable/ic_community"
         app:iconGravity="start" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/fide_prediction"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="60dp"
+        android:layout_below="@id/club_finder"
+        android:layout_marginTop="50dp"
+        android:text="@string/get_fide_res"
+        android:textSize="18sp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/home_btns_bg"
+        app:backgroundTint="@null"
+        app:icon="@drawable/outline_leaderboard_black_20"
+        app:iconGravity="start"/>
+
 
 </RelativeLayout>
 

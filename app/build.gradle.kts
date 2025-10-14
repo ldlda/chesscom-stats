@@ -97,6 +97,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.serialization.core)
+    implementation(libs.material)
+    implementation(libs.androidx.recyclerview)
 
     implementation(libs.gson)
     implementation(libs.retrofit)
@@ -117,6 +119,5 @@ dependencies {
 //     No additional plugins are necessary
 //    annotationProcessor(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
-
 
 }

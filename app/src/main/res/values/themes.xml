@@ -18,4 +18,8 @@
         <item name="postSplashScreenTheme">@style/Theme.StatsForChesscom</item>
     </style>
 
+    <style name="Theme.MyApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- customize colors etc. -->
+    </style>
+
 </resources>

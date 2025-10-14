@@ -23,6 +23,7 @@
     <string name="rapid_score">Điểm Rapid</string>
     <string name="clubPrivate">Kín</string>
     <string name="home_txt">Chào mừng</string>
+    <string name="extra_txt">Khám phá cờ vua cùng chúng tôi</string>
     <string name="plr_search">Tìm kiếm người chơi</string>
 
     <string name="player_avatar_desc">Avatar người dùng</string>
@@ -58,11 +59,15 @@
 
     <!-- Menu -->
     <string name="club_find">Tìm một CLB</string>
+    <string name="try_puzzle">Giải đố</string>
+    <string name="change_lang">Đổi ngôn ngữ</string>
     <string name="about">Về chúng tôi</string>
 
     <!-- Placeholder -->
     <string name="player_stats">Thống kê</string>
     <string name="bullet_score">Điểm Bullet</string>
+    <string name="get_fide_res">Dự đoán điểm FIDE</string>
+    <string name="estimate_fide">Điểm dự đoán:</string>
     <string name="clubMember">Thành viên</string>
     <string name="clubPublic">Mở</string>
     <string name="loading">Đang tải…</string>

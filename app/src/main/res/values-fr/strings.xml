@@ -48,11 +48,14 @@
     <string name="blitz_score">Rapport de Blitz</string>
     <string name="rapid_score">Rapport de Rapid</string>
     <string name="clubPrivate">Privé</string>
-    <string name="home_txt">Bienvenue à l\'accueil</string>
+    <string name="home_txt">Bienvenue</string>
+    <string name="extra_txt">Explore chess with us</string>
     <string name="plr_search">Rechercher un joueur</string>
 
     <!-- Menu -->
     <string name="club_find">Chercher pour un club</string>
+    <string name="try_puzzle">Résoudre une énigme</string>
+    <string name="change_lang">Changer de langue</string>
     <string name="about">À propos</string>
 
     <string name="player_rating">Classement</string>
@@ -65,6 +68,8 @@
     <!-- Placeholder -->
     <string name="player_stats">Stats</string>
     <string name="bullet_score">Rapport de Bullet</string>
+    <string name="get_fide_res">" estimer la note FIDE"</string>
+    <string name="estimate_fide">Note estimée:</string>
     <string name="clubMember">Membre du club</string>
     <string name="clubPublic">public</string>
     <string name="loading">Chargement…</string>
