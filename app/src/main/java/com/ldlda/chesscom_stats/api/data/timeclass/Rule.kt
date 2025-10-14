@@ -21,7 +21,17 @@ enum class Rule {
     Threecheck,
 
     @SerialName("kingofthehill")
-    Kingofthehill, ;
+    Kingofthehill,
+
+    @SerialName("tactics")
+    Tactics,
+
+    @SerialName("battle")
+    Battle,
+
+    @SerialName("rush")
+    Rush,
+    ;
 
     companion object {
         fun goodValueOf(value: String) =

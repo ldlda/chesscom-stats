@@ -9,6 +9,7 @@ import kotlinx.serialization.UseSerializers
 import java.net.URI
 import java.time.Instant
 
+// naming hell
 @Serializable
 data class Stats<T : BaseRecord>(
     val last: LastRecord,
@@ -16,8 +17,10 @@ data class Stats<T : BaseRecord>(
     val record: T,
 ) {
     @Serializable
-    data class LastRecord(val rating: Int, val date: Instant, val rd: Int)
+    data class LastRecord(override val rating: Int, override val date: Instant, val rd: Int) :
+        BaseRatingDate()
 
     @Serializable
-    data class BestRecord(val rating: Int, val date: Instant, val game: URI)
+    data class BestRecord(override val rating: Int, override val date: Instant, val game: URI) :
+        BaseRatingDate()
 }

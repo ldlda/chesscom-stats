@@ -44,12 +44,14 @@ data class PlayerStats(
 
     fun toJSON() = jsonFormat.encodeToString(this)
 
-    fun scoreTimeClass(time: Time, classType: Rule) = when (time to classType) {
+    fun scoreTimeClass(time: Time?, classType: Rule) = when (time to classType) {
         (Time.Daily to Rule.Chess) -> daily
         (Time.Rapid to Rule.Chess) -> rapid
         (Time.Bullet to Rule.Chess) -> bullet
         (Time.Blitz to Rule.Chess) -> blitz
         (Time.Daily to Rule.Chess960) -> daily960
+//        (null to Rule.Tactics) -> tactics // not the same type
+//        (null to Rule.Rush) -> puzzleRush // hikaru is > top 1 in this leaderboards? what???
         else -> null
     }
 }

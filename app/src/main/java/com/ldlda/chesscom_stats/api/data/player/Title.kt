@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class Title(
-    @get:JvmName("displayName") val displayName: String,
+    val displayName: String,
     @param:StringRes val stringRes: Int?
 ) {
     GM("Grandmaster", R.string.grandmaster),
@@ -21,6 +21,5 @@ enum class Title(
     WCM("Woman Candidate Master", R.string.fide_cand_master),
     ;
 
-    @get:JvmName("stringId")
     val stringId get() = stringRes
 }

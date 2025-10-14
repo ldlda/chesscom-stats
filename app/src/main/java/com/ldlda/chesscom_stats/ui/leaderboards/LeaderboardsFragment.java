@@ -45,6 +45,9 @@ public class LeaderboardsFragment extends Fragment {
             // Launch PlayerDetailActivity with LeaderboardEntry (fast path - no need to refetch data)
             Intent intent = new Intent(getContext(), PlayerDetailActivity.class);
             intent.putExtra(PlayerDetailActivity.EXTRA_PLAYER_ENTRY, player);
+            // TODO: Pass actual timeclass when we support switching between blitz/bullet/rapid/daily
+            // For now, hardcode "blitz" since that's what we fetch
+            intent.putExtra(PlayerDetailActivity.EXTRA_TIMECLASS, "blitz");
             startActivity(intent);
         });
         recyclerView.setAdapter(adapter);

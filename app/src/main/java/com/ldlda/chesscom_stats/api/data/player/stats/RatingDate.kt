@@ -9,9 +9,11 @@ import java.time.Instant
 
 @Serializable
 data class RatingDate(
-    val rating: Int,
-    val date: Instant,
-) {
-    fun Stats.LastRecord.toRatingDate() = RatingDate(rating, date)
-    fun Stats.BestRecord.toRatingDate() = RatingDate(rating, date)
+    override val rating: Int,
+    override val date: Instant,
+) : BaseRatingDate() {
+    companion object {
+        fun Stats.LastRecord.toRatingDate() = RatingDate(rating, date)
+        fun Stats.BestRecord.toRatingDate() = RatingDate(rating, date)
+    }
 }
