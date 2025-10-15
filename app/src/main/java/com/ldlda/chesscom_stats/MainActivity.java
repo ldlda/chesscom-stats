@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SplashScreen s = SplashScreen.installSplashScreen(this);
+        SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -90,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
                 .findFragmentById(R.id.fragment_container);
         if (navHostFragment != null) {
             navController = navHostFragment.getNavController();
+
+            // Setup automatic bottom nav visibility based on destination
+            setupBottomNavVisibility(navController);
         }
 
         // Bottom navigation with Navigation Component
@@ -105,6 +108,38 @@ public class MainActivity extends AppCompatActivity {
 
         backgroundSong = MediaPlayer.create(context, R.raw.open_sky);
         backgroundSong.setLooping(true);
+    }
+
+    /**
+     * Automatically hide/show bottom navigation based on which fragment is showing.
+     * Top-level destinations (Home, Leaderboards, Favorites, Lessons) show bottom nav.
+     * Detail destinations (PlayerSearch, Clubs, FidePredict, Puzzle) hide bottom nav.
+     */
+    private void setupBottomNavVisibility(NavController navController) {
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            int destinationId = destination.getId();
+
+            // Top-level destinations: SHOW bottom nav
+            if (destinationId == R.id.home ||
+                    destinationId == R.id.leaderboards ||
+                    destinationId == R.id.favorites ||
+                    destinationId == R.id.lessons) {
+
+                binding.bottomNavigation.setVisibility(View.VISIBLE);
+            }
+            // Detail destinations: HIDE bottom nav
+            else if (destinationId == R.id.playerSearchFragment ||
+                    destinationId == R.id.clubFragment ||
+                    destinationId == R.id.fidePredictFragment ||
+                    destinationId == R.id.puzzleFragment) {
+
+                binding.bottomNavigation.setVisibility(View.GONE);
+            }
+            // Default: show (safe fallback)
+            else {
+                binding.bottomNavigation.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override

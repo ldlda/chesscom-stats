@@ -11,78 +11,43 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.ldlda.chesscom_stats.R;
-import com.ldlda.chesscom_stats.ui.ai.FidePredictFragment;
-import com.ldlda.chesscom_stats.ui.clubs.ClubFragment;
-import com.ldlda.chesscom_stats.ui.playersearch.PlayerSearchFragment;
-import com.ldlda.chesscom_stats.ui.puzzle.PuzzleFragment;
+import com.ldlda.chesscom_stats.databinding.FragmentHomeBinding;
 
 import java.util.Locale;
 
 public class HomeFragment extends Fragment {
-    //Inflate fragment
+
+    FragmentHomeBinding binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        CardView plr_search_btn = view.findViewById(R.id.plr_searcher);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
 
-        plr_search_btn.setOnClickListener(v -> {
-            requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
+        // Player Search card - Navigate with Navigation Component
+        CardView plr_search_btn = binding.plrSearcher;
+        plr_search_btn.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_home_to_playerSearch));
 
-            PlayerSearchFragment searchFragment = new PlayerSearchFragment();
+        // Club Finder card - Navigate with Navigation Component
+        CardView club_finder = binding.clubFinder;
+        club_finder.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_home_to_clubs));
 
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, searchFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
+        // FIDE Prediction card - Navigate with Navigation Component
+        CardView predict_fide = binding.fidePrediction;
+        predict_fide.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_home_to_fidePredict));
 
-        CardView club_finder = view.findViewById(R.id.club_finder);
-        club_finder.setOnClickListener(v -> {
-            requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
+        // Puzzle card - Navigate with Navigation Component
+        CardView puzzle = binding.puzzle;
+        puzzle.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_home_to_puzzle));
 
-            ClubFragment clubFragment = new ClubFragment();
-
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, clubFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
-
-        CardView predict_fide = view.findViewById(R.id.fide_prediction);
-        predict_fide.setOnClickListener(v -> {
-                    FidePredictFragment fidePredictFragment = new FidePredictFragment();
-
-                    requireActivity().getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, fidePredictFragment)
-                            .addToBackStack(null)
-                            .commit();
-                }
-        );
-
-        CardView puzzle = view.findViewById(R.id.puzzle);
-        puzzle.setOnClickListener(v -> {
-            requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
-
-            PuzzleFragment puzzleFragment = new PuzzleFragment();
-
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, puzzleFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
-
-        CardView changeLang = view.findViewById(R.id.change_lang);
-
+        // Language switcher - Popup menu (stays same)
+        CardView changeLang = binding.changeLang;
         changeLang.setOnClickListener(this::showLanguageMenu);
 
-        return view;
+        return binding.getRoot();
     }
 
     private void showLanguageMenu(View anchor) {

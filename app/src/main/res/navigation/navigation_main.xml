@@ -12,13 +12,19 @@
         android:label="@string/home"
         tools:layout="@layout/fragment_home">
 
-        <!-- Actions for dashboard cards will go here -->
+        <!-- Actions to detail screens -->
         <action
-            android:id="@+id/action_home_to_leaderboards"
-            app:destination="@id/leaderboards" />
+            android:id="@+id/action_home_to_playerSearch"
+            app:destination="@id/playerSearchFragment" />
         <action
-            android:id="@+id/action_home_to_favorites"
-            app:destination="@id/favorites" />
+            android:id="@+id/action_home_to_clubs"
+            app:destination="@id/clubFragment" />
+        <action
+            android:id="@+id/action_home_to_fidePredict"
+            app:destination="@id/fidePredictFragment" />
+        <action
+            android:id="@+id/action_home_to_puzzle"
+            app:destination="@id/puzzleFragment" />
     </fragment>
 
     <!-- Leaderboards Fragment -->
@@ -41,5 +47,35 @@
         android:name="com.ldlda.chesscom_stats.ui.lessons.LessonsFragment"
         android:label="@string/lesson"
         tools:layout="@layout/fragment_lessons" />
+
+    <!-- DETAIL DESTINATIONS (hide bottom nav when showing these) -->
+
+    <!-- Player Search Fragment -->
+    <fragment
+        android:id="@+id/playerSearchFragment"
+        android:name="com.ldlda.chesscom_stats.ui.playersearch.PlayerSearchFragment"
+        android:label="Player Search"
+        tools:layout="@layout/fragment_player_search" />
+
+    <!-- Club Finder Fragment -->
+    <fragment
+        android:id="@+id/clubFragment"
+        android:name="com.ldlda.chesscom_stats.ui.clubs.ClubFragment"
+        android:label="Club Finder"
+        tools:layout="@layout/fragment_club" />
+
+    <!-- FIDE Prediction Fragment -->
+    <fragment
+        android:id="@+id/fidePredictFragment"
+        android:name="com.ldlda.chesscom_stats.ui.ai.FidePredictFragment"
+        android:label="FIDE Prediction"
+        tools:layout="@layout/fragment_fide_predict" />
+
+    <!-- Puzzle Fragment -->
+    <fragment
+        android:id="@+id/puzzleFragment"
+        android:name="com.ldlda.chesscom_stats.ui.puzzle.PuzzleFragment"
+        android:label="Puzzle"
+        tools:layout="@layout/fragment_puzzle" />
 
 </navigation>
