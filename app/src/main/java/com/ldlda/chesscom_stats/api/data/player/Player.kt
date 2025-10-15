@@ -8,6 +8,8 @@ import com.ldlda.chesscom_stats.api.repository.ChessRepository
 import com.ldlda.chesscom_stats.util.ldaCheckThis
 import com.ldlda.chesscom_stats.util.serialize.InstantEpochSecondSerializer
 import com.ldlda.chesscom_stats.util.serialize.tostring.HttpUrlSerializer
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -40,7 +42,7 @@ data class Player(
     @SerialName("last_online")
     val lastOnline: Instant,
 
-    val status: String,
+    val status: Status,
 
     val followers: Int,
 
@@ -53,10 +55,10 @@ data class Player(
     val name: String? = null,
 ) {
     var countryInfo: CountryInfo? = null
-        private set
+        internal set
 
     var playerStats: PlayerStats? = null
-        private set
+        internal set
 
     suspend fun fetchPlayerStats(repo: ChessRepository): PlayerStats {
         val newPlayerStats = repo.getPlayerStats(username)
@@ -84,6 +86,21 @@ data class Player(
         @JvmStatic
         fun fromJSON(jsonString: String): Player =
             jsonFormat.decodeFromString(jsonString)
+
+        suspend fun fetchFullPlayer(repo: ChessRepository, username: String): Player =
+        // the first time in my life it clicked:
+        // this is a scope. Think a block. if the parent block cancels this cancel.
+            // this goes with the parent. which mean call site do the work
+            coroutineScope {
+                val a = async {
+                    repo.getPlayer(username)
+                        .apply { fetchCountryInfo(repo) }
+                }
+                val b = async { repo.getPlayerStats(username) }
+                val player = a.await()
+                val stats = b.await()
+                player.apply { playerStats = stats }
+            }
     }
 
     fun toJSON() = jsonFormat.encodeToString(this)

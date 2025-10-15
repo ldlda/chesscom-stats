@@ -10,8 +10,6 @@ import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import com.ldlda.chesscom_stats.api.fetch.ChessApiException
 import com.ldlda.chesscom_stats.util.Futures.eager
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.runBlocking
@@ -124,12 +122,7 @@ class ChessRepoAdapterJava<CR>(
     // insanely convenient
     fun getCompletePlayerAsync(username: String): CompletableFuture<Player> =
         runAsyncLda {
-            val player = repo.getPlayer(username)
-            awaitAll(
-                async { player.fetchCountryInfo(repo) },
-                async { player.fetchPlayerStats(repo) }
-            )
-            player
+            Player.fetchFullPlayer(repo, username)
         }
 
     // ridiculously convenient

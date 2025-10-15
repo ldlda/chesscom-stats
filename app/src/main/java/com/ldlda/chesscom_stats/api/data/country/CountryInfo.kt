@@ -1,20 +1,23 @@
 package com.ldlda.chesscom_stats.api.data.country
 
+import android.os.Parcelable
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient
 import com.ldlda.chesscom_stats.util.checkFn
 import com.ldlda.chesscom_stats.util.invalidUrlBase
 import com.ldlda.chesscom_stats.util.malformedUrl
 import com.ldlda.chesscom_stats.util.requiredNotNullOr
 import com.ldlda.chesscom_stats.util.requiredOr
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
+@Parcelize
 @Serializable
 data class CountryInfo(
     val name: String,
     val code: String // Locale.IsoCountryCode + random shit
-) {
+) : Parcelable {
     companion object {
         private val jsonFormat = Json { ignoreUnknownKeys = true }
 

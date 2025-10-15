@@ -39,7 +39,7 @@ data class PlayerPreview(
         username = username,
         profilePage = profilePage,
         countryUrl = countryUrl,
-        status = status,
+        status = status.name,
         title = title,
         name = name,
         avatarUrl = avatarUrl
@@ -50,7 +50,7 @@ data class PlayerPreview(
         username = username,
         profilePage = profilePage,
         countryUrl = countryUrl,
-        status = status,
+        status = status?.name,
         title = title,
         name = name,
         avatarUrl = avatarUrl

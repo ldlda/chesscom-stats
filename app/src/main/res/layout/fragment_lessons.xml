@@ -25,19 +25,21 @@
         <androidx.appcompat.widget.SearchView
             android:id="@+id/search"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:background="@android:color/transparent"
+            android:focusable="true"
+            android:hint="@string/search_hint"
             android:queryHint="Search lessons..."
+            android:textColorHint="#888888"
             android:iconifiedByDefault="false"
-            app:searchIcon="@drawable/ic_search"
-            app:closeIcon="@drawable/close"
             android:paddingHorizontal="10dp"
             android:paddingVertical="5dp"
-            android:focusable="true"
-            android:layout_gravity="center_vertical"
-            android:hint="@string/search_hint"
+            app:closeIcon="@drawable/close"
             android:textColor="@color/black"
-            android:textColorHint="#888888"/>
+            app:queryBackground="@null"
+            app:searchIcon="@drawable/ic_search"
+            app:submitBackground="@null" />
     </androidx.cardview.widget.CardView>
 
     <!-- RecyclerView for lessons -->

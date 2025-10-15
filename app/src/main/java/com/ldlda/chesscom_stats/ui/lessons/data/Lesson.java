@@ -1,5 +1,9 @@
-package com.ldlda.chesscom_stats.ui.lessons;
+package com.ldlda.chesscom_stats.ui.lessons.data;
 
+
+import kotlinx.parcelize.Parcelize;
+
+@Parcelize
 public class Lesson {
 
     private final String dataTitle;

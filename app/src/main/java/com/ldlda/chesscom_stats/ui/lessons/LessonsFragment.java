@@ -10,10 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ldlda.chesscom_stats.R;
+import com.ldlda.chesscom_stats.ui.lessons.data.Lesson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,7 @@ public class LessonsFragment extends Fragment {
 
     RecyclerView recyclerView;
     List<Lesson> dataList;
-    LessonAdapter adapter;
+    LessonsAdapter adapter;
     SearchView searchView; // This will now correctly be the androidx version
 
     @Nullable
@@ -56,7 +58,7 @@ public class LessonsFragment extends Fragment {
         dataList = new ArrayList<>();
         populateData();
 
-        adapter = new LessonAdapter(requireContext(), dataList, this::showLessonContent);
+        adapter = new LessonsAdapter(requireContext(), dataList, this::showLessonContent);
         recyclerView.setAdapter(adapter);
 
         return view;
@@ -85,18 +87,20 @@ public class LessonsFragment extends Fragment {
     }
 
     public void showLessonContent(Bundle args) {
-        var lessonContentFragment = new LessonContentsFragment();
-        lessonContentFragment.setArguments(args);
-        var syfm = requireActivity().getSupportFragmentManager();
-        syfm.beginTransaction()
-                .setCustomAnimations(
-                        R.anim.slide_in_right,
-                        R.anim.slide_out_left,
-                        R.anim.slide_in_left,
-                        R.anim.slide_out_right
-                )
-                .replace(R.id.fragment_container, lessonContentFragment)
-                .addToBackStack("lesson_content_back")
-                .commit();
+        // Get lesson index from title
+        String title = args.getString("Title");
+        int startIndex = 0;
+        for (int i = 0; i < dataList.size(); i++) {
+            if (dataList.get(i).getDataTitle().equals(title)) {
+                startIndex = i;
+                break;
+            }
+        }
+
+        // Navigate to lesson pager container using Navigation Component
+        Bundle bundle = new Bundle();
+        bundle.putInt("startIndex", startIndex);
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.action_lessons_to_pager, bundle);
     }
 }

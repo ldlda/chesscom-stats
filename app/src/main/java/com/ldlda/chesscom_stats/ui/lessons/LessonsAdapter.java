@@ -1,5 +1,6 @@
 package com.ldlda.chesscom_stats.ui.lessons;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,23 +14,26 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ldlda.chesscom_stats.R;
+import com.ldlda.chesscom_stats.ui.lessons.data.Lesson;
 
 import java.util.List;
 
-public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.MyViewHolder> {
+public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyViewHolder> {
 
     private final Context context;
     private List<Lesson> dataList;
     private final ToLessonContent listener;
-    public void setSearchList(List<Lesson> dataSearchList) {
-        this.dataList = dataSearchList;
-        notifyDataSetChanged();
-    }
 
-    public LessonAdapter(Context context, List<Lesson> dataList, ToLessonContent listener) {
+    public LessonsAdapter(Context context, List<Lesson> dataList, ToLessonContent listener) {
         this.context = context;
         this.dataList = dataList;
         this.listener = listener;
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void setSearchList(List<Lesson> dataSearchList) {
+        this.dataList = dataSearchList;
+        notifyDataSetChanged();
     }
 
 
@@ -85,7 +89,6 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.MyViewHold
             recCard = itemView.findViewById(R.id.recCard);
         }
     }
-
 
 }
 

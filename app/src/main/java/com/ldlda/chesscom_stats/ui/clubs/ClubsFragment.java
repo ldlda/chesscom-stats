@@ -20,17 +20,17 @@ import com.ldlda.chesscom_stats.databinding.FragmentClubBinding;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class ClubFragment extends Fragment {
+public class ClubsFragment extends Fragment {
     public static final String TAG = "ClubFragment";
     private static final int BATCH_SIZE = 10;
     private FragmentClubBinding binding;
-    private ClubViewModel viewModel;
+    private ClubsViewModel viewModel;
     private ClubItemAdapter adapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentClubBinding.inflate(inflater, container, false);
-        viewModel = new ViewModelProvider(this).get(ClubViewModel.class);
+        viewModel = new ViewModelProvider(this).get(ClubsViewModel.class);
 //        requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
 
 

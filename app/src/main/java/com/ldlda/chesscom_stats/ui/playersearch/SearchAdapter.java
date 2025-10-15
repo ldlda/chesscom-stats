@@ -1,0 +1,82 @@
+package com.ldlda.chesscom_stats.ui.playersearch;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.ldlda.chesscom_stats.R;
+import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem;
+import com.ldlda.chesscom_stats.api.data.search.autocomplete.UserView;
+import com.ldlda.chesscom_stats.databinding.ItemPlayerSearchBinding;
+import com.squareup.picasso.Picasso;
+
+public class SearchAdapter extends ListAdapter<SearchItem, SearchAdapter.PlayerViewHolder> {
+    private static final DiffUtil.ItemCallback<SearchItem> DIFF =
+            new DiffUtil.ItemCallback<>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull SearchItem a, @NonNull SearchItem b) {
+                    // Prefer playerId if unique; fallback to username
+                    UserView userViewB = b.getUserView();
+                    UserView userViewA = a.getUserView();
+                    return userViewA.getUserId() == userViewB.getUserId() || userViewA.getUsername().equalsIgnoreCase(userViewB.getUsername());
+                }
+
+                @Override
+                public boolean areContentsTheSame(@NonNull SearchItem a, @NonNull SearchItem b) {
+                    return a.equals(b);
+                }
+            };
+    private final OnPlayerClickListener listener;
+
+    public SearchAdapter(OnPlayerClickListener listener) {
+        super(DIFF);
+        this.listener = listener;
+    }
+
+    @NonNull
+    @Override
+    public PlayerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = ItemPlayerSearchBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false).getRoot();
+        return new PlayerViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull PlayerViewHolder holder, int position) {
+        SearchItem player = getItem(position);
+        holder.username.setText(player.getUserView().getUsername());
+
+        String avatar = player.getUserView().getAvatar().toString();
+        if (!avatar.isEmpty()) {
+            Picasso.get()
+                    .load(avatar)
+                    .placeholder(R.drawable.ic_person)
+                    .error(R.drawable.ic_person)
+                    .into(holder.avatar);
+        } else {
+            holder.avatar.setImageResource(R.drawable.ic_person);
+        }
+        holder.itemView.setOnClickListener(v -> listener.onPlayerClick(player));
+    }
+
+    public interface OnPlayerClickListener {
+        void onPlayerClick(SearchItem player);
+    }
+
+    public static class PlayerViewHolder extends RecyclerView.ViewHolder {
+        ImageView avatar;
+        TextView username;
+
+        public PlayerViewHolder(@NonNull View itemView) {
+            super(itemView);
+            avatar = itemView.findViewById(R.id.player_avatar);
+            username = itemView.findViewById(R.id.player_username);
+        }
+    }
+}

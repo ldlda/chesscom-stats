@@ -159,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
             backgroundSong.release();
             backgroundSong = null;
         }
+        binding = null; // pair with onStart
     }
 
 

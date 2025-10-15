@@ -39,13 +39,14 @@ import okhttp3.HttpUrl;
 
 public class PlayerDetailActivity extends AppCompatActivity {
     public static final String EXTRA_PLAYER_ENTRY = "player_entry";
+    public static final String EXTRA2_PLAYER_ENTRY = "player2_entry";
     public static final String EXTRA_USERNAME = "username"; // Fallback for legacy
     public static final String EXTRA_TIMECLASS = "timeclass"; // Which leaderboard it came from (blitz/bullet/rapid/daily)
 
     private final String TAG = "PlayerDetailActivity";
     private ChessRepoAdapterJava<ChessRepositoryTimedCache> repo;
     private FavoritesViewModel favoritesViewModel;
-    private CompletableFuture inFlight;
+    private CompletableFuture<?> inFlight;
     private ActivityPlayerDetailBinding binding;
 
     private String username;
@@ -135,9 +136,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         // Check if favorited (background thread via ViewModel)
         if (playerId != null) {
             favoritesViewModel.isFavorite(playerId, isFav -> {
-                runOnUiThread(() -> {
-                    updateFavoriteButton(isFav);
-                });
+                runOnUiThread(() -> updateFavoriteButton(isFav));
                 return null;
             });
         }
@@ -255,9 +254,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
                 .exceptionally(ex -> {
                     if (isFinishing() || isDestroyed()) return null;
                     Log.e(TAG, "Failed to fetch player data", ex);
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, R.string.failed_to_load_player_data, Toast.LENGTH_SHORT).show();
-                    });
+                    runOnUiThread(() -> Toast.makeText(this, R.string.failed_to_load_player_data, Toast.LENGTH_SHORT).show());
                     return null;
                 });
     }
