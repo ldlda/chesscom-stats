@@ -18,24 +18,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.splashscreen.SplashScreen;
-import androidx.fragment.app.Fragment;
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ldlda.chesscom_stats.databinding.ActivityMainBinding;
 import com.ldlda.chesscom_stats.store.GlobalDB;
-import com.ldlda.chesscom_stats.ui.favorites.FavoritesFragment;
-import com.ldlda.chesscom_stats.ui.home.HomeFragment;
-import com.ldlda.chesscom_stats.ui.leaderboards.LeaderboardsFragment;
-import com.ldlda.chesscom_stats.ui.lessons.LessonsFragment;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String KEY_SELECTED = "selectedItemId";
     private final String TAG = "MainActivity";
     private MediaPlayer backgroundSong;
 
-    private int selectedItemId = R.id.home;
-
+    private NavController navController;
     private ActivityMainBinding binding;
 
     @Override
@@ -89,34 +85,20 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = binding.myToolbar;
         setSupportActionBar(myToolbar);
 
-        // Bottom navigation handling using show/hide (create fragments once)
-        BottomNavigationView bottomNavigationView = binding.bottomNavigation;
-
-        if (savedInstanceState != null) {
-            selectedItemId = savedInstanceState.getInt(KEY_SELECTED, R.id.home);
+        // Setup Navigation Component
+        var navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_container);
+        if (navHostFragment != null) {
+            navController = navHostFragment.getNavController();
         }
 
-//        NavController navController = Navigation.findNavController(binding.fragmentContainer);
-
-        if (savedInstanceState == null) {
-            replaceTo(fragmentFor(R.id.home));
+        // Bottom navigation with Navigation Component
+        BottomNavigationView bottomNavigationView = binding.bottomNavigation;
+        if (navController != null) {
+            NavigationUI.setupWithNavController(bottomNavigationView, navController);
         }
 
         GlobalDB.initDb(getApplicationContext());
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int menuId = item.getItemId();
-            Fragment target = fragmentFor(menuId);
-
-            replaceTo(target);
-            selectedItemId = menuId;
-            return true;
-        });
-
-        // Keep BottomNavigationView selection in sync
-        if (bottomNavigationView.getSelectedItemId() != selectedItemId) {
-            bottomNavigationView.setSelectedItemId(selectedItemId);
-        }
 
         // Music
         Context context = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) ? createAttributionContext("audioPlayback") : this;
@@ -157,23 +139,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(KEY_SELECTED, selectedItemId);
-    }
-
-    private void replaceTo(Fragment fragment) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(R.id.fragment_container, fragment)
-                .commit();
-    }
-
-    private Fragment fragmentFor(int menuId) {
-        if (menuId == R.id.home) return new HomeFragment();
-        if (menuId == R.id.leaderboards) return new LeaderboardsFragment();
-        if (menuId == R.id.favorites) return new FavoritesFragment();
-        if (menuId == R.id.lessons) return new LessonsFragment();
-        return new HomeFragment();
+        // Navigation Component handles state automatically
     }
 
     @Override

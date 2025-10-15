@@ -2,12 +2,44 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/navigation_main.xml"
-    app:startDestination="@id/mainActivity">
+    android:id="@+id/navigation_main"
+    app:startDestination="@id/home">
 
-    <activity
-        android:id="@+id/mainActivity"
-        android:name="com.ldlda.chesscom_stats.MainActivity"
-        android:label="activity_main"
-        tools:layout="@layout/activity_main" />
+    <!-- Home Fragment (Dashboard) -->
+    <fragment
+        android:id="@+id/home"
+        android:name="com.ldlda.chesscom_stats.ui.home.HomeFragment"
+        android:label="@string/home"
+        tools:layout="@layout/fragment_home">
+
+        <!-- Actions for dashboard cards will go here -->
+        <action
+            android:id="@+id/action_home_to_leaderboards"
+            app:destination="@id/leaderboards" />
+        <action
+            android:id="@+id/action_home_to_favorites"
+            app:destination="@id/favorites" />
+    </fragment>
+
+    <!-- Leaderboards Fragment -->
+    <fragment
+        android:id="@+id/leaderboards"
+        android:name="com.ldlda.chesscom_stats.ui.leaderboards.LeaderboardsFragment"
+        android:label="@string/hall_of_fame"
+        tools:layout="@layout/fragment_hall_of_fame" />
+
+    <!-- Favorites Fragment -->
+    <fragment
+        android:id="@+id/favorites"
+        android:name="com.ldlda.chesscom_stats.ui.favorites.FavoritesFragment"
+        android:label="@string/fav"
+        tools:layout="@layout/fragment_favorites" />
+
+    <!-- Lessons Fragment -->
+    <fragment
+        android:id="@+id/lessons"
+        android:name="com.ldlda.chesscom_stats.ui.lessons.LessonsFragment"
+        android:label="@string/lesson"
+        tools:layout="@layout/fragment_lessons" />
+
 </navigation>
