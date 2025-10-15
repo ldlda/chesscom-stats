@@ -1,5 +1,7 @@
 package com.ldlda.chesscom_stats.ui.puzzle;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -77,6 +79,9 @@ public class PuzzleFragment extends Fragment {
 
         solveURI.setOnClickListener(v -> {
             if (puzzleUrl != null) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(puzzleUrl));
+                startActivity(intent);
+                /*
                 Bundle bundle = new Bundle();
                 bundle.putString("puzzle_url", puzzleUrl);
 
@@ -94,6 +99,7 @@ public class PuzzleFragment extends Fragment {
                         .replace(R.id.fragment_container, webFragment)
                         .addToBackStack(null)
                         .commit();
+                 */
             } else {
                 Toast.makeText(requireContext(), "Puzzle not loaded yet", Toast.LENGTH_SHORT).show();
             }
