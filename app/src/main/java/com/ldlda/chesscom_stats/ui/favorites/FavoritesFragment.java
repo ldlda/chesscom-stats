@@ -1,6 +1,7 @@
 package com.ldlda.chesscom_stats.ui.favorites;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 public class FavoritesFragment extends Fragment {
     private FragmentFavoritesBinding binding;
     private FavoritesAdapter adapter;
-    private final List<String> favs = new ArrayList<>(); // Ensure this is populated elsewhere
+    private final List<FavoritesAdapter.FavoritePlayer> favs = new ArrayList<>(); // Ensure this is populated elsewhere
     private FavoritesViewModel viewModel;
 
     @Nullable
@@ -41,7 +42,14 @@ public class FavoritesFragment extends Fragment {
         adapter = new FavoritesAdapter(new FavoritesAdapter.OnFavoriteClickListener() {
             @Override
             public void onRemoveClicked(String username) {
-                int pos = favs.indexOf(username);
+                int pos = -1;
+                for (int i = 0; i < favs.size(); i++) {
+                    if (favs.get(i).username.equals(username)) {
+                        pos = i;
+                        break;
+                    }
+                }
+                Log.i("FavoritesFragment", "Removing favorite: " + username + " at position " + pos);
                 if (pos != -1) {
                     // Animate out before removing
                     var viewHolder = binding.favRecycler.findViewHolderForAdapterPosition(pos);
@@ -78,6 +86,8 @@ public class FavoritesFragment extends Fragment {
                 ))
                 .collect(Collectors.toList());
 
+            favs.clear();
+            favs.addAll(favoritePlayers);
             adapter.submitList(new ArrayList<>(favoritePlayers));
         });
 
