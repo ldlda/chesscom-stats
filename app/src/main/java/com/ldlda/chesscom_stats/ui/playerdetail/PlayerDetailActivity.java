@@ -45,13 +45,13 @@ public class PlayerDetailActivity extends AppCompatActivity {
     private final String TAG = "PlayerDetailActivity";
     private ChessRepoAdapterJava<ChessRepositoryTimedCache> repo;
     private FavoritesViewModel favoritesViewModel;
-    private CompletableFuture inFlight;
+    // Specify type parameter for CompletableFuture
+    private CompletableFuture<Void> inFlight;
     private ActivityPlayerDetailBinding binding;
 
     private String username;
     private Long playerId;
     static final String noData = "No data";
-    static final String loading = "Loading..."; // lowk i cant wire this up up top
     private HttpUrl profileUrl;
     private TextView usernameView;
     private TextView nameView;
@@ -69,6 +69,9 @@ public class PlayerDetailActivity extends AppCompatActivity {
     private TextView lastOnlineDate;
     private MaterialButton addFavoriteBtn;
     private MaterialButton profileButton;
+
+    private String curtitle;
+    private long curlastOnlineDate;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -145,7 +148,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
         // Favorite button click handler
         addFavoriteBtn.setOnClickListener(v -> {
             if (playerId != null && username != null) {
-                favoritesViewModel.toggleFavorite(playerId, username, isFav -> {
+                String lastOnlineDateStr = String.valueOf(curlastOnlineDate); // Convert long to String
+                favoritesViewModel.toggleFavorite(playerId, username, curtitle, lastOnlineDateStr, isFav -> {
                     runOnUiThread(() -> {
                         updateFavoriteButton(isFav);
                         Toast.makeText(this,
@@ -233,6 +237,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
                         // Title
                         Title title = player.getTitle();
                         titleView.setText(title != null ? title.getDisplayName() : getString(R.string.none));
+                        curtitle = title != null ? title.getDisplayName() : "none";
 
                         // Country (already fetched!)
                         countryView.setText(country.getName());
@@ -247,6 +252,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
                         // Joined & Last Online
                         joinedDate.setText(formatInstant(player.getJoined()));
                         lastOnlineDate.setText(formatInstant(player.getLastOnline()));
+                        // Fix type mismatch for curlastOnlineDate
+                        curlastOnlineDate = player.getLastOnline() != null ? player.getLastOnline().toEpochMilli() : 5555L;
 
                         // Stats (already fetched!)
                         updateStatsViews(playerStats);

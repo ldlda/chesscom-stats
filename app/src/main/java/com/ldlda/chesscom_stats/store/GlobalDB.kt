@@ -16,5 +16,6 @@ object GlobalDB {
         Room.databaseBuilder(
             applicationContext,
             FavoriteDatabase::class.java, "favorite-users"
-        ).build().also { if (!::db.isInitialized) db = it }
+        ).fallbackToDestructiveMigration() // Added to handle schema changes without crashing
+        .build().also { if (!::db.isInitialized) db = it }
 }

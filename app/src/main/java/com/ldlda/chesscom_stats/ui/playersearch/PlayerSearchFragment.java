@@ -59,6 +59,9 @@ public class PlayerSearchFragment extends Fragment {
 
     private String currentUsername = null;
     private Long currentPlayerId = null;
+
+    private String currentTitle = null;
+    private long currentlastOnldate = 5555;
     private FavoritesViewModel favoritesViewModel;
 
     @Override
@@ -93,7 +96,7 @@ public class PlayerSearchFragment extends Fragment {
 
         fav_btn.setOnClickListener(v -> {
             if (currentUsername != null && currentPlayerId != null) {
-                favoritesViewModel.toggleFavorite(currentPlayerId, currentUsername, isFav -> {
+                favoritesViewModel.toggleFavorite(currentPlayerId, currentUsername, currentTitle, String.valueOf(currentlastOnldate),  isFav -> {
                     requireActivity().runOnUiThread(() -> {
                         Toast.makeText(requireContext(),
                                 isFav ? "Added to favorites" : "Removed from favorites",
@@ -138,6 +141,9 @@ public class PlayerSearchFragment extends Fragment {
 
                             currentUsername = data.profileUrl.substring(data.profileUrl.lastIndexOf("/") + 1);
                             currentPlayerId = data.playerId; // Get from API response
+                            currentTitle = data.title;
+                            currentlastOnldate = data.lastOnline;
+
 
                             // Check if already favorited
                             favoritesViewModel.isFavorite(currentPlayerId, isFav -> {

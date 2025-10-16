@@ -17,12 +17,12 @@ import com.ldlda.chesscom_stats.databinding.FragmentFavoritesBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FavoritesFragment extends Fragment {
-    private static final String TAG = "FavoritesFragment";
     private FragmentFavoritesBinding binding;
     private FavoritesAdapter adapter;
-    private final List<String> favs = new ArrayList<>();
+    private final List<String> favs = new ArrayList<>(); // Ensure this is populated elsewhere
     private FavoritesViewModel viewModel;
 
     @Nullable
@@ -67,11 +67,18 @@ public class FavoritesFragment extends Fragment {
 
         recycler.setAdapter(adapter);
 
-        // Observe favorites from ViewModel
-        viewModel.getFavorites().observe(getViewLifecycleOwner(), favorites -> {
-            favs.clear();
-            favs.addAll(favorites);
-            adapter.submitList(new ArrayList<>(favs));
+        // Observe favorite users from ViewModel
+        viewModel.getFavoriteUsers().observe(getViewLifecycleOwner(), users -> {
+            List<FavoritesAdapter.FavoritePlayer> favoritePlayers = users.stream()
+                .map(user -> new FavoritesAdapter.FavoritePlayer(
+                    user.getUsername(),
+                    user.getTitle() != null ? user.getTitle() : "",
+                    user.getLastOnlDate() != null ? user.getLastOnlDate() : "",
+                    0 // Using a boilerplate value for rating
+                ))
+                .collect(Collectors.toList());
+
+            adapter.submitList(new ArrayList<>(favoritePlayers));
         });
 
         // Load favorites on creation

@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    version = 2,
+    version = 3, // Incremented version number to reflect schema changes
     entities = [User::class]
 )
 @TypeConverters(Converters::class)

@@ -23,6 +23,9 @@ class FavoritesViewModel : ViewModel() {
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> = _loading
 
+    private val _favoriteUsers = MutableLiveData<List<User>>()
+    val favoriteUsers: LiveData<List<User>> = _favoriteUsers
+
     private val dao = GlobalDB.db.favoriteDao()
 
     /**
@@ -35,10 +38,12 @@ class FavoritesViewModel : ViewModel() {
                 val users = withContext(Dispatchers.IO) {
                     dao.getAllUsersOnce()
                 }
+                _favoriteUsers.value = users
                 _favorites.value = users.map { it.username }.toSet()
             } catch (e: Exception) {
                 // Log error but don't crash
                 e.printStackTrace()
+                _favoriteUsers.value = emptyList()
                 _favorites.value = emptySet()
             } finally {
                 _loading.value = false
@@ -61,12 +66,14 @@ class FavoritesViewModel : ViewModel() {
     /**
      * Add a player to favorites (background thread)
      */
-    fun addFavorite(playerId: Long, username: String) {
+    fun addFavorite(playerId: Long, username: String, title: String? = null, lastOnlDate: String? = null) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val user = User(
                     playerId = playerId,
                     username = username,
+                    title = title,
+                    lastOnlDate = lastOnlDate,
                     favoriteSince = Date()
                 )
                 dao.upsert(user)
@@ -105,7 +112,7 @@ class FavoritesViewModel : ViewModel() {
     /**
      * Toggle favorite status (background thread)
      */
-    fun toggleFavorite(playerId: Long, username: String, callback: (Boolean) -> Unit?) {
+    fun toggleFavorite(playerId: Long, username: String, title: String? = null, lastOnlDate: String? = null, callback: (Boolean) -> Unit?) {
         viewModelScope.launch {
             val isFav = withContext(Dispatchers.IO) {
                 val exists = dao.existsByPlayerId(playerId)
@@ -117,6 +124,8 @@ class FavoritesViewModel : ViewModel() {
                         User(
                             playerId = playerId,
                             username = username,
+                            title = title,
+                            lastOnlDate = lastOnlDate,
                             favoriteSince = Date()
                         )
                     )

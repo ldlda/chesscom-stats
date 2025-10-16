@@ -11,5 +11,7 @@ data class User(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "player_id") val playerId: Long, // fuck some places dont
     val username: String,
+    @ColumnInfo(name = "title") val title: String? = null,
+    @ColumnInfo(name = "last_onl_date") val lastOnlDate: String? = null,
     @ColumnInfo("favorite_since") val favoriteSince: Date = Date(System.currentTimeMillis()),
 )
