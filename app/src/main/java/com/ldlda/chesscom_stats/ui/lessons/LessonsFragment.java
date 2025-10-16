@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +27,8 @@ public class LessonsFragment extends Fragment {
     List<Lesson> dataList;
     LessonsAdapter adapter;
     SearchView searchView; // This will now correctly be the androidx version
+
+    LessonViewModel viewModel;
 
     @Nullable
     @Override
@@ -55,8 +58,8 @@ public class LessonsFragment extends Fragment {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(requireContext(), 1);
         recyclerView.setLayoutManager(gridLayoutManager);
 
-        dataList = new ArrayList<>();
-        populateData();
+        viewModel = new ViewModelProvider(this).get(LessonViewModel.class);
+        dataList = viewModel.Cuh.getValue();
 
         adapter = new LessonsAdapter(requireContext(), dataList, this::showLessonContent);
         recyclerView.setAdapter(adapter);
@@ -64,13 +67,9 @@ public class LessonsFragment extends Fragment {
         return view;
     }
 
-    private void populateData() {
-        dataList.add(new Lesson("Lesson 1", R.string.lesson1_desc, "Beginner", R.drawable.lesson_1));
-        dataList.add(new Lesson("Lesson 2", R.string.lesson2_desc, "Intermidiate", R.drawable.lesson_2));
-        dataList.add(new Lesson("Lesson 3", R.string.lesson3_desc, "Intermidiate", R.drawable.lesson_3));
-        dataList.add(new Lesson("Lesson 4", R.string.lesson4_desc, "Advance", R.drawable.lesson_4));
-        dataList.add(new Lesson("Lesson 5", R.string.lesson5_desc, "Advance", R.drawable.lesson_5));
-    }
+    // why duplicate
+    // this is not the same view WE NEED TO VIEWMODEL AGAIN
+
 
     private void searchList(String text) {
         List<Lesson> dataSearchList = new ArrayList<>();

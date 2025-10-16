@@ -1,6 +1,9 @@
 package com.ldlda.chesscom_stats.ui.lessons.data;
 
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.StringRes;
+
 import kotlinx.parcelize.Parcelize;
 
 @Parcelize
@@ -11,11 +14,15 @@ public class Lesson {
     private final String dataLevel;
     private final int dataImage;
 
-    public Lesson(String dataTitle, int dataDesc, String dataLang, int dataImage) {
+    private final int color;
+
+
+    public Lesson(String dataTitle, @StringRes int dataDesc, String dataLang, @DrawableRes int dataImage, int color) {
         this.dataTitle = dataTitle;
         this.dataDesc = dataDesc;
         this.dataLevel = dataLang;
         this.dataImage = dataImage;
+        this.color = color;
     }
 
     public String getDataTitle() {
@@ -32,5 +39,9 @@ public class Lesson {
 
     public int getDataImage() {
         return dataImage;
+    }
+
+    public int getColor() {
+        return color;
     }
 }

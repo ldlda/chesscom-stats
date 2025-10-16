@@ -1,5 +1,6 @@
 package com.ldlda.chesscom_stats.ui.lessons.pager;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,13 +9,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.databinding.FragmentLessonPagerContainerBinding;
+import com.ldlda.chesscom_stats.ui.lessons.LessonViewModel;
 import com.ldlda.chesscom_stats.ui.lessons.data.Lesson;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LessonPagerContainerFragment extends Fragment {
@@ -22,6 +23,7 @@ public class LessonPagerContainerFragment extends Fragment {
     private List<Lesson> lessonsList;
     private int startIndex;
 
+    private LessonViewModel viewModel;
     public static LessonPagerContainerFragment newInstance(int startIndex) {
         LessonPagerContainerFragment fragment = new LessonPagerContainerFragment();
         Bundle args = new Bundle();
@@ -41,7 +43,8 @@ public class LessonPagerContainerFragment extends Fragment {
         }
 
         // Setup lesson list
-        setupLessonList();
+        viewModel = new ViewModelProvider(this).get(LessonViewModel.class);
+        lessonsList = viewModel.Cuh.getValue();
 
         // Setup ViewPager2 adapter
         LessonPagerAdapter adapter = new LessonPagerAdapter(this, lessonsList);
@@ -88,22 +91,28 @@ public class LessonPagerContainerFragment extends Fragment {
         binding = null;
     }
 
-    private void setupLessonList() {
-        lessonsList = new ArrayList<>();
-        lessonsList.add(new Lesson("Lesson 1", R.string.lesson1_desc, "Beginner", R.drawable.lesson_1));
-        lessonsList.add(new Lesson("Lesson 2", R.string.lesson2_desc, "Intermidiate", R.drawable.lesson_2));
-        lessonsList.add(new Lesson("Lesson 3", R.string.lesson3_desc, "Intermidiate", R.drawable.lesson_3));
-        lessonsList.add(new Lesson("Lesson 4", R.string.lesson4_desc, "Advanced", R.drawable.lesson_4));
-        lessonsList.add(new Lesson("Lesson 5", R.string.lesson5_desc, "Advanced", R.drawable.lesson_5));
-    }
-
     private void updateUI(int position) {
         // Update counter
         // top haxx
-        binding.lessonCounter.setText(lessonsList.get(position).getDataTitle());
+        Lesson lesson = lessonsList.get(position);
+        binding.lessonCounter.setText(lesson.getDataTitle());
 
         // Enable/disable buttons
         binding.btnPrevious.setEnabled(position > 0);
         binding.btnNext.setEnabled(position < lessonsList.size() - 1);
+
+        binding.btnPrevious.setTextColor(lesson.getColor());
+
+        // wtf
+        binding.btnPrevious.setStrokeColor(new ColorStateList(new int[1][1], new int[]{lesson.getColor()}));
+
+        binding.btnNext.setBackgroundColor(lesson.getColor());
+
+        binding.btnPrevious.setHighlightColor(lesson.getColor());
+        binding.btnNext.setHighlightColor(lesson.getColor());
+
+        binding.btnPrevious.setHintTextColor(lesson.getColor());
+
+        binding.btnPrevious.setLinkTextColor(lesson.getColor());
     }
 }
