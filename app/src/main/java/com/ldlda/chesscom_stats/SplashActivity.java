@@ -20,9 +20,7 @@ public class SplashActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_splash);
 
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
-            finish();
-        }, 2500);
+        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+        new Handler(Looper.getMainLooper()).postDelayed(() -> finish(), 2500);
     }
 }

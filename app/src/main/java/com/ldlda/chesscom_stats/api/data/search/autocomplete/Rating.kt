@@ -1,20 +1,23 @@
 package com.ldlda.chesscom_stats.api.data.search.autocomplete
 
+import android.os.Parcelable
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.UserView.AvatarSurrogate
 import com.ldlda.chesscom_stats.api.data.timeclass.Rule
 import com.ldlda.chesscom_stats.api.data.timeclass.Time
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
+@Parcelize
 @Serializable(with = Rating.RatingSerializer::class)
 data class Rating(
     val variantTime: Time,
     val variantClass: Rule,
     val rating: Int,
-) {
+) : Parcelable {
     @Serializable
     class RatingSurrogate(
         val variantTimeclass: String,

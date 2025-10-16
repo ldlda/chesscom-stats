@@ -2,6 +2,7 @@ package com.ldlda.chesscom_stats.util
 
 import okhttp3.Cache
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
 
 fun buildCache(parent: File, dir: String, maxSize: Long) = Cache(
@@ -29,3 +30,15 @@ fun buildIconLink(fen: String, size: Int? = null) =
         .addQueryParameter("fen", fen)
         .apply { size?.let { this.addQueryParameter("size", size.toString()) } }
         .build()
+
+fun buildChessComMemberLink(username: String) =
+    HttpUrl.Builder().scheme("https").host("www.chess.com")
+        .addPathSegment("member")
+        .addPathSegment(username).build()
+
+// this iae on not //api.chess.com/pub/country
+fun getCountryApiUrl(fuckass: HttpUrl, base: HttpUrl = "//api.chess.com/pub/".toHttpUrl()): String {
+    require(fuckass.host == base.host && fuckass.encodedPath.startsWith(base.encodedPath)) { "bad base" }
+    require(fuckass.encodedPathSegments.getOrNull(1) == "country") { "bad url" }
+    return requireNotNull(fuckass.encodedPathSegments.getOrNull(2)) { "bad url" }
+}

@@ -25,7 +25,7 @@ class PlayerDetailViewModel(app: Application) : AndroidViewModel(app) {
     private val _error = MutableLiveData<Throwable?>()
     val error: LiveData<Throwable?> = _error
 
-    fun load(username: String) {
+    fun loadFullBad(username: String) {
         if (_loading.value == true) return
         _loading.value = true
         _error.value = null
@@ -33,6 +33,8 @@ class PlayerDetailViewModel(app: Application) : AndroidViewModel(app) {
             try {
                 val user = repo.getPlayer(username)
                 // Fetch country and stats in parallel; they mutate the Player instance via helpers
+                // this is bad no? what if i can assign elsewhere;
+                // or better yet, the three happens at the same time, all then bundled in one.
                 val fetchCountry = async { user.fetchCountryInfo(repo) }
                 val fetchStats = async { user.fetchPlayerStats(repo) }
                 awaitAll(fetchCountry, fetchStats)

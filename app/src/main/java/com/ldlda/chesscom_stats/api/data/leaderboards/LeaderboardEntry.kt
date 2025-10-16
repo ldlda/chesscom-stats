@@ -3,6 +3,7 @@
 package com.ldlda.chesscom_stats.api.data.leaderboards
 
 import android.os.Parcelable
+import com.ldlda.chesscom_stats.api.data.player.Status
 import com.ldlda.chesscom_stats.api.data.player.Title
 import com.ldlda.chesscom_stats.api.data.player.stats.Record
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
@@ -73,14 +74,14 @@ data class LeaderboardEntry(
 
 
     @SerialName("url") val profilePage: HttpUrl,
-    @SerialName("country") val countryUrl: @WriteWith<HttpUrlParcelerNullable> HttpUrl? = null,
-    val status: String? = null,
+    @SerialName("country") val countryApiUrl: @WriteWith<HttpUrlParcelerNullable> HttpUrl? = null,
+    val status: Status? = Status.Basic,
     val title: Title? = null,
     val name: String? = null,
     @SerialName("avatar") val avatarUrl: @WriteWith<HttpUrlParcelerNullable> HttpUrl? = null, // HttpUrl("https://www.chess.com/bundles/web/images/noavatar_l.84a92436.gif"),
 ) : Parcelable {
     @IgnoredOnParcel
-    val elo = score
+    val elo get() = score
     val gameRecord
         get() =
             (winCount ?: drawCount ?: lossCount)

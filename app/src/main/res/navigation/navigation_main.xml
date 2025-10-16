@@ -15,16 +15,32 @@
         <!-- Actions to detail screens -->
         <action
             android:id="@+id/action_home_to_playerSearch"
-            app:destination="@id/playerSearchFragment" />
+            app:destination="@id/playerSearchFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_home_to_clubs"
-            app:destination="@id/clubFragment" />
+            app:destination="@id/clubFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_home_to_fidePredict"
-            app:destination="@id/fidePredictFragment" />
+            app:destination="@id/fidePredictFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_home_to_puzzle"
-            app:destination="@id/puzzleFragment" />
+            app:destination="@id/puzzleFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
 
     <!-- Leaderboards Fragment -->
@@ -46,7 +62,17 @@
         android:id="@+id/lessons"
         android:name="com.ldlda.chesscom_stats.ui.lessons.LessonsFragment"
         android:label="@string/lesson"
-        tools:layout="@layout/fragment_lessons" />
+        tools:layout="@layout/fragment_lessons">
+
+        <!-- Action to lesson pager container -->
+        <action
+            android:id="@+id/action_lessons_to_pager"
+            app:destination="@id/lessonPagerContainerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
 
     <!-- DETAIL DESTINATIONS (hide bottom nav when showing these) -->
 
@@ -60,7 +86,7 @@
     <!-- Club Finder Fragment -->
     <fragment
         android:id="@+id/clubFragment"
-        android:name="com.ldlda.chesscom_stats.ui.clubs.ClubFragment"
+        android:name="com.ldlda.chesscom_stats.ui.clubs.ClubsFragment"
         android:label="Club Finder"
         tools:layout="@layout/fragment_club" />
 
@@ -77,5 +103,18 @@
         android:name="com.ldlda.chesscom_stats.ui.puzzle.PuzzleFragment"
         android:label="Puzzle"
         tools:layout="@layout/fragment_puzzle" />
+
+    <!-- Lesson Pager Container (ViewPager2 for swipeable lessons) -->
+    <fragment
+        android:id="@+id/lessonPagerContainerFragment"
+        android:name="com.ldlda.chesscom_stats.ui.lessons.pager.LessonPagerContainerFragment"
+        android:label="Lesson Details"
+        tools:layout="@layout/fragment_lesson_pager_container">
+
+        <argument
+            android:name="startIndex"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
 
 </navigation>

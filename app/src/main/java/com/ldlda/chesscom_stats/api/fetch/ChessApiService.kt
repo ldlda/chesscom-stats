@@ -10,7 +10,7 @@ import com.ldlda.chesscom_stats.api.data.player.clubs.PlayerClubs
 import com.ldlda.chesscom_stats.api.data.player.games.monthly.MonthlyArchives
 import com.ldlda.chesscom_stats.api.data.player.games.monthly.MonthlyGameList
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
-import com.ldlda.chesscom_stats.java_api.PuzzleData
+import com.ldlda.chesscom_stats.api.data.puzzle.Puzzle
 import okhttp3.HttpUrl
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -73,10 +73,10 @@ interface ChessApiService {
     suspend fun club(@Path("nameId") nameId: String): Club
 
     @GET("puzzle")
-    suspend fun dailyPuzzle(): PuzzleData
+    suspend fun dailyPuzzle(): Puzzle
 
     @GET("puzzle/random")
-    suspend fun randomPuzzle(): PuzzleData
+    suspend fun randomPuzzle(): Puzzle
 
     // not supporting live/base/increment because if you query hikaru it will 503
     // there are more that hits 503

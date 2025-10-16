@@ -25,10 +25,13 @@ import com.ldlda.chesscom_stats.api.data.player.stats.BaseRecord;
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats;
 import com.ldlda.chesscom_stats.api.data.player.stats.Stats;
 import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;
-import com.ldlda.chesscom_stats.api.repository.ChessRepositoryTimedCache;
+import com.ldlda.chesscom_stats.api.repository.ChessRepository;
 import com.ldlda.chesscom_stats.databinding.ActivityPlayerDetailBinding;
 import com.ldlda.chesscom_stats.ui.favorites.FavoritesViewModel;
+import com.ldlda.chesscom_stats.util.RepoProvider;
 import com.squareup.picasso.Picasso;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,19 +42,18 @@ import okhttp3.HttpUrl;
 
 public class PlayerDetailActivity extends AppCompatActivity {
     public static final String EXTRA_PLAYER_ENTRY = "player_entry";
+    public static final String EXTRA2_PLAYER_ENTRY = "player2_entry";
     public static final String EXTRA_USERNAME = "username"; // Fallback for legacy
     public static final String EXTRA_TIMECLASS = "timeclass"; // Which leaderboard it came from (blitz/bullet/rapid/daily)
-
-    private final String TAG = "PlayerDetailActivity";
-    private ChessRepoAdapterJava<ChessRepositoryTimedCache> repo;
-    private FavoritesViewModel favoritesViewModel;
-    private CompletableFuture inFlight;
-    private ActivityPlayerDetailBinding binding;
-
-    private String username;
-    private Long playerId;
     static final String noData = "No data";
     static final String loading = "Loading..."; // lowk i cant wire this up up top
+    private final String TAG = "PlayerDetailActivity";
+    private ChessRepoAdapterJava<@NotNull ChessRepository> repo;
+    private FavoritesViewModel favoritesViewModel;
+    private CompletableFuture<?> inFlight;
+    private ActivityPlayerDetailBinding binding;
+    private String username;
+    private Long playerId;
     private HttpUrl profileUrl;
     private TextView usernameView;
     private TextView nameView;
@@ -96,7 +98,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         profileButton = binding.profileURI;
 
         // Initialize repository early (needed for both fast and slow paths)
-        repo = ChessRepoAdapterJava.getAdapterJava(new ChessRepositoryTimedCache(),
+        repo = RepoProvider.getDefault().buildJavaAdapter(
                 getCoroutineScope(getLifecycle()));
 
         // Try to get LeaderboardEntry first (optimized path)
@@ -135,9 +137,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         // Check if favorited (background thread via ViewModel)
         if (playerId != null) {
             favoritesViewModel.isFavorite(playerId, isFav -> {
-                runOnUiThread(() -> {
-                    updateFavoriteButton(isFav);
-                });
+                runOnUiThread(() -> updateFavoriteButton(isFav));
                 return null;
             });
         }
@@ -255,9 +255,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
                 .exceptionally(ex -> {
                     if (isFinishing() || isDestroyed()) return null;
                     Log.e(TAG, "Failed to fetch player data", ex);
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, R.string.failed_to_load_player_data, Toast.LENGTH_SHORT).show();
-                    });
+                    runOnUiThread(() -> Toast.makeText(this, R.string.failed_to_load_player_data, Toast.LENGTH_SHORT).show());
                     return null;
                 });
     }
@@ -270,7 +268,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
      * UX Win: User sees content IMMEDIATELY instead of waiting for API
      * <p>
      * Technical: Still fetches player/stats/country in background (same as slow path)
-     *           but UI updates incrementally instead of all-at-once
+     * but UI updates incrementally instead of all-at-once
      *
      * @param timeclass Which leaderboard this came from: "blitz", "bullet", "rapid", or "daily"
      */
@@ -301,7 +299,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         titleView.setText(title != null ? title.getDisplayName() : getString(R.string.none));
 
         // Country (will be updated when fetchCountryInfo completes)
-        HttpUrl countryUrl = entry.getCountryUrl();
+        HttpUrl countryUrl = entry.getCountryApiUrl();
         if (countryUrl != null) {
             fetchCountryInfo(countryUrl);
         }
@@ -345,7 +343,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
      * <ol>
      *     <li>
      *   getPlayerStatsAsync - for FIDE + detailed bullet/blitz/rapid stats
-     *</li><li>
+     * </li><li>
      *  getPlayerAsync - for followers count
      * </li></ol><p>
      * Not actually cheaper API-wise (same 2 calls as getCompletePlayerAsync)

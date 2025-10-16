@@ -17,7 +17,6 @@ import com.ldlda.chesscom_stats.R;
 import java.util.List;
 
 public class FavoritesAdapter extends ListAdapter<String, FavoritesAdapter.FavViewHolder> {
-    private final OnFavoriteClickListener listener;
     private static final DiffUtil.ItemCallback<String> DIFF = new DiffUtil.ItemCallback<>() {
         @Override
         public boolean areItemsTheSame(@NonNull String oldItem, @NonNull String newItem) {
@@ -29,6 +28,8 @@ public class FavoritesAdapter extends ListAdapter<String, FavoritesAdapter.FavVi
             return oldItem.equals(newItem);
         }
     };
+    private final OnFavoriteClickListener listener;
+
     public FavoritesAdapter(OnFavoriteClickListener listener) {
         super(DIFF);
         this.listener = listener;

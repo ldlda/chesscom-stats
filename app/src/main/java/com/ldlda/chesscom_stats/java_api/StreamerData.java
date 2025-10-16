@@ -2,6 +2,7 @@ package com.ldlda.chesscom_stats.java_api;
 
 import com.google.gson.annotations.SerializedName;
 
+// not sure this is streamer data or streamer item, git blame this bih
 public class StreamerData {
     public String username;
     @SerializedName("avatar")

@@ -104,8 +104,13 @@ public class LeaderboardsFragment extends Fragment {
                 } else {
                     List<LeaderboardEntry> filtered = allPlayers
                             .stream()
-                            .filter(player -> player.getUsername().toLowerCase()
-                                    .contains(newText.toLowerCase()))
+                            .filter(player -> {
+                                String lowerCase = newText.toLowerCase();
+                                boolean username = player.getUsername().toLowerCase()
+                                        .contains(lowerCase);
+                                boolean name = player.getName() != null && player.getName().toLowerCase().contains(lowerCase);
+                                return username || name;
+                            })
                             .toList();
                     adapter.submitList(filtered);
                 }

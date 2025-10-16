@@ -26,6 +26,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ldlda.chesscom_stats.databinding.ActivityMainBinding;
 import com.ldlda.chesscom_stats.store.GlobalDB;
+import com.ldlda.chesscom_stats.util.RepoProvider;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
@@ -94,14 +95,14 @@ public class MainActivity extends AppCompatActivity {
             // Setup automatic bottom nav visibility based on destination
             setupBottomNavVisibility(navController);
         }
-
         // Bottom navigation with Navigation Component
         BottomNavigationView bottomNavigationView = binding.bottomNavigation;
         if (navController != null) {
-            NavigationUI.setupWithNavController(bottomNavigationView, navController);
+            NavigationUI.setupWithNavController(bottomNavigationView, navController, false);
         }
 
         GlobalDB.initDb(getApplicationContext());
+        RepoProvider.setupAppContext(getApplicationContext());
 
         // Music
         Context context = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) ? createAttributionContext("audioPlayback") : this;
@@ -159,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
             backgroundSong.release();
             backgroundSong = null;
         }
+        binding = null; // pair with onStart
     }
 
 

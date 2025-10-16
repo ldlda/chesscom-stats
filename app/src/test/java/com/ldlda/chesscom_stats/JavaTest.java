@@ -8,7 +8,6 @@ import org.junit.Test;
 public class JavaTest {
     @Test
     public void realest() {
-        Title.GM.displayName();
-
+        Title.GM.getDisplayName();
     }
 }

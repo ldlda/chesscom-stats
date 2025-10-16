@@ -7,7 +7,7 @@ import kotlinx.serialization.json.Json
  * These are what i see in a response.
  *
  * This can change any moment; as well as the [request][SearchRequest]
- * and [endpoint][com.ldlda.chesscom_stats.api.fetch.ChessApiService.autocompleteUsername].
+ * and [endpoint][com.ldlda.chesscom_stats.api.fetch.PrivateApiService.autocompleteUsername].
  */
 @Serializable
 data class SearchResult(
