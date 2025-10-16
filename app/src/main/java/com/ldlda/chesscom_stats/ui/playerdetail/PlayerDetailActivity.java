@@ -27,8 +27,8 @@ import com.ldlda.chesscom_stats.api.data.player.stats.Stats;
 import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;
 import com.ldlda.chesscom_stats.api.repository.ChessRepository;
 import com.ldlda.chesscom_stats.databinding.ActivityPlayerDetailBinding;
+import com.ldlda.chesscom_stats.di.RepoProvider;
 import com.ldlda.chesscom_stats.ui.favorites.FavoritesViewModel;
-import com.ldlda.chesscom_stats.util.RepoProvider;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -98,7 +98,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         profileButton = binding.profileURI;
 
         // Initialize repository early (needed for both fast and slow paths)
-        repo = RepoProvider.getDefault().buildJavaAdapter(
+        repo = RepoProvider.defaultRepository(getApplicationContext()).buildJavaAdapter(
                 getCoroutineScope(getLifecycle()));
 
         // Try to get LeaderboardEntry first (optimized path)

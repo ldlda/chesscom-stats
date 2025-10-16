@@ -7,6 +7,7 @@ import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.player.games.monthly.MonthlyGame
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
+import com.ldlda.chesscom_stats.api.data.puzzle.Puzzle
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchRequest
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
@@ -180,6 +181,14 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun getDailyPuzzle(): Puzzle {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getRandomPuzzle(): Puzzle {
+        TODO("Not yet implemented")
+    }
+
     // deprecated
     @Deprecated("use ChessRepository instead")
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -257,6 +266,14 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
     }
 
     override fun getCountryClubsAsync(code: String): CompletableFuture<List<HttpUrl>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getDailyPuzzleAsync(): CompletableFuture<Puzzle?> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getRandomPuzzleAsync(): CompletableFuture<Puzzle?> {
         TODO("Not yet implemented")
     }
 }

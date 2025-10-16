@@ -6,6 +6,7 @@ import com.ldlda.chesscom_stats.api.data.country.CountryInfo
 import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
+import com.ldlda.chesscom_stats.api.data.puzzle.Puzzle
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import com.ldlda.chesscom_stats.api.fetch.ChessApiException
 import com.ldlda.chesscom_stats.util.Futures.eager
@@ -81,6 +82,13 @@ class ChessRepoAdapterJava<CR>(
 
     override fun getCountryClubsAsync(code: String): CompletableFuture<List<HttpUrl>> =
         runAsyncLda { repo.getCountryClubs(code) }
+
+    override fun getDailyPuzzleAsync(): CompletableFuture<Puzzle> =
+        runAsyncLda { repo.getDailyPuzzle() }
+
+
+    override fun getRandomPuzzleAsync(): CompletableFuture<Puzzle> =
+        runAsyncLda { repo.getRandomPuzzle() }
 
     /* convenience functions */
     @WorkerThread

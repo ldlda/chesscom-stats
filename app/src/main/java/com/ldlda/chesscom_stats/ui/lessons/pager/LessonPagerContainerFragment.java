@@ -24,6 +24,7 @@ public class LessonPagerContainerFragment extends Fragment {
     private int startIndex;
 
     private LessonViewModel viewModel;
+
     public static LessonPagerContainerFragment newInstance(int startIndex) {
         LessonPagerContainerFragment fragment = new LessonPagerContainerFragment();
         Bundle args = new Bundle();
@@ -101,18 +102,19 @@ public class LessonPagerContainerFragment extends Fragment {
         binding.btnPrevious.setEnabled(position > 0);
         binding.btnNext.setEnabled(position < lessonsList.size() - 1);
 
-        binding.btnPrevious.setTextColor(lesson.getColor());
+        int color = lesson.getColor();
+        binding.btnPrevious.setTextColor(color);
 
         // wtf
-        binding.btnPrevious.setStrokeColor(new ColorStateList(new int[1][1], new int[]{lesson.getColor()}));
+        binding.btnPrevious.setStrokeColor(ColorStateList.valueOf(color));
 
-        binding.btnNext.setBackgroundColor(lesson.getColor());
+        binding.btnNext.setBackgroundColor(color);
 
-        binding.btnPrevious.setHighlightColor(lesson.getColor());
-        binding.btnNext.setHighlightColor(lesson.getColor());
+        binding.btnPrevious.setHighlightColor(color);
+        binding.btnNext.setHighlightColor(color);
 
-        binding.btnPrevious.setHintTextColor(lesson.getColor());
+        binding.btnPrevious.setHintTextColor(color);
 
-        binding.btnPrevious.setLinkTextColor(lesson.getColor());
+        binding.btnPrevious.setLinkTextColor(color);
     }
 }

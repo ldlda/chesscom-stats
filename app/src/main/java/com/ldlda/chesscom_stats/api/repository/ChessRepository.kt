@@ -6,6 +6,7 @@ import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.player.games.monthly.MonthlyGame
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
+import com.ldlda.chesscom_stats.api.data.puzzle.Puzzle
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchRequest
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +28,8 @@ interface ChessRepository {
     suspend fun getClub(url: HttpUrl): Club
     suspend fun getClub(nameId: String): Club
 
+    suspend fun getDailyPuzzle(): Puzzle
+    suspend fun getRandomPuzzle(): Puzzle
     suspend fun searchPlayers(prefix: String): List<SearchItem>
     suspend fun searchPlayers(request: SearchRequest): List<SearchItem>
 

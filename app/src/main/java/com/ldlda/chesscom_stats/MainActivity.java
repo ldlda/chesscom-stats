@@ -25,8 +25,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ldlda.chesscom_stats.databinding.ActivityMainBinding;
+import com.ldlda.chesscom_stats.di.RepoProvider;
 import com.ldlda.chesscom_stats.store.GlobalDB;
-import com.ldlda.chesscom_stats.util.RepoProvider;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";

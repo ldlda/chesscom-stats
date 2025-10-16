@@ -6,6 +6,7 @@ import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.player.games.monthly.MonthlyGame
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
+import com.ldlda.chesscom_stats.api.data.puzzle.Puzzle
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchRequest
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient
@@ -83,4 +84,9 @@ open class ChessRepositoryImpl(
     override suspend fun getClub(nameId: String): Club =
         publicService.callApi { it.club(nameId) }
 
+    override suspend fun getDailyPuzzle(): Puzzle =
+        publicService.callApi { it.dailyPuzzle() }
+
+    override suspend fun getRandomPuzzle(): Puzzle =
+        publicService.callApi { it.randomPuzzle() }
 }
