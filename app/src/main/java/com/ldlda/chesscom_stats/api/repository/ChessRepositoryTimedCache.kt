@@ -8,12 +8,15 @@ import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
 import com.ldlda.chesscom_stats.api.fetch.ChessApiClient
+import com.ldlda.chesscom_stats.api.fetch.ChessApiService
+import com.ldlda.chesscom_stats.api.fetch.PrivateApiService
 import com.ldlda.chesscom_stats.util.cache.TimedCache
 import com.ldlda.chesscom_stats.util.cache.TimedCacheProvider
 import okhttp3.HttpUrl
 
 class ChessRepositoryTimedCache(
-    client: ChessApiClient = ChessApiClient.defaultInstance,
+    publicService: ChessApiService = ChessApiClient.defaultPublicService,
+    privateService: PrivateApiService = ChessApiClient.defaultPrivateService,
     private val playerCache: TimedCache<Player> = TimedCacheProvider.defaultPlayerCache,
     private val statsCache: TimedCache<PlayerStats> = TimedCacheProvider.defaultStatsCache,
     private val leaderboardsCache: TimedCache<Leaderboards> = TimedCacheProvider.defaultLeaderboardsCache,
@@ -21,7 +24,7 @@ class ChessRepositoryTimedCache(
     private val countryPlayerCache: TimedCache<CountryPlayers> = TimedCache(15 * 60_000),
     private val countryClubCache: TimedCache<CountryClubs> = TimedCache(15 * 60_000),
 
-    ) : ChessRepositoryImpl(client) {
+    ) : ChessRepositoryImpl(publicService, privateService) {
     companion object {
         /**
          * Default singleton instance with 2-minute TTL cache.

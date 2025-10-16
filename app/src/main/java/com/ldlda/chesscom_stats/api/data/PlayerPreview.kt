@@ -49,7 +49,7 @@ data class PlayerPreview(
         playerId = playerId,
         username = username,
         profilePage = profilePage,
-        countryUrl = countryUrl,
+        countryUrl = countryApiUrl,
         status = status?.name,
         title = title,
         name = name,

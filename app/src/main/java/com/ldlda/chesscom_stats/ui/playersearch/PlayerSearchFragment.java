@@ -21,9 +21,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;
 import com.ldlda.chesscom_stats.api.repository.ChessRepository;
-import com.ldlda.chesscom_stats.api.repository.ChessRepositoryTimedCache;
 import com.ldlda.chesscom_stats.databinding.FragmentBoringBinding;
 import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailActivity;
+import com.ldlda.chesscom_stats.util.RepoProvider;
 
 public class PlayerSearchFragment extends Fragment {
     public static final String TAG = "PlayerSearchFragment";
@@ -38,7 +38,7 @@ public class PlayerSearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        repo = ChessRepoAdapterJava.getAdapterJava(new ChessRepositoryTimedCache(), getCoroutineScope(getLifecycle()));
+        repo = RepoProvider.getDefault().buildJavaAdapter(getCoroutineScope(getLifecycle()));
     }
 
     @Override

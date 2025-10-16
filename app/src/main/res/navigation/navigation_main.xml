@@ -15,16 +15,32 @@
         <!-- Actions to detail screens -->
         <action
             android:id="@+id/action_home_to_playerSearch"
-            app:destination="@id/playerSearchFragment" />
+            app:destination="@id/playerSearchFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_home_to_clubs"
-            app:destination="@id/clubFragment" />
+            app:destination="@id/clubFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_home_to_fidePredict"
-            app:destination="@id/fidePredictFragment" />
+            app:destination="@id/fidePredictFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_home_to_puzzle"
-            app:destination="@id/puzzleFragment" />
+            app:destination="@id/puzzleFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
 
     <!-- Leaderboards Fragment -->

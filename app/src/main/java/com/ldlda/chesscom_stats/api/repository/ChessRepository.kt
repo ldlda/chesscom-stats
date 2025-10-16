@@ -8,6 +8,7 @@ import com.ldlda.chesscom_stats.api.data.player.games.monthly.MonthlyGame
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchRequest
+import kotlinx.coroutines.CoroutineScope
 import okhttp3.HttpUrl
 
 interface ChessRepository {
@@ -16,7 +17,6 @@ interface ChessRepository {
     suspend fun getLeaderboards(): Leaderboards
     suspend fun getCountry(countryUrl: HttpUrl): CountryInfo
 
-    /** for searchplayers (but they send everything) */
     suspend fun getCountry(code: String): CountryInfo
 
     suspend fun getMonthlyArchivesList(username: String): List<HttpUrl>
@@ -29,4 +29,7 @@ interface ChessRepository {
 
     suspend fun searchPlayers(prefix: String): List<SearchItem>
     suspend fun searchPlayers(request: SearchRequest): List<SearchItem>
+
+    // free defaults for anything and anyone subclassing this
+    fun buildJavaAdapter(scope: CoroutineScope) = ChessRepoAdapterJava(this, scope)
 }

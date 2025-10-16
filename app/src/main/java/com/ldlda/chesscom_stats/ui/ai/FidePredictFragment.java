@@ -26,8 +26,13 @@ public class FidePredictFragment extends Fragment {
     private final double[] STD_X = {358.64892717, 299.44639535, 274.0567951};
     private final double MEAN_Y = 2234.3300039169603;
     private final double STD_Y = 264.50016824539256;
+    private EditText bullet_score;
+    private EditText blitz_score;
+    private EditText rapid_score;
+    private TextView fide_res;
+    private Button get_res;
 
-    private int PredictionFunc(int bullet, int blitz, int rapid){
+    private int PredictionFunc(int bullet, int blitz, int rapid) {
         // Normalize inputs
         double x_bullet = (bullet - MEAN_X[0]) / STD_X[0];
         double x_blitz = (blitz - MEAN_X[1]) / STD_X[1];
@@ -42,11 +47,6 @@ public class FidePredictFragment extends Fragment {
         return Math.toIntExact(Math.round(prediction));
     }
 
-    private EditText bullet_score;
-    private EditText blitz_score;
-    private EditText rapid_score;
-    private TextView fide_res;
-    private Button get_res;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,31 +58,28 @@ public class FidePredictFragment extends Fragment {
 
         get_res = view.findViewById(R.id.retrieve_res);
 
-        get_res.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String bullet_val = bullet_score.getText().toString().trim();
-                String blitz_val = blitz_score.getText().toString().trim();
-                String rapid_val = rapid_score.getText().toString().trim();
+        get_res.setOnClickListener(v -> {
+            String bullet_val = bullet_score.getText().toString().trim();
+            String blitz_val = blitz_score.getText().toString().trim();
+            String rapid_val = rapid_score.getText().toString().trim();
 
-                int bullet, blitz, rapid;
-                if (bullet_val.isEmpty() || blitz_val.isEmpty() || rapid_val.isEmpty()) {
-                    Toast.makeText(getContext(), "All 3 stats need to be filled my man", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                try {
-                    bullet = Integer.parseInt(bullet_val);
-                    blitz = Integer.parseInt(blitz_val);
-                    rapid = Integer.parseInt(rapid_val);
-
-                } catch (NumberFormatException e) {
-                    Toast.makeText(getContext(), "Enter valid integer scores pal", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                fide_res.setText("Estimated FIDE rating: \n"+PredictionFunc(bullet,blitz,rapid));
+            int bullet, blitz, rapid;
+            if (bullet_val.isEmpty() || blitz_val.isEmpty() || rapid_val.isEmpty()) {
+                Toast.makeText(getContext(), "All 3 stats need to be filled my man", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            try {
+                bullet = Integer.parseInt(bullet_val);
+                blitz = Integer.parseInt(blitz_val);
+                rapid = Integer.parseInt(rapid_val);
+
+            } catch (NumberFormatException e) {
+                Toast.makeText(getContext(), "Enter valid integer scores pal", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            fide_res.setText("Estimated FIDE rating: \n" + PredictionFunc(bullet, blitz, rapid));
         });
         return view;
     }

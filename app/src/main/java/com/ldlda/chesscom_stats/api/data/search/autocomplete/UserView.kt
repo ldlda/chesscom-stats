@@ -3,6 +3,7 @@
 package com.ldlda.chesscom_stats.api.data.search.autocomplete
 
 import android.os.Parcelable
+import com.ldlda.chesscom_stats.api.data.player.Title
 import com.ldlda.chesscom_stats.util.parcelize.httpurl.HttpUrlParceler
 import com.ldlda.chesscom_stats.util.serialize.tostring.HttpUrlSerializer
 import com.ldlda.chesscom_stats.util.serialize.tostring.InstantParseSerializer
@@ -38,7 +39,7 @@ data class UserView(
     val firstName: String? = null,
     val lastName: String? = null,
 
-    val chessTitle: String? = null,
+    val chessTitle: Title? = null,
 
     // one second after creation but i think im not certain
     // last profile update, above line is what if bro just joined

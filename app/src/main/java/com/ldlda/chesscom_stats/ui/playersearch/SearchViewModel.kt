@@ -28,8 +28,8 @@ class SearchViewModel(
     val error: LiveData<Throwable?> = _error
 
     fun load(pref: String) {
-        Log.d("SearchViewModel", "load: pinged with $pref")
         if (_loading.value == true) return
+        Log.d("SearchViewModel", "load: pinged with $pref")
         _loading.value = true
         _error.value = null
         viewModelScope.launch {

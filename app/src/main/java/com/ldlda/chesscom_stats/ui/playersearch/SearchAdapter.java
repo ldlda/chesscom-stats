@@ -17,6 +17,10 @@ import com.ldlda.chesscom_stats.api.data.search.autocomplete.UserView;
 import com.ldlda.chesscom_stats.databinding.ItemPlayerSearchBinding;
 import com.squareup.picasso.Picasso;
 
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class SearchAdapter extends ListAdapter<SearchItem, SearchAdapter.PlayerViewHolder> {
     private static final DiffUtil.ItemCallback<SearchItem> DIFF =
             new DiffUtil.ItemCallback<>() {
@@ -50,7 +54,11 @@ public class SearchAdapter extends ListAdapter<SearchItem, SearchAdapter.PlayerV
     @Override
     public void onBindViewHolder(@NonNull PlayerViewHolder holder, int position) {
         SearchItem player = getItem(position);
-        holder.username.setText(player.getUserView().getUsername());
+        UserView userView = player.getUserView();
+        holder.username.setText(userView.getUsername());
+        String name = Stream.of(userView.getFirstName(), userView.getLastName())
+                .filter(Objects::nonNull).collect(Collectors.joining(" ")).trim();
+        holder.name.setText(String.format("Name: %s", name.isBlank() ? "N/A" : name));
 
         String avatar = player.getUserView().getAvatar().toString();
         if (!avatar.isEmpty()) {
@@ -72,11 +80,14 @@ public class SearchAdapter extends ListAdapter<SearchItem, SearchAdapter.PlayerV
     public static class PlayerViewHolder extends RecyclerView.ViewHolder {
         ImageView avatar;
         TextView username;
+        TextView name;
 
         public PlayerViewHolder(@NonNull View itemView) {
-            super(itemView);
-            avatar = itemView.findViewById(R.id.player_avatar);
-            username = itemView.findViewById(R.id.player_username);
+            super(itemView); // sacred super never toucher
+            ItemPlayerSearchBinding binding = ItemPlayerSearchBinding.bind(itemView);
+            avatar = binding.playerAvatar;
+            username = binding.playerUsername;
+            name = binding.playerDetailName;
         }
     }
 }

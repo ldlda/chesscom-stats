@@ -4,9 +4,10 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
+
 @Database(
-    version = 2,
-    entities = [User::class]
+    version = 1,
+    entities = [User::class],
 )
 @TypeConverters(Converters::class)
 abstract class FavoriteDatabase : RoomDatabase() {

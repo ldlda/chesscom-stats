@@ -20,9 +20,9 @@ import java.util.List;
 
 public class FavoritesFragment extends Fragment {
     private static final String TAG = "FavoritesFragment";
+    private final List<String> favs = new ArrayList<>();
     private FragmentFavoritesBinding binding;
     private FavoritesAdapter adapter;
-    private final List<String> favs = new ArrayList<>();
     private FavoritesViewModel viewModel;
 
     @Nullable

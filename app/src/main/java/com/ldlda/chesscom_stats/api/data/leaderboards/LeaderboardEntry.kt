@@ -74,7 +74,7 @@ data class LeaderboardEntry(
 
 
     @SerialName("url") val profilePage: HttpUrl,
-    @SerialName("country") val countryUrl: @WriteWith<HttpUrlParcelerNullable> HttpUrl? = null,
+    @SerialName("country") val countryApiUrl: @WriteWith<HttpUrlParcelerNullable> HttpUrl? = null,
     val status: Status? = Status.Basic,
     val title: Title? = null,
     val name: String? = null,

@@ -72,7 +72,7 @@ data class CountryInfo(
          .filter(|second| second.is_empty())  // lowk this isnt better
          */
 
-        /**
+        /*
          * this requires the input to be chesscom
          */
     }

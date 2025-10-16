@@ -19,23 +19,6 @@ import java.util.concurrent.CompletableFuture
 /**
  * Java-friendly adapter around ChessRepository.
  *
- * @deprecated Use {@link JavaChessRepository} instead. That interface is designed for Java
- * callers and returns CompletableFuture directly without exposing coroutines. The default
- * implementation {@link ChessRepositoryTimedCache} already implements both interfaces.
- * <p>
- * Migration example:
- * <pre>{@code
- * // Old (this class):
- * ChessRepoAdapterJava adapter = new ChessRepoAdapterJava();
- * adapter.getPlayerAsync("hikaru").thenAccept(...);
- *
- * // New (JavaChessRepository):
- * JavaChessRepository repo = ChessRepositoryTimedCache.getDefaultInstance();
- * repo.getPlayer("hikaru").thenAccept(...);
- * }</pre>
- * <p>
- * This class will be removed in the future.
- *
  * - get*Blocking: call from worker thread in tests or background code.
  * - get*Async: CompletableFuture for Java async tests/UI.
  *
@@ -43,8 +26,7 @@ import java.util.concurrent.CompletableFuture
  */
 
 class ChessRepoAdapterJava<CR>(
-    val repo: CR,
-    val scope: CoroutineScope
+    val repo: CR, val scope: CoroutineScope
 ) : JavaChessRepository where CR : ChessRepository {
     private fun <T> runBlockingLda(task: suspend CoroutineScope.() -> T) =
         runBlocking(scope.coroutineContext, task)
@@ -52,15 +34,13 @@ class ChessRepoAdapterJava<CR>(
     private fun <T> runAsyncLda2(task: suspend CoroutineScope.() -> T) =
         eager(scope.coroutineContext, task)
 
-    private fun <T> runAsyncLda(task: suspend CoroutineScope.() -> T) =
-        scope.future(block = task)
+    private fun <T> runAsyncLda(task: suspend CoroutineScope.() -> T) = scope.future(block = task)
 
     fun close() = scope.cancel()
 
     @WorkerThread
     @Throws(ChessApiException::class)
-    fun getPlayerBlocking(username: String): Player =
-        runBlockingLda { repo.getPlayer(username) }
+    fun getPlayerBlocking(username: String): Player = runBlockingLda { repo.getPlayer(username) }
 
     override fun getPlayerAsync(username: String): CompletableFuture<Player> =
         runAsyncLda { repo.getPlayer(username) }
@@ -75,16 +55,14 @@ class ChessRepoAdapterJava<CR>(
 
     @WorkerThread
     @Throws(ChessApiException::class)
-    fun getLeaderboardsBlocking(): Leaderboards =
-        runBlockingLda { repo.getLeaderboards() }
+    fun getLeaderboardsBlocking(): Leaderboards = runBlockingLda { repo.getLeaderboards() }
 
     override fun getLeaderboardsAsync(): CompletableFuture<Leaderboards> =
         runAsyncLda { repo.getLeaderboards() }
 
     @WorkerThread
     @Throws(ChessApiException::class)
-    fun getCountryByUrlBlocking(url: HttpUrl): CountryInfo =
-        runBlockingLda { repo.getCountry(url) }
+    fun getCountryByUrlBlocking(url: HttpUrl): CountryInfo = runBlockingLda { repo.getCountry(url) }
 
     override fun getCountryByUrlAsync(url: HttpUrl): CompletableFuture<CountryInfo> =
         runAsyncLda { repo.getCountry(url) }
@@ -120,15 +98,19 @@ class ChessRepoAdapterJava<CR>(
         runAsyncLda { player.fetchPlayerStats(repo); player }
 
     // insanely convenient
-    fun getCompletePlayerAsync(username: String): CompletableFuture<Player> =
-        runAsyncLda {
-            Player.fetchFullPlayer(repo, username)
-        }
+    fun getCompletePlayerAsync(username: String): CompletableFuture<Player> = runAsyncLda {
+        Player.fetchFullPlayer(repo, username)
+        // this can be mirrored in java by uhhhh allof stats and player then country then player.country = country
+    }
 
     // ridiculously convenient
     companion object {
         @JvmStatic
         @JvmSuppressWildcards
+        @Deprecated(
+            "this should die, use buildJavaAdapter on the kotlin repo instead",
+            ReplaceWith("this.buildJavaAdapter(scope)")
+        )
         fun <T : ChessRepository> T.getAdapterJava(scope: CoroutineScope) =
             ChessRepoAdapterJava(this, scope)
     }

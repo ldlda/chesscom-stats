@@ -11,6 +11,13 @@ public class Lesson {
     private final String dataLevel;
     private final int dataImage;
 
+    public Lesson(String dataTitle, int dataDesc, String dataLang, int dataImage) {
+        this.dataTitle = dataTitle;
+        this.dataDesc = dataDesc;
+        this.dataLevel = dataLang;
+        this.dataImage = dataImage;
+    }
+
     public String getDataTitle() {
         return dataTitle;
     }
@@ -25,12 +32,5 @@ public class Lesson {
 
     public int getDataImage() {
         return dataImage;
-    }
-
-    public Lesson(String dataTitle, int dataDesc, String dataLang, int dataImage) {
-        this.dataTitle = dataTitle;
-        this.dataDesc = dataDesc;
-        this.dataLevel = dataLang;
-        this.dataImage = dataImage;
     }
 }

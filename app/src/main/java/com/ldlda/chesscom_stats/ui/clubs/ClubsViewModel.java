@@ -13,9 +13,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.ldlda.chesscom_stats.api.data.PubApiError;
 import com.ldlda.chesscom_stats.api.data.club.Club;
-import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;
-import com.ldlda.chesscom_stats.api.repository.ChessRepositoryTimedCache;
 import com.ldlda.chesscom_stats.api.repository.JavaChessRepository;
+import com.ldlda.chesscom_stats.util.RepoProvider;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,10 +28,8 @@ public class ClubsViewModel extends AndroidViewModel {
     final static String TAG = "ClubViewModel";
 
     // Keep ViewModelScope for lifecycle-aware cancellation
-    private final JavaChessRepository repo = ChessRepoAdapterJava.getAdapterJava(
-            new ChessRepositoryTimedCache(),
-            getViewModelScope(this)
-    );
+    private final JavaChessRepository repo = RepoProvider.getDefault()
+            .buildJavaAdapter(getViewModelScope(this));
     private final @NonNull MutableLiveData<List<HttpUrl>> clubUrls = new MutableLiveData<>(Collections.emptyList());
     private final @NonNull MutableLiveData<List<Club>> clubList = new MutableLiveData<>(Collections.emptyList());
     private final @NonNull MutableLiveData<Boolean> loadingUrls = new MutableLiveData<>(false);

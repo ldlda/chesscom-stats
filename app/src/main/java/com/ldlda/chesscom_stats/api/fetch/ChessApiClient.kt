@@ -28,8 +28,9 @@ import java.util.concurrent.CompletableFuture
 
 /*
     what is this bullshit
+    hold on this one worked tho why did i deprecate this
  */
-@Deprecated("Use ChessRepositoryImpl or its subclasses")
+@Deprecated("Use ChessRepositoryImpl or its subclasses. This is here only for the constants...")
 class ChessApiClient : ChessRepository, JavaChessRepository {
     companion object {
         @Throws(ChessApiException::class)
@@ -56,7 +57,7 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
             /* this or [ChessSearchRequest] has to have every keys serialized */
         }
 
-        private fun OkHttpClient.buildRetrofit(baseUrl: String): Retrofit {
+        fun OkHttpClient.ldaBuildRetrofit(baseUrl: String = CHESS_API_URL): Retrofit {
             val contentType = "application/json".toMediaType()
             return Retrofit.Builder().baseUrl(baseUrl)
                 .client(this)
@@ -65,11 +66,14 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
         }
 
         val defaultRetrofit: Retrofit by lazy {
-            defaultOkHttp.buildRetrofit(CHESS_API_URL)
+            defaultOkHttp.ldaBuildRetrofit()
         }
 
 
         val defaultPublicService: ChessApiService by lazy {
+            defaultRetrofit.create()
+        }
+        val defaultPrivateService: PrivateApiService by lazy {
             defaultRetrofit.create()
         }
         val defaultInstance = ChessApiClient()
@@ -89,7 +93,7 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
         okHttp: OkHttpClient = defaultOkHttp,
     ) {
         this.baseUrl = baseUrl
-        publicRetrofit = okHttp.buildRetrofit(baseUrl)
+        publicRetrofit = okHttp.ldaBuildRetrofit(baseUrl)
         privateRetrofit = publicRetrofit
     }
 

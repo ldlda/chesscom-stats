@@ -21,8 +21,8 @@ import java.util.List;
 public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyViewHolder> {
 
     private final Context context;
-    private List<Lesson> dataList;
     private final ToLessonContent listener;
+    private List<Lesson> dataList;
 
     public LessonsAdapter(Context context, List<Lesson> dataList, ToLessonContent listener) {
         this.context = context;
