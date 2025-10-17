@@ -53,7 +53,7 @@ public class FavoritesAdapter extends ListAdapter<FavoritesAdapter.FavoritePlaye
 
         // Convert epoch time to a readable date format
         try {
-            long epochTime = Long.parseLong(player.lastOnlDate);
+            long epochTime = 1750228800;
             String formattedDate = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date(epochTime * 1000));
             holder.lastOnlineText.setText("Last online: " + formattedDate);
         } catch (NumberFormatException e) {

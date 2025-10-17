@@ -80,9 +80,9 @@ public class FavoritesFragment extends Fragment {
             List<FavoritesAdapter.FavoritePlayer> favoritePlayers = users.stream()
                 .map(user -> new FavoritesAdapter.FavoritePlayer(
                     user.getUsername(),
-                    user.getTitle() != null ? user.getTitle() : "",
-                    user.getLastOnlDate() != null ? user.getLastOnlDate() : "",
-                    0 // Using a boilerplate value for rating
+                    user.getTitle() != null && !user.getTitle().isEmpty() ? user.getTitle() : "GM",
+                    user.getLastOnlDate() != null && !user.getLastOnlDate().isEmpty() ? user.getLastOnlDate() : "--",
+                        1750228800  // Using a boilerplate value for rating
                 ))
                 .collect(Collectors.toList());
 
