@@ -32,10 +32,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom_navigation"
         app:defaultNavHost="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:navGraph="@navigation/navigation_main"
-        android:layout_alignBottom="@+id/bottom_navigation"
         tools:layout="@layout/fragment_home" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

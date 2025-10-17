@@ -4,9 +4,6 @@ package com.ldlda.chesscom_stats.ui.lessons.data;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 
-import kotlinx.parcelize.Parcelize;
-
-@Parcelize
 public class Lesson {
 
     private final String dataTitle;

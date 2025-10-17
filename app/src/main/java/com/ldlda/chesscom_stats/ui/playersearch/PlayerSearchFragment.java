@@ -24,6 +24,7 @@ import com.ldlda.chesscom_stats.api.repository.ChessRepository;
 import com.ldlda.chesscom_stats.databinding.FragmentBoringBinding;
 import com.ldlda.chesscom_stats.di.RepoProvider;
 import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailActivity;
+import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailData;
 
 public class PlayerSearchFragment extends Fragment {
     public static final String TAG = "PlayerSearchFragment";
@@ -91,7 +92,7 @@ public class PlayerSearchFragment extends Fragment {
         adapter = new SearchAdapter(player -> {
             Intent intent = new Intent(getContext(), PlayerDetailActivity.class);
             // Pass username for SLOW PATH - activity will fetch all data from API
-            intent.putExtra(PlayerDetailActivity.EXTRA_USERNAME, player.getUserView().getUsername());
+            intent.putExtra(PlayerDetailActivity.EXTRA_PLAYER_DATA, PlayerDetailData.fromSearchItem(player));
             startActivity(intent);
         });
 

@@ -2,13 +2,9 @@
 
 package com.ldlda.chesscom_stats.api.data.search.autocomplete
 
-import android.os.Parcelable
 import com.ldlda.chesscom_stats.api.data.player.Title
-import com.ldlda.chesscom_stats.util.parcelize.httpurl.HttpUrlParceler
 import com.ldlda.chesscom_stats.util.serialize.tostring.HttpUrlSerializer
 import com.ldlda.chesscom_stats.util.serialize.tostring.InstantParseSerializer
-import kotlinx.parcelize.Parcelize
-import kotlinx.parcelize.TypeParceler
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -18,7 +14,6 @@ import kotlinx.serialization.encoding.Encoder
 import okhttp3.HttpUrl
 import java.time.Instant
 
-@Parcelize
 @Serializable
 data class UserView(
     val userId: Long,
@@ -45,20 +40,18 @@ data class UserView(
     // last profile update, above line is what if bro just joined
     val updatedAt: Instant? = null,
 
-    ) : Parcelable {
+    ) {
 
     val avatar get() = avatarStruct.url
     val ecoAvatar get() = avatarStruct.badUrl
 
-    @Parcelize
-    @TypeParceler<HttpUrl, HttpUrlParceler>()
     @Serializable
     class AvatarSurrogate(
         @SerialName("highResolutionUrl")
         val url: HttpUrl,
         @SerialName("url")
         val badUrl: HttpUrl,
-    ) : Parcelable
+    )
 
     // i do need eco sometimes
     class TheHttpUrlSerializer : KSerializer<HttpUrl> {
