@@ -1,7 +1,9 @@
 package com.ldlda.chesscom_stats.ui.playersearch;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -59,6 +61,9 @@ public class PlayerSearchFragment extends Fragment {
 
     private String currentUsername = null;
     private Long currentPlayerId = null;
+
+    private MaterialButton profileURI;
+    private String profileURL;
     private FavoritesViewModel favoritesViewModel;
 
     @Override
@@ -87,6 +92,32 @@ public class PlayerSearchFragment extends Fragment {
         bullet_stats = binding.bulletStats;
         blitz_stats = binding.blitzStats;
         rapid_stats = binding.rapidStats;
+
+        profileURI = binding.profileURI;
+
+        profileURI.setOnClickListener(v -> {
+            if (profileURL != null) {
+                Bundle bundle = new Bundle();
+                bundle.putString("profile_url", profileURL);
+
+                PlayerProfileWebView webFragment = new PlayerProfileWebView();
+                webFragment.setArguments(bundle);
+
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(
+                                R.anim.slide_in_right,  // animation for the new fragment entering
+                                R.anim.slide_out_left,      // animation for the current fragment exiting
+                                R.anim.slide_in_left,   // animation when coming back (pop enter)
+                                R.anim.slide_out_right      // animation when going back (pop exit)
+                        )
+                        .replace(R.id.fragment_container, webFragment)
+                        .addToBackStack(null)
+                        .commit();
+            } else {
+                Toast.makeText(requireContext(), "Profile not loaded yet", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // No favoriting until having searched for a player
         fav_btn.setEnabled(false);
@@ -135,6 +166,8 @@ public class PlayerSearchFragment extends Fragment {
                             fav_btn.setEnabled(true);
 
                             PlayerProfileData data = response.body();
+
+                            profileURL = data.profileUrl;
 
                             currentUsername = data.profileUrl.substring(data.profileUrl.lastIndexOf("/") + 1);
                             currentPlayerId = data.playerId; // Get from API response
