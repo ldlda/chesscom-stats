@@ -25,14 +25,6 @@ public class LessonPagerContainerFragment extends Fragment {
 
     private LessonViewModel viewModel;
 
-    public static LessonPagerContainerFragment newInstance(int startIndex) {
-        LessonPagerContainerFragment fragment = new LessonPagerContainerFragment();
-        Bundle args = new Bundle();
-        args.putInt("startIndex", startIndex);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,7 +32,7 @@ public class LessonPagerContainerFragment extends Fragment {
 
         // Get starting index
         if (getArguments() != null) {
-            startIndex = getArguments().getInt("startIndex", 0);
+            startIndex = LessonPagerContainerFragmentArgs.fromBundle(getArguments()).getIndex();
         }
 
         // Setup lesson list
@@ -54,7 +46,7 @@ public class LessonPagerContainerFragment extends Fragment {
         // Add custom slide animation between lessons
         binding.lessonViewPager.setPageTransformer(new MyTransformer());
 
-        binding.lessonViewPager.setCurrentItem(startIndex, false); // Jump to selected lesson
+        binding.lessonViewPager.setCurrentItem(startIndex, true); // jump to selected lesson
 
         // Update UI when page changes (swipe or button)
         binding.lessonViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -96,25 +88,17 @@ public class LessonPagerContainerFragment extends Fragment {
         // Update counter
         // top haxx
         Lesson lesson = lessonsList.get(position);
-        binding.lessonCounter.setText(lesson.getDataTitle());
+        binding.lessonCounter.setText(lesson.dataTitle);
+
+        int color = lesson.color;
+        // it works
+        binding.btnPrevious.setTextColor(ColorStateList.valueOf(color));
+        binding.btnPrevious.setStrokeColor(ColorStateList.valueOf(color));
+
+        binding.btnNext.setBackgroundTintList(ColorStateList.valueOf(color));
 
         // Enable/disable buttons
         binding.btnPrevious.setEnabled(position > 0);
         binding.btnNext.setEnabled(position < lessonsList.size() - 1);
-
-        int color = lesson.getColor();
-        binding.btnPrevious.setTextColor(color);
-
-        // wtf
-        binding.btnPrevious.setStrokeColor(ColorStateList.valueOf(color));
-
-        binding.btnNext.setBackgroundColor(color);
-
-        binding.btnPrevious.setHighlightColor(color);
-        binding.btnNext.setHighlightColor(color);
-
-        binding.btnPrevious.setHintTextColor(color);
-
-        binding.btnPrevious.setLinkTextColor(color);
     }
 }

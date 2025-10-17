@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.ViewCompat;
@@ -91,9 +92,9 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        // Set up toolbar
-//        Toolbar myToolbar = binding.myToolbar;
-//        setSupportActionBar(myToolbar);
+//         Set up toolbar
+        Toolbar myToolbar = binding.myToolbar;
+        setSupportActionBar(myToolbar);
 
         // Setup Navigation Component
         var navHostFragment = (NavHostFragment) getSupportFragmentManager()

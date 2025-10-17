@@ -12,20 +12,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.ldlda.chesscom_stats.databinding.FragmentLessonContentsBinding;
+import com.ldlda.chesscom_stats.ui.lessons.data.Lesson;
 
 public class LessonContentsFragment extends Fragment {
-
+    public static final String LESSON = "Lesson";
     private TextView detailDesc/*, detailTitle*/;
     private ImageView detailImage;
-
     private FragmentLessonContentsBinding binding;
 
-    public static LessonContentsFragment newInstance(String title, int desc, int image) {
+    // good old bundle
+    public static LessonContentsFragment newInstance(Lesson lesson) {
         LessonContentsFragment fragment = new LessonContentsFragment();
         Bundle args = new Bundle();
-        args.putString("Title", title);
-        args.putInt("Desc", desc);
-        args.putInt("Image", image);
+        args.putParcelable(LESSON, lesson);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,18 +53,27 @@ public class LessonContentsFragment extends Fragment {
     }
 
     private void applyArgsToViews(@Nullable Bundle args) {
-        if (args == null) return;
+        if (args == null || !args.containsKey(LESSON)) return;
 
-//        if (args.containsKey("Title") && detailTitle != null) {
-//            detailTitle.setText(args.getString("Title"));
-//        }
+        // Set ClassLoader for custom Parcelable (handles older Android versions)
+        args.setClassLoader(Lesson.class.getClassLoader());
 
-        if (args.containsKey("Desc") && detailDesc != null) {
-            detailDesc.setText(args.getInt("Desc"));
+        // Use type-safe getParcelable for API 33+, fallback to deprecated for older
+        Lesson lesson;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            lesson = args.getParcelable(LESSON, Lesson.class);
+        } else {
+            lesson = args.getParcelable(LESSON);
         }
 
-        if (args.containsKey("Image") && detailImage != null) {
-            detailImage.setImageResource(args.getInt("Image"));
+        if (lesson == null) return;
+
+        if (detailDesc != null) {
+            detailDesc.setText(lesson.dataDesc);
+        }
+
+        if (detailImage != null) {
+            detailImage.setImageResource(lesson.dataImage);
         }
     }
 }

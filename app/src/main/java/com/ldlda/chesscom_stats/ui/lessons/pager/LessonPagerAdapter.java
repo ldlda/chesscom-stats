@@ -21,11 +21,7 @@ public class LessonPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         Lesson lesson = lessons.get(position);
-        return LessonContentsFragment.newInstance(
-                lesson.getDataTitle(),
-                lesson.getDataDesc(),
-                lesson.getDataImage()
-        );
+        return LessonContentsFragment.newInstance(lesson);
     }
 
     @Override

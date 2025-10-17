@@ -5,6 +5,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.viewpager2.widget.ViewPager2;
 
+// funny view pager transformer, based on anim xmls
 public class MyTransformer implements ViewPager2.PageTransformer {
 
     @Override
