@@ -97,7 +97,7 @@ public class ClubsFragment extends Fragment {
 
             if (ahhSize != 0) {
                 int currrent = displayList.size();
-                binding.clubsOverview.setText(String.format("%s of %s loaded", currrent, ahhSize));
+                binding.clubsOverview.setText(String.format("%s of %s loaded (%s error)", currrent, ahhSize, viewModel.getErrorClubs().getValue()));
             } else {
                 binding.clubsOverview.setText("not loaded yet");
             }
@@ -136,6 +136,7 @@ public class ClubsFragment extends Fragment {
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
                 Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                binding.clubsOverview.setText(error);
             }
         });
     }

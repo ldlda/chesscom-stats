@@ -48,7 +48,7 @@ public class HybridTest {
         PlayerStats ldaStats = ldabsbplef.getPlayerStats();
         assertNotNull(ldaStats);
 
-        var VN = ldabsbplef.getCountryCode(ChessApiClient.CHESS_API_URL, true);
+        var VN = ldabsbplef.getCountryCode(ChessApiClient.CHESS_API_URL);
         assertEquals("VN", VN);
 
 

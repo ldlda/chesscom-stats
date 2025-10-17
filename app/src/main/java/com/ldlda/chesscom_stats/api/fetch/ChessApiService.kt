@@ -12,6 +12,7 @@ import com.ldlda.chesscom_stats.api.data.player.games.monthly.MonthlyGameList
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
 import com.ldlda.chesscom_stats.api.data.puzzle.Puzzle
 import okhttp3.HttpUrl
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Url
@@ -24,59 +25,59 @@ import retrofit2.http.Url
  */
 interface ChessApiService {
     @GET("player/{username}")
-    suspend fun player(@Path("username") username: String): Player
+    suspend fun player(@Path("username") username: String): Response<Player>
 
     @GET("player/{username}/stats")
-    suspend fun playerStats(@Path("username") username: String): PlayerStats
+    suspend fun playerStats(@Path("username") username: String): Response<PlayerStats>
 
     @GET("player/{username}/clubs")
-    suspend fun playerClubs(@Path("username") username: String): PlayerClubs
+    suspend fun playerClubs(@Path("username") username: String): Response<PlayerClubs>
 
     @GET("leaderboards")
-    suspend fun leaderboards(): Leaderboards
+    suspend fun leaderboards(): Response<Leaderboards>
 
 
     //region Cuntry
 
     @GET("country/{code}")
-    suspend fun country(@Path("code") countryCode: String): CountryInfo
+    suspend fun country(@Path("code") countryCode: String): Response<CountryInfo>
 
     @GET
-    suspend fun country(@Url url: HttpUrl): CountryInfo
+    suspend fun country(@Url url: HttpUrl): Response<CountryInfo>
 
     @GET("country/{code}/players")
-    suspend fun countryPlayers(@Path("code") countryCode: String): CountryPlayers
+    suspend fun countryPlayers(@Path("code") countryCode: String): Response<CountryPlayers>
 
     @GET("country/{code}/clubs")
-    suspend fun countryClubs(@Path("code") countryCode: String): CountryClubs
+    suspend fun countryClubs(@Path("code") countryCode: String): Response<CountryClubs>
 
     //endregion
 
     @GET("player/{username}/games/archives")
-    suspend fun monthlyArchivesList(@Path("username") username: String): MonthlyArchives
+    suspend fun monthlyArchivesList(@Path("username") username: String): Response<MonthlyArchives>
 
     @GET("player/{username}/games/{year}/{month}")
     suspend fun monthlyArchives(
         @Path("username") username: String,
         @Path("year") year: String,
         @Path("month") month: String
-    ): MonthlyGameList
+    ): Response<MonthlyGameList>
 
     @GET
-    suspend fun monthlyArchives(@Url url: HttpUrl): MonthlyGameList
+    suspend fun monthlyArchives(@Url url: HttpUrl): Response<MonthlyGameList>
 
     @GET
-    suspend fun club(@Url url: HttpUrl): Club
+    suspend fun club(@Url url: HttpUrl): Response<Club>
 
 
     @GET("club/{nameId}")
-    suspend fun club(@Path("nameId") nameId: String): Club
+    suspend fun club(@Path("nameId") nameId: String): Response<Club>
 
     @GET("puzzle")
-    suspend fun dailyPuzzle(): Puzzle
+    suspend fun dailyPuzzle(): Response<Puzzle>
 
     @GET("puzzle/random")
-    suspend fun randomPuzzle(): Puzzle
+    suspend fun randomPuzzle(): Response<Puzzle>
 
     // not supporting live/base/increment because if you query hikaru it will 503
     // there are more that hits 503

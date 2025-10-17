@@ -43,7 +43,7 @@ android {
     }
 
     testOptions {
-//        unitTests.isReturnDefaultValues = true
+        unitTests.isReturnDefaultValues = true // NOT MOCKED bullshit
     }
 
     configurations.all {
