@@ -47,7 +47,9 @@ public class LeaderboardsFragment extends Fragment {
     private LinearLayout podium, podiumFirst, podiumSecond, podiumThird;
     private ImageView avatarFirst, avatarSecond, avatarThird;
     private TextView usernameFirst, usernameSecond, usernameThird;
-    private ImageButton collapse_toggle;
+    private ImageButton collapseToggle;
+
+    private Toast tooSoonToast;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,8 +66,7 @@ public class LeaderboardsFragment extends Fragment {
         usernameFirst = binding.usernameFirst;
         usernameSecond = binding.usernameSecond;
         usernameThird = binding.usernameThird;
-
-        collapse_toggle = binding.collapseToggle;
+        collapseToggle = binding.collapseToggle;
 
         SwipeRefreshLayout swipeRefreshLayout = binding.leaderboardSwipeRefresh;
         RecyclerView recyclerView = binding.hallOfFameRecycler;
@@ -80,7 +81,11 @@ public class LeaderboardsFragment extends Fragment {
             if (now - lastRefreshAt < MIN_REFRESH_INTERVAL_MS) {
                 // Too soon; just cancel the spinner quickly.
                 swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(getContext(), R.string.refresh_too_soon, Toast.LENGTH_SHORT).show();
+                if (tooSoonToast != null)
+                    tooSoonToast.cancel();
+                tooSoonToast = Toast.makeText(getContext(), R.string.refresh_too_soon, Toast.LENGTH_SHORT);
+                tooSoonToast.show();
+
                 return;
             }
             viewModel.load(true);
@@ -95,10 +100,7 @@ public class LeaderboardsFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText.isBlank()) {
-                    List<LeaderboardEntry> rest = allPlayers.size() > 3
-                            ? allPlayers.subList(3, allPlayers.size())
-                            : new ArrayList<>();
-                    adapter.submitList(new ArrayList<>(rest));
+                    extracted();
                 } else {
                     List<LeaderboardEntry> filtered = allPlayers
                             .stream()
@@ -132,10 +134,7 @@ public class LeaderboardsFragment extends Fragment {
             }
 
             // Show rest in RecyclerView (skip top 3)
-            List<LeaderboardEntry> rest = allPlayers.size() > 3
-                    ? allPlayers.subList(3, allPlayers.size())
-                    : new ArrayList<>();
-            adapter.submitList(new ArrayList<>(rest));
+            extracted();
             lastRefreshAt = System.currentTimeMillis();
         });
         viewModel.getError().observe(getViewLifecycleOwner(), err -> {
@@ -146,12 +145,24 @@ public class LeaderboardsFragment extends Fragment {
         });
 
         // Collapse podium
-        collapse_toggle.setOnClickListener(v->{
+        collapseToggle.setOnClickListener(v -> {
             podium.setVisibility(
                     podium.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE
             );
+            extracted();
         });
         return binding.getRoot();
+    }
+
+    private void extracted() {
+        if (podium.getVisibility() == View.VISIBLE) {
+            List<LeaderboardEntry> rest = allPlayers.size() > 3
+                    ? allPlayers.subList(3, allPlayers.size())
+                    : new ArrayList<>();
+            adapter.submitList(new ArrayList<>(rest));
+        } else {
+            adapter.submitList(new ArrayList<>(allPlayers));
+        }
     }
 
     private void updatePodium(LeaderboardEntry first, LeaderboardEntry second, LeaderboardEntry third) {

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
-    <!-- Collapsible header with podium -->
+    <!-- Single AppBarLayout with all collapsible content -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
@@ -13,19 +13,21 @@
         android:background="@android:color/transparent"
         app:elevation="0dp">
 
+        <!-- CollapsingToolbarLayout for podium (parallax) -->
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:contentScrim="@android:color/transparent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
 
-            <!-- Collapsible content: Title + Podium -->
+            <!-- Podium with parallax collapse -->
             <LinearLayout
+                android:id="@+id/podium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:padding="16dp"
+                android:paddingTop="16dp"
                 app:layout_collapseMode="parallax">
 
                 <TextView
@@ -37,7 +39,7 @@
                     android:textStyle="bold" />
 
                 <LinearLayout
-                    android:id="@+id/podium"android:layout_width="match_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
                     android:gravity="bottom|center_horizontal"
@@ -74,7 +76,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="70dp"
                             android:background="#C0C0C0"
-                android:src="@drawable/ic_second"/>
+                            android:src="@drawable/ic_second" />
                     </LinearLayout>
 
                     <!-- First Place -->
@@ -107,7 +109,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="100dp"
                             android:background="#FFD700"
-                android:src="@drawable/ic_first"/>
+                            android:src="@drawable/ic_first" />
                     </LinearLayout>
 
                     <!-- Third Place -->
@@ -140,58 +142,50 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:background="#CD7F32"
-                android:src="@drawable/ic_third"/>
+                            android:src="@drawable/ic_third" />
                     </LinearLayout>
                 </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/hall_of_fame"
-                    android:textSize="24sp" />
-
             </LinearLayout>
-
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-        <!-- SearchView: Sticky header - moves with screen, collapses after podium -->
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/player_search_view"
+        <!-- "Hall of Fame" title - linear collapse (scroll away completely) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="16dp"
+            android:text="@string/hall_of_fame"
+            android:textSize="24sp"
+            app:layout_scrollFlags="scroll|snap" />
+
+        <!-- SearchView + Eye Button - collapses but enters on scroll up -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/search_bg"
-            android:iconifiedByDefault="false"
-            android:queryHint="Search for a player"
-            app:iconifiedByDefault="false" />
-        <!--            app:layout_scrollFlags="scroll|exitUntilCollapsed"-->
-    <ImageButton
-        android:id="@+id/collapse_toggle"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="8dp"
-        app:srcCompat="@drawable/ic_eye_track" />
+            android:orientation="horizontal"
+            app:layout_scrollFlags="scroll|enterAlways">
 
-    <androidx.appcompat.widget.SearchView
-        android:layout_marginTop="15dp"
-        android:id="@+id/player_search_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:iconifiedByDefault="false"
-        android:background="@drawable/search_bg"
-        android:queryHint="Search for a player"
-        app:iconifiedByDefault="false" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/hall_of_fame"
-        android:layout_centerInParent="true"
-        android:textSize="24sp" />
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/player_search_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/search_bg"
+                android:iconifiedByDefault="false"
+                android:queryHint="Search for a player"
+                app:iconifiedByDefault="false" />
+
+            <ImageButton
+                android:id="@+id/collapse_toggle"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:contentDescription="Toggle Podium"
+                app:srcCompat="@drawable/ic_eye_track" />
+        </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
