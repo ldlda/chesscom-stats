@@ -77,7 +77,7 @@ class ChessRepositoryTimedCache(
 
     override suspend fun getPlayer(username: String): Player {
         return operation(playerCache, { username.normalize() }) {
-            super.getPlayer(username.normalize())
+            super.getPlayer(it)
         }
 //        val key = username.normalize()
 //        playerCache.get(key)?.let { return it }
@@ -88,7 +88,7 @@ class ChessRepositoryTimedCache(
 
     override suspend fun getPlayerStats(username: String): PlayerStats {
         return operation(statsCache, { username.normalize() }) {
-            super.getPlayerStats(username.normalize())
+            super.getPlayerStats(it)
         }
 //        val key = username.normalize()
 //        statsCache.get(key)?.let { return it }
