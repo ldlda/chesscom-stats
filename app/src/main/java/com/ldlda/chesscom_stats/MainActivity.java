@@ -16,8 +16,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
 import androidx.core.splashscreen.SplashScreen;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -41,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(v.getPaddingLeft(), systemBars.top, v.getPaddingRight(), v.getPaddingBottom());
+            return insets;
+
+        });
 
         // Add a callback that's called when the splash screen is animating to the
         // app content.
@@ -83,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Set up toolbar
-        Toolbar myToolbar = binding.myToolbar;
-        setSupportActionBar(myToolbar);
+//        Toolbar myToolbar = binding.myToolbar;
+//        setSupportActionBar(myToolbar);
 
         // Setup Navigation Component
         var navHostFragment = (NavHostFragment) getSupportFragmentManager()
