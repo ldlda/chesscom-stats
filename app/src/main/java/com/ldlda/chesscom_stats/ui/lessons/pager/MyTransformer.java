@@ -1,12 +1,17 @@
 package com.ldlda.chesscom_stats.ui.lessons.pager;
 
+import android.animation.ArgbEvaluator;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.ldlda.chesscom_stats.R;
 
 // funny view pager transformer, based on anim xmls
 public class MyTransformer implements ViewPager2.PageTransformer {
+    private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
 
     @Override
     public void transformPage(@NonNull View page, float position) {
