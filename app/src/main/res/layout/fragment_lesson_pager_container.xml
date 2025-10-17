@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/lesson_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/lesson_container"
     android:background="@android:color/transparent"
     android:orientation="vertical">
 
@@ -50,6 +50,7 @@
             android:paddingVertical="10dp"
             android:text="@string/previous"
             android:textColor="#6C63FF"
+            app:backgroundTint="#E0FFFFFF"
             app:cornerRadius="30dp"
             app:strokeColor="#6C63FF" />
 

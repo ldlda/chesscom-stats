@@ -32,17 +32,22 @@
             android:layout_height="220dp"
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="20dp"
-            app:cardElevation="6dp"
+            app:cardElevation="8dp"
             app:cardUseCompatPadding="true">
 
-            <ImageView
-                android:id="@+id/detailImage"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:contentDescription="Lesson Hero Image"
-                android:scaleType="centerCrop"
-                android:src="@drawable/lesson_1" />
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/detailImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Lesson Hero Image"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/lesson_1" />
+            </FrameLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Description -->
