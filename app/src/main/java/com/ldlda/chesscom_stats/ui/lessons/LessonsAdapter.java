@@ -2,7 +2,6 @@ package com.ldlda.chesscom_stats.ui.lessons;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,20 +45,15 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.recImage.setImageResource(dataList.get(position).getDataImage());
-        holder.recTitle.setText(dataList.get(position).getDataTitle());
-        holder.recDesc.setText(context.getString(dataList.get(position).getDataDesc()));
-        holder.recLang.setText(dataList.get(position).getDataLang());
+        holder.recImage.setImageResource(dataList.get(position).dataImage);
+        holder.recTitle.setText(dataList.get(position).dataTitle);
+        holder.recDesc.setText(context.getString(dataList.get(position).dataDesc));
+        holder.recLevel.setText(dataList.get(position).dataLevel);
 
         holder.recCard.setOnClickListener(view -> {
             int currentPosition = holder.getBindingAdapterPosition();
             if (currentPosition != RecyclerView.NO_POSITION) {
-                Bundle args = new Bundle();
-                Lesson lesson = dataList.get(currentPosition);
-                args.putInt("Image", lesson.getDataImage());
-                args.putString("Title", lesson.getDataTitle());
-                args.putInt("Desc", lesson.getDataDesc());
-                listener.toLessonContent(args);
+                listener.toLessonContent(currentPosition);
             }
         });
     }
@@ -70,13 +64,13 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyViewHo
     }
 
     public interface ToLessonContent {
-        void toLessonContent(Bundle arg);
+        void toLessonContent(int currentPosition);
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         ImageView recImage;
-        TextView recTitle, recDesc, recLang;
+        TextView recTitle, recDesc, recLevel;
         CardView recCard;
 
         public MyViewHolder(@NonNull View itemView) {
@@ -85,10 +79,8 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyViewHo
             recImage = itemView.findViewById(R.id.recImage);
             recTitle = itemView.findViewById(R.id.recTitle);
             recDesc = itemView.findViewById(R.id.recDesc);
-            recLang = itemView.findViewById(R.id.recLang);
+            recLevel = itemView.findViewById(R.id.recLang);
             recCard = itemView.findViewById(R.id.recCard);
         }
     }
-
 }
-

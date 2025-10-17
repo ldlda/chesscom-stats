@@ -74,7 +74,7 @@ public class LessonsFragment extends Fragment {
     private void searchList(String text) {
         List<Lesson> dataSearchList = new ArrayList<>();
         for (Lesson data : dataList) {
-            if (data.getDataTitle().toLowerCase().contains(text.toLowerCase())) {
+            if (data.dataTitle.toLowerCase().contains(text.toLowerCase())) {
                 dataSearchList.add(data);
             }
         }
@@ -85,21 +85,11 @@ public class LessonsFragment extends Fragment {
         }
     }
 
-    public void showLessonContent(Bundle args) {
-        // Get lesson index from title
-        String title = args.getString("Title");
-        int startIndex = 0;
-        for (int i = 0; i < dataList.size(); i++) {
-            if (dataList.get(i).getDataTitle().equals(title)) {
-                startIndex = i;
-                break;
-            }
-        }
-
-        // Navigate to lesson pager container using Navigation Component
-        Bundle bundle = new Bundle();
-        bundle.putInt("startIndex", startIndex);
+    public void showLessonContent(int currentPosition) {
+        // Navigate to lesson pager container using Navigation Component and Safe Args
+        var action = LessonsFragmentDirections.actionLessonsToPager();
+        action.setIndex(currentPosition);
         NavHostFragment.findNavController(this)
-                .navigate(R.id.action_lessons_to_pager, bundle);
+                .navigate(action);
     }
 }

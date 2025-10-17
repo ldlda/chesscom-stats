@@ -9,6 +9,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.ldlda.chesscom_stats.R;
 
+// funny view pager transformer, based on anim xmls
 public class MyTransformer implements ViewPager2.PageTransformer {
     private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
 

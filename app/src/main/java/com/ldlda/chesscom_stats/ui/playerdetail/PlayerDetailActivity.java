@@ -18,12 +18,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.button.MaterialButton;
 import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.api.data.country.CountryInfo;
-import com.ldlda.chesscom_stats.api.data.leaderboards.LeaderboardEntry;
 import com.ldlda.chesscom_stats.api.data.player.Player;
 import com.ldlda.chesscom_stats.api.data.player.Title;
-import com.ldlda.chesscom_stats.api.data.player.stats.BaseRecord;
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats;
-import com.ldlda.chesscom_stats.api.data.player.stats.Stats;
 import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;
 import com.ldlda.chesscom_stats.api.repository.ChessRepository;
 import com.ldlda.chesscom_stats.databinding.ActivityPlayerDetailBinding;
@@ -41,25 +38,19 @@ import java.util.concurrent.CompletableFuture;
 import okhttp3.HttpUrl;
 
 public class PlayerDetailActivity extends AppCompatActivity {
-    public static final String EXTRA_PLAYER_ENTRY = "player_entry";
-    public static final String EXTRA2_PLAYER_ENTRY = "player2_entry";
-    public static final String EXTRA_USERNAME = "username"; // Fallback for legacy
-    public static final String EXTRA_TIMECLASS = "timeclass"; // Which leaderboard it came from (blitz/bullet/rapid/daily)
-    static final String noData = "No data";
-    static final String loading = "Loading..."; // lowk i cant wire this up up top
+    public static final String EXTRA_PLAYER_DATA = "player_data";
+    public static final String EXTRA_USERNAME = "username"; // Fallback for legacy callers
     private final String TAG = "PlayerDetailActivity";
     private ChessRepoAdapterJava<@NotNull ChessRepository> repo;
     private FavoritesViewModel favoritesViewModel;
     private CompletableFuture<?> inFlight;
     private ActivityPlayerDetailBinding binding;
-    private String username;
-    private Long playerId;
-    private HttpUrl profileUrl;
-    private TextView usernameView;
-    private TextView nameView;
-    private String timeclass; // "blitz", "bullet", "rapid", or "daily"
+    private PlayerDetailData currentData;
+    private boolean isFullyLoaded = false; // True after all API fetches complete
     // View references
     private ImageView avatar;
+    private TextView usernameView;
+    private TextView nameView;
     private TextView titleView;
     private TextView countryView;
     private TextView bulletScores;
@@ -97,44 +88,30 @@ public class PlayerDetailActivity extends AppCompatActivity {
         addFavoriteBtn = binding.addToFavBtn;
         profileButton = binding.profileURI;
 
-        // Initialize repository early (needed for both fast and slow paths)
+        // Initialize repository
         repo = RepoProvider.defaultRepository(getApplicationContext()).buildJavaAdapter(
                 getCoroutineScope(getLifecycle()));
 
-        // Try to get LeaderboardEntry first (optimized path)
-        LeaderboardEntry playerEntry = getIntent().getParcelableExtra(EXTRA_PLAYER_ENTRY);
-        timeclass = getIntent().getStringExtra(EXTRA_TIMECLASS); // May be null
+        // ========== UNIFIED PATH ==========
+        // Get PlayerDetailData from Intent (all sources send this now)
+        PlayerDetailData data = getIntent().getParcelableExtra(EXTRA_PLAYER_DATA);
 
-        if (playerEntry != null) {
-            // ========== FAST PATH ==========
-            // We came from leaderboards - already have cached data in the Parcelable!
-            // Advantage: Show UI INSTANTLY (no loading spinner), fetch rest in background
-            // Note: Still fetches same 3 APIs (player, stats, country) - but UI shows immediately
-            //       In pure Kotlin this wouldn't be needed (suspend functions FTW), but Java AsyncTask ass
-            username = playerEntry.getUsername();
-            playerId = playerEntry.getPlayerId();
-            profileUrl = playerEntry.getProfilePage();
-
-            // Display what we already have immediately (no loading spinner!)
-            displayPlayerEntry(playerEntry, timeclass);
-
-            // Then fetch only the missing data in background
-            fetchPlayerStats();
-        } else {
-            // ========== SLOW PATH ==========
-            // We came from search or direct link - have NOTHING except username
-            // Must wait for API before showing anything (loading spinner shows)
-            username = getIntent().getStringExtra(EXTRA_USERNAME);
+        // Fallback for legacy callers that only send username
+        if (data == null) {
+            String username = getIntent().getStringExtra(EXTRA_USERNAME);
             if (username == null) {
-                throw new IllegalArgumentException("Intent extra 'username' or 'player_entry' must not be null");
+                throw new IllegalArgumentException("Intent must include EXTRA_PLAYER_DATA or EXTRA_USERNAME");
             }
-
-            usernameView.setText(username);
-            // Fetch everything from API (shows loading states)
-            fetchPlayerData();
+            data = new PlayerDetailData(username);
         }
 
+        currentData = data;
+
+        // Render what we have immediately (progressive enhancement)
+        render(data);
+
         // Check if favorited (background thread via ViewModel)
+        Long playerId = data.playerId();
         if (playerId != null) {
             favoritesViewModel.isFavorite(playerId, isFav -> {
                 runOnUiThread(() -> updateFavoriteButton(isFav));
@@ -142,10 +119,15 @@ public class PlayerDetailActivity extends AppCompatActivity {
             });
         }
 
+        // Fetch missing data in background
+        fetchMissingData(data);
+
         // Favorite button click handler
         addFavoriteBtn.setOnClickListener(v -> {
-            if (playerId != null && username != null) {
-                favoritesViewModel.toggleFavorite(playerId, username, isFav -> {
+            Long playerId1 = currentData.playerId();
+            String username1 = currentData.username();
+            if (playerId1 != null && username1 != null) {
+                favoritesViewModel.toggleFavorite(playerId1, username1, isFav -> {
                     runOnUiThread(() -> {
                         updateFavoriteButton(isFav);
                         Toast.makeText(this,
@@ -161,6 +143,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
 
         // Profile button click handler
         profileButton.setOnClickListener(v -> {
+            HttpUrl profileUrl = currentData.profileUrl();
             if (profileUrl != null) {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(profileUrl.toString()));
                 startActivity(browserIntent);
@@ -183,104 +166,20 @@ public class PlayerDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * SLOW PATH: Fetch everything from scratch when we only have a username
-     * <p>
-     * This is used when navigating from search or a direct link
-     * <p>
-     * Makes 1 API call: getCompletePlayerAsync (which internally fetches player + stats + country)
+     * Render PlayerDetailData to UI (progressive enhancement pattern)
+     * Shows whatever data is available, leaves rest as placeholders
      */
-    private void fetchPlayerData() {
-        inFlight = repo.getCompletePlayerAsync(username)
-                .thenAccept(player -> {
-                    if (isFinishing() || isDestroyed()) return;
-
-                    // getCompletePlayerAsync already fetches stats + country, so just use them
-                    PlayerStats playerStats = player.getPlayerStats();
-                    CountryInfo country = player.getCountryInfo();
-                    if (playerStats == null || country == null) {
-                        throw new IllegalStateException("getCompletePlayerAsync didn't fetch stats/country");
-                    }
-
-                    // Capture for other uses
-                    playerId = player.getPlayerId();
-                    profileUrl = player.getProfilePage();
-
-                    runOnUiThread(() -> {
-                        // Update favorites button now that we have playerId
-                        favoritesViewModel.isFavorite(playerId, isFav -> {
-                            runOnUiThread(() -> updateFavoriteButton(isFav));
-                            return null;
-                        });
-
-                        // Avatar
-                        HttpUrl avatarUri = player.getAvatarUrl();
-                        if (avatarUri != null) {
-                            Picasso.get()
-                                    .load(avatarUri.toString())
-                                    .placeholder(R.drawable.ic_person)
-                                    .error(R.drawable.ic_person)
-                                    .into(avatar);
-                        } else {
-                            avatar.setImageResource(R.drawable.ic_person);
-                        }
-
-                        // Name
-                        String name = player.getName();
-                        if (name != null && !name.isEmpty()) {
-                            nameView.setText(name);
-                        }
-
-                        // Title
-                        Title title = player.getTitle();
-                        titleView.setText(title != null ? title.getDisplayName() : getString(R.string.none));
-
-                        // Country (already fetched!)
-                        countryView.setText(country.getName());
-
-                        // FIDE
-                        int fide = playerStats.getFide();
-                        fideScore.setText(String.format("FIDE: %s", fide > 0 ? String.valueOf(fide) : "N/A"));
-
-                        // Followers
-                        followerCount.setText(String.format("Followers: %d", player.getFollowers()));
-
-                        // Joined & Last Online
-                        joinedDate.setText(formatInstant(player.getJoined()));
-                        lastOnlineDate.setText(formatInstant(player.getLastOnline()));
-
-                        // Stats (already fetched!)
-                        updateStatsViews(playerStats);
-                    });
-                })
-                .exceptionally(ex -> {
-                    if (isFinishing() || isDestroyed()) return null;
-                    Log.e(TAG, "Failed to fetch player data", ex);
-                    runOnUiThread(() -> Toast.makeText(this, R.string.failed_to_load_player_data, Toast.LENGTH_SHORT).show());
-                    return null;
-                });
-    }
-
-    /**
-     * FAST PATH: Display what we already have from LeaderboardEntry (instant - no API call!)
-     * <p>
-     * This is used when clicking from leaderboards - we already have cached data
-     * <p>
-     * UX Win: User sees content IMMEDIATELY instead of waiting for API
-     * <p>
-     * Technical: Still fetches player/stats/country in background (same as slow path)
-     * but UI updates incrementally instead of all-at-once
-     *
-     * @param timeclass Which leaderboard this came from: "blitz", "bullet", "rapid", or "daily"
-     */
-    private void displayPlayerEntry(LeaderboardEntry entry, @Nullable String timeclass) {
+    private void render(PlayerDetailData data) {
         // Username
-        usernameView.setText(entry.getUsername());
+        if (data.username() != null) {
+            usernameView.setText(data.username());
+        }
 
         // Avatar
-        HttpUrl avatarUri = entry.getAvatarUrl();
-        if (avatarUri != null) {
+        HttpUrl avatar1 = data.avatar();
+        if (avatar1 != null) {
             Picasso.get()
-                    .load(avatarUri.toString())
+                    .load(avatar1.toString())
                     .placeholder(R.drawable.ic_person)
                     .error(R.drawable.ic_person)
                     .into(avatar);
@@ -289,143 +188,236 @@ public class PlayerDetailActivity extends AppCompatActivity {
         }
 
         // Name
-        String name = entry.getName();
-        if (name != null && !name.isEmpty()) {
+        String name = data.name();
+        if (name != null && !name.isEmpty()) { // LINT WHY ARE YOU STUPID
             nameView.setText(name);
+        } else {
+            nameView.setText("--");
         }
 
         // Title
-        Title title = entry.getTitle();
-        titleView.setText(title != null ? title.getDisplayName() : getString(R.string.none));
-
-        // Country (will be updated when fetchCountryInfo completes)
-        HttpUrl countryUrl = entry.getCountryApiUrl();
-        if (countryUrl != null) {
-            fetchCountryInfo(countryUrl);
-        }
-
-        // Show basic info from leaderboard entry
-        // Use the correct card based on which timeclass leaderboard it came from
-        String leaderboardLabel = timeclass != null ? timeclass.substring(0, 1).toUpperCase() + timeclass.substring(1) : "Rating";
-        String leaderboardText = String.format("%s\nRating: %d\nRank: #%d", leaderboardLabel, entry.getScore(), entry.getRank());
-
-        // Add W/L/D record if available
-        var record = entry.getGameRecord();
-        if (record != null) {
-            leaderboardText += String.format("\nW/L/D\n%d / %d / %d", record.getWin(), record.getLoss(), record.getDraw());
-        }
-
-        // Put the leaderboard data in the correct card
-        if ("bullet".equalsIgnoreCase(timeclass)) {
-            bulletScores.setText(leaderboardText);
-            blitzScores.setText("Blitz\nLoading...");
-            rapidScores.setText("Rapid\nLoading...");
-        } else if ("rapid".equalsIgnoreCase(timeclass)) {
-            rapidScores.setText(leaderboardText);
-            bulletScores.setText("Bullet\nLoading...");
-            blitzScores.setText("Blitz\nLoading...");
-        } else if ("daily".equalsIgnoreCase(timeclass)) {
-            // Daily doesn't have a dedicated card, use rapid card
-            rapidScores.setText(leaderboardText);
-            bulletScores.setText("Bullet\nLoading...");
-            blitzScores.setText("Blitz\nLoading...");
+        Title title = data.title();
+        if (title != null) {
+            titleView.setText(title.getDisplayName());
         } else {
-            // Default to blitz (null or "blitz")
-            blitzScores.setText(leaderboardText);
-            bulletScores.setText("Bullet\nLoading...");
-            rapidScores.setText("Rapid\nLoading...");
-        }
-    }
-
-    /**
-     * FAST PATH (part 2): Fetch remaining data after showing cached LeaderboardEntry
-     * Makes 2 API calls in parallel:
-     * <ol>
-     *     <li>
-     *   getPlayerStatsAsync - for FIDE + detailed bullet/blitz/rapid stats
-     * </li><li>
-     *  getPlayerAsync - for followers count
-     * </li></ol><p>
-     * Not actually cheaper API-wise (same 2 calls as getCompletePlayerAsync)
-     * <p>
-     * Real win: UI already showed, this just fills in the gaps (perceived speed)
-     */
-    private void fetchPlayerStats() {
-        // Fetch stats for FIDE + rating details
-        CompletableFuture<PlayerStats> statsFuture = repo.getPlayerStatsAsync(username);
-
-        // Fetch player for followers count
-        CompletableFuture<Player> playerFuture = repo.getPlayerAsync(username);
-
-        inFlight = CompletableFuture.allOf(statsFuture, playerFuture)
-                .thenAccept(ignored -> {
-                    if (isFinishing() || isDestroyed()) return;
-
-                    PlayerStats playerStats = statsFuture.join();
-                    Player player = playerFuture.join();
-
-                    runOnUiThread(() -> {
-                        // FIDE rating
-                        int fide = playerStats.getFide();
-                        fideScore.setText(String.format("FIDE: %s", fide > 0 ? String.valueOf(fide) : "N/A"));
-
-                        // Followers
-                        followerCount.setText(String.format("Followers: %d", player.getFollowers()));
-
-                        // Joined & Last Online
-                        joinedDate.setText(formatInstant(player.getJoined()));
-                        lastOnlineDate.setText(formatInstant(player.getLastOnline()));
-
-                        // Update stat cards
-                        updateStatsViews(playerStats);
-                    });
-                })
-                .exceptionally(ex -> {
-                    if (isFinishing() || isDestroyed()) return null;
-                    Log.e(TAG, "Failed to fetch stats", ex);
-                    return null;
-                });
-    }
-
-    /**
-     * Update the three stat cards with bullet/blitz/rapid data
-     * DX improvement: ONE place to update stats instead of 3!
-     * Shows rating + W/L/D record for all 3 cards
-     */
-    private void updateStatsViews(PlayerStats stats) {
-        updateStatCard(bulletScores, "Bullet", stats.getBullet());
-        updateStatCard(blitzScores, "Blitz", stats.getBlitz());
-        updateStatCard(rapidScores, "Rapid", stats.getRapid());
-    }
-
-    /**
-     * Helper to update a single stat card with rating + W/L/D
-     */
-    private void updateStatCard(TextView view, String label, @org.jetbrains.annotations.Nullable Stats<? extends BaseRecord> stat) {
-        if (stat == null) {
-            view.setText(String.format("%s\n%s", label, noData));
-            return;
+            titleView.setText(getString(R.string.none));
         }
 
+        // Country
+        CountryInfo country = data.country();
+        if (country != null) {
+            countryView.setText(country.getName());
+        } else {
+            countryView.setText(isFullyLoaded ? "Unknown" : "Loading...");
+        }
+
+        // FIDE
+        Integer fide = data.fide();
+        if (fide != null) {
+            fideScore.setText(String.format("FIDE: %s", fide > 0 ? String.valueOf(fide) : "N/A"));
+        } else {
+            fideScore.setText(isFullyLoaded ? "FIDE: N/A" : "FIDE: Loading...");
+        }
+
+        // Followers
+        if (data.followers() != null) {
+            followerCount.setText(String.format("Followers: %d", data.followers()));
+        } else {
+            followerCount.setText(isFullyLoaded ? "Followers: N/A" : "Followers: --");
+        }
+
+        // Joined & Last Online
+        joinedDate.setText(formatInstant(data.joined()));
+        lastOnlineDate.setText(formatInstant(data.lastOnline()));
+
+        // Ratings - show what we have (current, best, W/L/D)
+        updateRatingCard(bulletScores, "Bullet", data);
+        updateRatingCard(blitzScores, "Blitz", data);
+        updateRatingCard(rapidScores, "Rapid", data);
+    }
+
+    /**
+     * Update a rating card with current/best rating + W/L/D record
+     * Shows leaderboard rank if this timeclass matches the source leaderboard
+     */
+    private void updateRatingCard(TextView view, String label, PlayerDetailData data) {
+        Integer current = null;
+        Integer best = null;
+        Integer wins = null;
+        Integer losses = null;
+        Integer draws = null;
+        boolean isLeaderboardTimeclass = false;
+
+        // Extract timeclass-specific data
+        switch (label) {
+            case "Bullet":
+                current = data.bulletRating();
+                best = data.bulletBest();
+                wins = data.bulletWins();
+                losses = data.bulletLosses();
+                draws = data.bulletDraws();
+                isLeaderboardTimeclass = "bullet".equalsIgnoreCase(data.leaderboardTimeclass());
+                break;
+            case "Blitz":
+                current = data.blitzRating();
+                best = data.blitzBest();
+                wins = data.blitzWins();
+                losses = data.blitzLosses();
+                draws = data.blitzDraws();
+                isLeaderboardTimeclass = "blitz".equalsIgnoreCase(data.leaderboardTimeclass());
+                break;
+            case "Rapid":
+                current = data.rapidRating();
+                best = data.rapidBest();
+                wins = data.rapidWins();
+                losses = data.rapidLosses();
+                draws = data.rapidDraws();
+                isLeaderboardTimeclass = "rapid".equalsIgnoreCase(data.leaderboardTimeclass());
+                break;
+        }
+
+        // Build card text
         StringBuilder text = new StringBuilder(label).append("\n");
-        text.append(String.format("Current: %d\n", stat.getLast().getRating()));
 
-        if (stat.getBest() != null)
-            text.append(String.format("Best: %d\n", stat.getBest().getRating()));
+        // Show leaderboard rank if this is the source timeclass
+        if (isLeaderboardTimeclass && data.leaderboardRank() != null) {
+            text.append(String.format("Rank: #%d\n", data.leaderboardRank()));
+        }
 
-        var record = stat.getRecord();
-        text.append(String.format("W/L/D\n%d / %d / %d", record.getWin(), record.getLoss(), record.getDraw()));
+        if (current != null) {
+            text.append(String.format("Current: %d\n", current));
+        } else {
+            text.append(isFullyLoaded ? "N/A\n" : "Loading...\n");
+        }
+
+        if (best != null) {
+            text.append(String.format("Best: %d\n", best));
+        } else if (isFullyLoaded && current != null) {
+            // Only show "N/A" for best if we have a current rating (player plays this timeclass)
+            text.append("Best: N/A\n");
+        }
+
+        if (wins != null || losses != null || draws != null) {
+            text.append(String.format("W/L/D\n%d / %d / %d",
+                    wins != null ? wins : 0,
+                    losses != null ? losses : 0,
+                    draws != null ? draws : 0));
+        } else if (isFullyLoaded && current != null) {
+            text.append("W/L/D\nN/A");
+        }
 
         view.setText(text.toString());
     }
 
     /**
-     * Fetch country info by URL and update the country TextView
+     * Fetch missing data based on what's null in PlayerDetailData
+     * Uses the smart requires*() methods to avoid unnecessary API calls
      */
-    private void fetchCountryInfo(HttpUrl countryUrl) {
+    private void fetchMissingData(PlayerDetailData data) {
+        String username = data.username();
+        if (username == null) {
+            Log.e(TAG, "Cannot fetch data without username");
+            return;
+        }
+
+        CompletableFuture<Player> playerFuture = null;
+        CompletableFuture<PlayerStats> statsFuture = null;
+        CompletableFuture<CountryInfo> countryFuture = null;
+
+        // Fetch player if needed
+        if (data.requiresPlayer()) {
+            playerFuture = repo.getPlayerAsync(username);
+        }
+
+        // Fetch stats if needed
+        if (data.requiresStats()) {
+            statsFuture = repo.getPlayerStatsAsync(username);
+        }
+
+        // Fetch country if needed (requires player data first to get country URL)
+        if (data.requiresCountry() && data.requiresPlayer()) {
+            // Will fetch after player data arrives
+        }
+
+        // Collect all futures that are not null
+        var futures = new java.util.ArrayList<CompletableFuture<?>>();
+        if (playerFuture != null) futures.add(playerFuture);
+        if (statsFuture != null) futures.add(statsFuture);
+
+        if (futures.isEmpty()) {
+            // Nothing to fetch - already have everything!
+            isFullyLoaded = true;
+            render(currentData); // Re-render to show "N/A" instead of "Loading..."
+            return;
+        }
+
+        CompletableFuture<Player> finalPlayerFuture = playerFuture;
+        CompletableFuture<PlayerStats> finalStatsFuture = statsFuture;
+
+        inFlight = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenAccept(ignored -> {
+                    if (isFinishing() || isDestroyed()) return;
+
+
+                    // Merge player data
+                    if (finalPlayerFuture != null) {
+                        Player player = finalPlayerFuture.join();
+                        currentData = currentData.mergeWith(PlayerDetailData.fromPlayer(player));
+
+                        // Fetch country if still needed
+                        if (currentData.requiresCountry()) {
+                            // this will atomically update country field independent of all ts
+                            fetchCountry(player.getCountryUrl());
+                        }
+                    }
+
+                    // Merge stats data
+                    if (finalStatsFuture != null) {
+                        PlayerStats stats = finalStatsFuture.join();
+                        currentData = currentData.mergeWith(PlayerDetailData.fromPlayerStats(stats));
+                    }
+
+                    isFullyLoaded = true; // Mark as fully loaded
+
+                    // Re-render with enriched data
+                    PlayerDetailData finalEnriched = currentData;
+                    runOnUiThread(() -> {
+                        render(finalEnriched);
+                        Log.d(TAG, "fetchMissingData: current " + currentData);
+                        // Update favorite button if we just got playerId
+                        Long playerId = finalEnriched.playerId();
+                        if (playerId != null) {
+                            favoritesViewModel.isFavorite(playerId, isFav -> {
+                                runOnUiThread(() -> updateFavoriteButton(isFav));
+                                return null;
+                            });
+                        }
+                    });
+                })
+                .exceptionally(ex -> {
+                    if (isFinishing() || isDestroyed()) return null;
+                    Log.e(TAG, "Failed to fetch player data", ex);
+                    isFullyLoaded = true; // Mark as done even on error
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Failed to load player data", Toast.LENGTH_SHORT).show();
+                        render(currentData); // Re-render to show "N/A" instead of "Loading..."
+                    });
+                    return null;
+                });
+    }
+
+    /**
+     * Fetch country info separately (happens after player fetch)
+     */
+    private void fetchCountry(HttpUrl countryUrl) {
         repo.getCountryByUrlAsync(countryUrl)
                 .thenAccept(country -> {
                     if (isFinishing() || isDestroyed()) return;
+                    Log.d(TAG, "fetchCountry: run");
+                    currentData = currentData.mergeWith(
+                            PlayerDetailData.fromCountry(country)
+                    );
+
                     runOnUiThread(() -> countryView.setText(country.getName()));
                 })
                 .exceptionally(ex -> {

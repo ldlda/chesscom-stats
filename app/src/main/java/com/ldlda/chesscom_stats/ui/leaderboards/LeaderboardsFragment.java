@@ -23,6 +23,7 @@ import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.api.data.leaderboards.LeaderboardEntry;
 import com.ldlda.chesscom_stats.databinding.FragmentHallOfFameBinding;
 import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailActivity;
+import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailData;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -64,15 +65,7 @@ public class LeaderboardsFragment extends Fragment {
         SwipeRefreshLayout swipeRefreshLayout = binding.leaderboardSwipeRefresh;
         RecyclerView recyclerView = binding.hallOfFameRecycler;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new LeaderboardsAdapter(player -> {
-            // Launch PlayerDetailActivity with LeaderboardEntry (fast path - no need to refetch data)
-            Intent intent = new Intent(getContext(), PlayerDetailActivity.class);
-            intent.putExtra(PlayerDetailActivity.EXTRA_PLAYER_ENTRY, player);
-            // TODO: Pass actual timeclass when we support switching between blitz/bullet/rapid/daily
-            // For now, hardcode "blitz" since that's what we fetch
-            intent.putExtra(PlayerDetailActivity.EXTRA_TIMECLASS, "blitz");
-            startActivity(intent);
-        });
+        adapter = new LeaderboardsAdapter(this::launchPlayerDetail);
         recyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this.requireActivity()).get(LeaderboardsViewModel.class);
@@ -181,8 +174,8 @@ public class LeaderboardsFragment extends Fragment {
 
     private void launchPlayerDetail(LeaderboardEntry player) {
         Intent intent = new Intent(getContext(), PlayerDetailActivity.class);
-        intent.putExtra(PlayerDetailActivity.EXTRA_PLAYER_ENTRY, player);
-        intent.putExtra(PlayerDetailActivity.EXTRA_TIMECLASS, "blitz");
+        // TODO: Pass actual timeclass when we support switching between blitz/bullet/rapid/daily
+        intent.putExtra(PlayerDetailActivity.EXTRA_PLAYER_DATA, PlayerDetailData.fromLeaderboardEntry(player, "blitz"));
         startActivity(intent);
     }
 
