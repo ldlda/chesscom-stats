@@ -1,5 +1,7 @@
 package com.ldlda.chesscom_stats.ui.puzzle;
 
+import static androidx.lifecycle.LifecycleKt.getCoroutineScope;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,19 +14,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.ldlda.chesscom_stats.R;
-import com.ldlda.chesscom_stats.java_api.ApiClient;
-import com.ldlda.chesscom_stats.java_api.PlayerStatsData;
-import com.ldlda.chesscom_stats.java_api.Puzzle;
-import com.ldlda.chesscom_stats.java_api.PuzzleData;
+import com.ldlda.chesscom_stats.api.repository.ChessRepoAdapterJava;
+import com.ldlda.chesscom_stats.api.repository.ChessRepository;
+import com.ldlda.chesscom_stats.databinding.FragmentPuzzleBinding;
+import com.ldlda.chesscom_stats.di.RepoProvider;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import org.jetbrains.annotations.NotNull;
+
+import retrofit2.HttpException;
 
 public class PuzzleFragment extends Fragment {
     private static final String TAG = "PuzzleFragment";
@@ -36,44 +39,50 @@ public class PuzzleFragment extends Fragment {
     private String puzzleUrl;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_puzzle, container, false);
-        progressBar = view.findViewById(R.id.prog_bar);
-        solveURI = view.findViewById(R.id.puzzleURI);
-        puzzleView = view.findViewById(R.id.puzzleView);
-        puzzleName = view.findViewById(R.id.puzzle_name);
+        FragmentPuzzleBinding binding = FragmentPuzzleBinding.inflate(inflater, container, false);
+        progressBar = binding.progBar;
+        solveURI = binding.puzzleURI;
+        puzzleView = binding.puzzleView;
+        puzzleName = binding.puzzleName;
 
-        Puzzle puzzleApi = ApiClient.getClient().create(Puzzle.class);
-
-        Call<PuzzleData> statCall = puzzleApi.getDailyPuzzleData();
+        ChessRepoAdapterJava<@NotNull ChessRepository> repo = RepoProvider.defaultRepository(requireContext()).buildJavaAdapter(getCoroutineScope(getLifecycle()));
 
         progressBar.setVisibility(View.VISIBLE);
-        statCall.enqueue(new Callback<PuzzleData>() {
-            @Override
-            public void onResponse(Call<PuzzleData> call, Response<PuzzleData> response) {
-                progressBar.setVisibility(View.GONE);
-                if (response.isSuccessful() && response.body() != null) {
-                    PuzzleData puzzle = response.body();
-                    puzzleName.setText(puzzle.title);
-                    puzzleUrl = puzzle.url;
 
+        repo.getDailyPuzzleAsync().thenAccept(
+                puzzle -> {
+
+                    puzzleName.setText(puzzle.getTitle());
+                    puzzleUrl = puzzle.getUrl().toString();
+                    String l = puzzle.getImage()
+                            .newBuilder()
+                            .removeAllQueryParameters("size")
+                            .setQueryParameter("size", "3")
+                            .build().toString();
+                    Log.d(TAG, "onCreateView: " + l);
                     Glide.with(requireContext())
-                            .load(puzzle.image)
+                            .load(l)
+                            .placeholder(R.drawable.ic_pawn)
+                            .error(R.drawable.ic_banned_acc)
                             .into(puzzleView);
-                }else{
-                    Log.e(TAG,"Puzzle load error-Response code:"+response.code());
-                    Toast.makeText(requireContext(),"Error loading puzzle-Response code:"+ response.code(),Toast.LENGTH_SHORT).show();
                 }
-            }
-
-            @Override
-            public void onFailure(Call<PuzzleData> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Log.e(TAG,t.getMessage());
-                Toast.makeText(requireContext(),"Error getting puzzle: "+ t.getMessage(),Toast.LENGTH_SHORT).show();
-            }
+        ).exceptionally(
+                throwable -> {
+                    if (throwable.getCause() instanceof HttpException he) {
+                        Log.e(TAG, "Puzzle load error-Response code:" + he.code());
+                        Toast.makeText(requireContext(), "Error loading puzzle-Response code:" + he.code(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e(TAG, "shit:" + throwable.getMessage());
+                        Toast.makeText(requireContext(), "Error getting puzzle: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                    return null;
+                }
+        ).handle((ignored, ignored1) -> {
+            progressBar.setVisibility(View.GONE);
+            return null;
         });
 
 
@@ -106,7 +115,7 @@ public class PuzzleFragment extends Fragment {
         });
 
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override

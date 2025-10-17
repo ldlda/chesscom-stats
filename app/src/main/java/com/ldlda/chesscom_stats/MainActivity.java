@@ -17,33 +17,40 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
 import androidx.core.splashscreen.SplashScreen;
-import androidx.fragment.app.Fragment;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ldlda.chesscom_stats.databinding.ActivityMainBinding;
+import com.ldlda.chesscom_stats.di.RepoProvider;
 import com.ldlda.chesscom_stats.store.GlobalDB;
-import com.ldlda.chesscom_stats.ui.favorites.FavoritesFragment;
-import com.ldlda.chesscom_stats.ui.home.HomeFragment;
-import com.ldlda.chesscom_stats.ui.leaderboards.LeaderboardsFragment;
-import com.ldlda.chesscom_stats.ui.lessons.LessonsFragment;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String KEY_SELECTED = "selectedItemId";
     private final String TAG = "MainActivity";
     private MediaPlayer backgroundSong;
 
-    private int selectedItemId = R.id.home;
-
+    private NavController navController;
     private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SplashScreen s = SplashScreen.installSplashScreen(this);
+        SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(v.getPaddingLeft(), systemBars.top, v.getPaddingRight(), v.getPaddingBottom());
+            return insets;
+
+        });
 
         // Add a callback that's called when the splash screen is animating to the
         // app content.
@@ -85,44 +92,65 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        // Set up toolbar
+//         Set up toolbar
         Toolbar myToolbar = binding.myToolbar;
         setSupportActionBar(myToolbar);
 
-        // Bottom navigation handling using show/hide (create fragments once)
-        BottomNavigationView bottomNavigationView = binding.bottomNavigation;
+        // Setup Navigation Component
+        var navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_container);
+        if (navHostFragment != null) {
+            navController = navHostFragment.getNavController();
 
-        if (savedInstanceState != null) {
-            selectedItemId = savedInstanceState.getInt(KEY_SELECTED, R.id.home);
+            // Setup automatic bottom nav visibility based on destination
+            setupBottomNavVisibility(navController);
         }
-
-//        NavController navController = Navigation.findNavController(binding.fragmentContainer);
-
-        if (savedInstanceState == null) {
-            replaceTo(fragmentFor(R.id.home));
+        // Bottom navigation with Navigation Component
+        BottomNavigationView bottomNavigationView = binding.bottomNavigation;
+        if (navController != null) {
+            NavigationUI.setupWithNavController(bottomNavigationView, navController, false);
         }
 
         GlobalDB.initDb(getApplicationContext());
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int menuId = item.getItemId();
-            Fragment target = fragmentFor(menuId);
-
-            replaceTo(target);
-            selectedItemId = menuId;
-            return true;
-        });
-
-        // Keep BottomNavigationView selection in sync
-        if (bottomNavigationView.getSelectedItemId() != selectedItemId) {
-            bottomNavigationView.setSelectedItemId(selectedItemId);
-        }
+        RepoProvider.setupAppContext(getApplicationContext());
 
         // Music
         Context context = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) ? createAttributionContext("audioPlayback") : this;
 
         backgroundSong = MediaPlayer.create(context, R.raw.open_sky);
         backgroundSong.setLooping(true);
+    }
+
+    /**
+     * Automatically hide/show bottom navigation based on which fragment is showing.
+     * Top-level destinations (Home, Leaderboards, Favorites, Lessons) show bottom nav.
+     * Detail destinations (PlayerSearch, Clubs, FidePredict, Puzzle) hide bottom nav.
+     */
+    private void setupBottomNavVisibility(NavController navController) {
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            int destinationId = destination.getId();
+
+            // Top-level destinations: SHOW bottom nav
+            if (destinationId == R.id.home ||
+                    destinationId == R.id.leaderboards ||
+                    destinationId == R.id.favorites ||
+                    destinationId == R.id.lessons) {
+
+                binding.bottomNavigation.setVisibility(View.VISIBLE);
+            }
+            // Detail destinations: HIDE bottom nav
+            else if (destinationId == R.id.playerSearchFragment ||
+                    destinationId == R.id.clubFragment ||
+                    destinationId == R.id.fidePredictFragment ||
+                    destinationId == R.id.puzzleFragment) {
+
+                binding.bottomNavigation.setVisibility(View.GONE);
+            }
+            // Default: show (safe fallback)
+            else {
+                binding.bottomNavigation.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override
@@ -142,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
             backgroundSong.release();
             backgroundSong = null;
         }
+        binding = null; // pair with onStart
     }
 
 
@@ -157,23 +186,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(KEY_SELECTED, selectedItemId);
-    }
-
-    private void replaceTo(Fragment fragment) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(R.id.fragment_container, fragment)
-                .commit();
-    }
-
-    private Fragment fragmentFor(int menuId) {
-        if (menuId == R.id.home) return new HomeFragment();
-        if (menuId == R.id.leaderboards) return new LeaderboardsFragment();
-        if (menuId == R.id.favorites) return new FavoritesFragment();
-        if (menuId == R.id.lessons) return new LessonsFragment();
-        return new HomeFragment();
+        // Navigation Component handles state automatically
     }
 
     @Override

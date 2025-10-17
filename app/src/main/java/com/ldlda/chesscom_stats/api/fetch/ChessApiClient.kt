@@ -7,6 +7,7 @@ import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
 import com.ldlda.chesscom_stats.api.data.player.Player
 import com.ldlda.chesscom_stats.api.data.player.games.monthly.MonthlyGame
 import com.ldlda.chesscom_stats.api.data.player.stats.PlayerStats
+import com.ldlda.chesscom_stats.api.data.puzzle.Puzzle
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchItem
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchRequest
 import com.ldlda.chesscom_stats.api.repository.ChessRepository
@@ -28,8 +29,9 @@ import java.util.concurrent.CompletableFuture
 
 /*
     what is this bullshit
+    hold on this one worked tho why did i deprecate this
  */
-@Deprecated("Use ChessRepositoryImpl or its subclasses")
+@Deprecated("Use ChessRepositoryImpl or its subclasses. This is here only for the constants...")
 class ChessApiClient : ChessRepository, JavaChessRepository {
     companion object {
         @Throws(ChessApiException::class)
@@ -56,7 +58,7 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
             /* this or [ChessSearchRequest] has to have every keys serialized */
         }
 
-        private fun OkHttpClient.buildRetrofit(baseUrl: String): Retrofit {
+        fun OkHttpClient.ldaBuildRetrofit(baseUrl: String = CHESS_API_URL): Retrofit {
             val contentType = "application/json".toMediaType()
             return Retrofit.Builder().baseUrl(baseUrl)
                 .client(this)
@@ -65,11 +67,14 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
         }
 
         val defaultRetrofit: Retrofit by lazy {
-            defaultOkHttp.buildRetrofit(CHESS_API_URL)
+            defaultOkHttp.ldaBuildRetrofit()
         }
 
 
         val defaultPublicService: ChessApiService by lazy {
+            defaultRetrofit.create()
+        }
+        val defaultPrivateService: PrivateApiService by lazy {
             defaultRetrofit.create()
         }
         val defaultInstance = ChessApiClient()
@@ -89,7 +94,7 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
         okHttp: OkHttpClient = defaultOkHttp,
     ) {
         this.baseUrl = baseUrl
-        publicRetrofit = okHttp.buildRetrofit(baseUrl)
+        publicRetrofit = okHttp.ldaBuildRetrofit(baseUrl)
         privateRetrofit = publicRetrofit
     }
 
@@ -176,6 +181,14 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun getDailyPuzzle(): Puzzle {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getRandomPuzzle(): Puzzle {
+        TODO("Not yet implemented")
+    }
+
     // deprecated
     @Deprecated("use ChessRepository instead")
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -253,6 +266,14 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
     }
 
     override fun getCountryClubsAsync(code: String): CompletableFuture<List<HttpUrl>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getDailyPuzzleAsync(): CompletableFuture<Puzzle?> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getRandomPuzzleAsync(): CompletableFuture<Puzzle?> {
         TODO("Not yet implemented")
     }
 }

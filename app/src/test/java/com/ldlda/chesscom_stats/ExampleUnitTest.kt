@@ -45,7 +45,7 @@ class ExampleUnitTest {
         val wijgij = "https://api.chess.com/pub/player/erik/games/2007/07"
         assertEquals(
             MonthlyArchives.Detail("erik", "2007", "07"),
-            wijgij.toHttpUrl().mapMonthlyArchivesDetail(fuh.toHttpUrl(), true)
+            wijgij.toHttpUrl().mapMonthlyArchivesDetail(fuh.toHttpUrl())
         )
     }
 

@@ -20,9 +20,9 @@ import java.util.List;
 
 public class FavoritesFragment extends Fragment {
     private static final String TAG = "FavoritesFragment";
+    private final List<UserFavoriteModel> favs = new ArrayList<>();
     private FragmentFavoritesBinding binding;
     private FavoritesAdapter adapter;
-    private final List<String> favs = new ArrayList<>();
     private FavoritesViewModel viewModel;
 
     @Nullable
@@ -41,11 +41,23 @@ public class FavoritesFragment extends Fragment {
         adapter = new FavoritesAdapter(new FavoritesAdapter.OnFavoriteClickListener() {
             @Override
             public void onRemoveClicked(String username) {
-                int pos = favs.indexOf(username);
+                // Find position by username
+                int pos = -1;
+                for (int i = 0; i < favs.size(); i++) {
+                    if (favs.get(i).username.equals(username)) {
+                        pos = i;
+                        break;
+                    }
+                }
+                
                 if (pos != -1) {
                     // Animate out before removing
                     var viewHolder = binding.favRecycler.findViewHolderForAdapterPosition(pos);
-                    if (viewHolder == null) return;
+                    if (viewHolder == null) {
+                        // No animation, just remove
+                        viewModel.removeFavoriteByUsername(username);
+                        return;
+                    }
                     View view = viewHolder.itemView;
                     view.animate()
                             .alpha(0f)

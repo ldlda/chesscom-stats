@@ -1,3 +1,6 @@
+/**
+ * Testing ground of lda
+ */
 package com.ldlda.chesscom_stats.util
 
 /*
@@ -47,7 +50,7 @@ inline fun <B, C> ldaCheck(
  * refer to [ldaCheck][ldaCheck as Function1<*, *>]
  *
  * ```kotlin
- * val a: A = lowk ass
+ * val a: A = lowk ass ngl
  * val c: C = a.ldaCheck { it().getOrThrow() } { cuh() } // prolly runs a.cuh
  * ```
  *

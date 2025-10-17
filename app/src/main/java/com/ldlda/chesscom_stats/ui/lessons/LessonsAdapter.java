@@ -1,7 +1,7 @@
 package com.ldlda.chesscom_stats.ui.lessons;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,23 +13,26 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ldlda.chesscom_stats.R;
+import com.ldlda.chesscom_stats.ui.lessons.data.Lesson;
 
 import java.util.List;
 
-public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.MyViewHolder> {
+public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.MyViewHolder> {
 
     private final Context context;
-    private List<Lesson> dataList;
     private final ToLessonContent listener;
-    public void setSearchList(List<Lesson> dataSearchList) {
-        this.dataList = dataSearchList;
-        notifyDataSetChanged();
-    }
+    private List<Lesson> dataList;
 
-    public LessonAdapter(Context context, List<Lesson> dataList, ToLessonContent listener) {
+    public LessonsAdapter(Context context, List<Lesson> dataList, ToLessonContent listener) {
         this.context = context;
         this.dataList = dataList;
         this.listener = listener;
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void setSearchList(List<Lesson> dataSearchList) {
+        this.dataList = dataSearchList;
+        notifyDataSetChanged();
     }
 
 
@@ -42,20 +45,15 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.recImage.setImageResource(dataList.get(position).getDataImage());
-        holder.recTitle.setText(dataList.get(position).getDataTitle());
-        holder.recDesc.setText(context.getString(dataList.get(position).getDataDesc()));
-        holder.recLang.setText(dataList.get(position).getDataLang());
+        holder.recImage.setImageResource(dataList.get(position).dataImage);
+        holder.recTitle.setText(dataList.get(position).dataTitle);
+        holder.recDesc.setText(context.getString(dataList.get(position).dataDesc));
+        holder.recLevel.setText(dataList.get(position).dataLevel);
 
         holder.recCard.setOnClickListener(view -> {
             int currentPosition = holder.getBindingAdapterPosition();
             if (currentPosition != RecyclerView.NO_POSITION) {
-                Bundle args = new Bundle();
-                Lesson lesson = dataList.get(currentPosition);
-                args.putInt("Image", lesson.getDataImage());
-                args.putString("Title", lesson.getDataTitle());
-                args.putInt("Desc", lesson.getDataDesc());
-                listener.toLessonContent(args);
+                listener.toLessonContent(currentPosition);
             }
         });
     }
@@ -66,13 +64,13 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.MyViewHold
     }
 
     public interface ToLessonContent {
-        void toLessonContent(Bundle arg);
+        void toLessonContent(int currentPosition);
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         ImageView recImage;
-        TextView recTitle, recDesc, recLang;
+        TextView recTitle, recDesc, recLevel;
         CardView recCard;
 
         public MyViewHolder(@NonNull View itemView) {
@@ -81,11 +79,8 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.MyViewHold
             recImage = itemView.findViewById(R.id.recImage);
             recTitle = itemView.findViewById(R.id.recTitle);
             recDesc = itemView.findViewById(R.id.recDesc);
-            recLang = itemView.findViewById(R.id.recLang);
+            recLevel = itemView.findViewById(R.id.recLang);
             recCard = itemView.findViewById(R.id.recCard);
         }
     }
-
-
 }
-

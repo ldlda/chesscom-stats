@@ -37,4 +37,8 @@ data class SearchRequest(
      */
     @EncodeDefault
     val suggestionsLimit: Int = 100,
-)
+) {
+    init {
+        if (prefix.length < 3) throw IllegalArgumentException("prefix cant be below 3 chr")
+    }
+}

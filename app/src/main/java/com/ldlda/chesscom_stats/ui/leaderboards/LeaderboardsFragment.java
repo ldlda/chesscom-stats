@@ -24,6 +24,7 @@ import com.ldlda.chesscom_stats.R;
 import com.ldlda.chesscom_stats.api.data.leaderboards.LeaderboardEntry;
 import com.ldlda.chesscom_stats.databinding.FragmentHallOfFameBinding;
 import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailActivity;
+import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailData;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -46,7 +47,9 @@ public class LeaderboardsFragment extends Fragment {
     private LinearLayout podium, podiumFirst, podiumSecond, podiumThird;
     private ImageView avatarFirst, avatarSecond, avatarThird;
     private TextView usernameFirst, usernameSecond, usernameThird;
-    private ImageButton collapse_toggle;
+    private ImageButton collapseToggle;
+
+    private Toast tooSoonToast;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,21 +66,12 @@ public class LeaderboardsFragment extends Fragment {
         usernameFirst = binding.usernameFirst;
         usernameSecond = binding.usernameSecond;
         usernameThird = binding.usernameThird;
-
-        collapse_toggle = binding.collapseToggle;
+        collapseToggle = binding.collapseToggle;
 
         SwipeRefreshLayout swipeRefreshLayout = binding.leaderboardSwipeRefresh;
         RecyclerView recyclerView = binding.hallOfFameRecycler;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new LeaderboardsAdapter(player -> {
-            // Launch PlayerDetailActivity with LeaderboardEntry (fast path - no need to refetch data)
-            Intent intent = new Intent(getContext(), PlayerDetailActivity.class);
-            intent.putExtra(PlayerDetailActivity.EXTRA_PLAYER_ENTRY, player);
-            // TODO: Pass actual timeclass when we support switching between blitz/bullet/rapid/daily
-            // For now, hardcode "blitz" since that's what we fetch
-            intent.putExtra(PlayerDetailActivity.EXTRA_TIMECLASS, "blitz");
-            startActivity(intent);
-        });
+        adapter = new LeaderboardsAdapter(this::launchPlayerDetail);
         recyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this.requireActivity()).get(LeaderboardsViewModel.class);
@@ -87,7 +81,11 @@ public class LeaderboardsFragment extends Fragment {
             if (now - lastRefreshAt < MIN_REFRESH_INTERVAL_MS) {
                 // Too soon; just cancel the spinner quickly.
                 swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(getContext(), R.string.refresh_too_soon, Toast.LENGTH_SHORT).show();
+                if (tooSoonToast != null)
+                    tooSoonToast.cancel();
+                tooSoonToast = Toast.makeText(getContext(), R.string.refresh_too_soon, Toast.LENGTH_SHORT);
+                tooSoonToast.show();
+
                 return;
             }
             viewModel.load(true);
@@ -102,15 +100,17 @@ public class LeaderboardsFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText.isBlank()) {
-                    List<LeaderboardEntry> rest = allPlayers.size() > 3
-                            ? allPlayers.subList(3, allPlayers.size())
-                            : new ArrayList<>();
-                    adapter.submitList(new ArrayList<>(rest));
+                    extracted();
                 } else {
                     List<LeaderboardEntry> filtered = allPlayers
                             .stream()
-                            .filter(player -> player.getUsername().toLowerCase()
-                                    .contains(newText.toLowerCase()))
+                            .filter(player -> {
+                                String lowerCase = newText.toLowerCase();
+                                boolean username = player.getUsername().toLowerCase()
+                                        .contains(lowerCase);
+                                boolean name = player.getName() != null && player.getName().toLowerCase().contains(lowerCase);
+                                return username || name;
+                            })
                             .toList();
                     adapter.submitList(filtered);
                 }
@@ -134,10 +134,7 @@ public class LeaderboardsFragment extends Fragment {
             }
 
             // Show rest in RecyclerView (skip top 3)
-            List<LeaderboardEntry> rest = allPlayers.size() > 3
-                    ? allPlayers.subList(3, allPlayers.size())
-                    : new ArrayList<>();
-            adapter.submitList(new ArrayList<>(rest));
+            extracted();
             lastRefreshAt = System.currentTimeMillis();
         });
         viewModel.getError().observe(getViewLifecycleOwner(), err -> {
@@ -148,12 +145,24 @@ public class LeaderboardsFragment extends Fragment {
         });
 
         // Collapse podium
-        collapse_toggle.setOnClickListener(v->{
+        collapseToggle.setOnClickListener(v -> {
             podium.setVisibility(
                     podium.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE
             );
+            extracted();
         });
         return binding.getRoot();
+    }
+
+    private void extracted() {
+        if (podium.getVisibility() == View.VISIBLE) {
+            List<LeaderboardEntry> rest = allPlayers.size() > 3
+                    ? allPlayers.subList(3, allPlayers.size())
+                    : new ArrayList<>();
+            adapter.submitList(new ArrayList<>(rest));
+        } else {
+            adapter.submitList(new ArrayList<>(allPlayers));
+        }
     }
 
     private void updatePodium(LeaderboardEntry first, LeaderboardEntry second, LeaderboardEntry third) {
@@ -187,8 +196,8 @@ public class LeaderboardsFragment extends Fragment {
 
     private void launchPlayerDetail(LeaderboardEntry player) {
         Intent intent = new Intent(getContext(), PlayerDetailActivity.class);
-        intent.putExtra(PlayerDetailActivity.EXTRA_PLAYER_ENTRY, player);
-        intent.putExtra(PlayerDetailActivity.EXTRA_TIMECLASS, "blitz");
+        // TODO: Pass actual timeclass when we support switching between blitz/bullet/rapid/daily
+        intent.putExtra(PlayerDetailActivity.EXTRA_PLAYER_DATA, PlayerDetailData.fromLeaderboardEntry(player, "blitz"));
         startActivity(intent);
     }
 

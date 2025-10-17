@@ -14,21 +14,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import com.ldlda.chesscom_stats.R;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class FavoritesAdapter extends ListAdapter<String, FavoritesAdapter.FavViewHolder> {
-    private final OnFavoriteClickListener listener;
-    private static final DiffUtil.ItemCallback<String> DIFF = new DiffUtil.ItemCallback<>() {
+public class FavoritesAdapter extends ListAdapter<UserFavoriteModel, FavoritesAdapter.FavViewHolder> {
+    private static final DiffUtil.ItemCallback<UserFavoriteModel> DIFF = new DiffUtil.ItemCallback<>() {
         @Override
-        public boolean areItemsTheSame(@NonNull String oldItem, @NonNull String newItem) {
-            return oldItem.equals(newItem);
+        public boolean areItemsTheSame(@NonNull UserFavoriteModel oldItem, @NonNull UserFavoriteModel newItem) {
+            return oldItem.userId == newItem.userId && oldItem.username.equals(newItem.username);
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull String oldItem, @NonNull String newItem) {
+        public boolean areContentsTheSame(@NonNull UserFavoriteModel oldItem, @NonNull UserFavoriteModel newItem) {
             return oldItem.equals(newItem);
         }
     };
+    private final OnFavoriteClickListener listener;
+
     public FavoritesAdapter(OnFavoriteClickListener listener) {
         super(DIFF);
         this.listener = listener;
@@ -44,16 +46,35 @@ public class FavoritesAdapter extends ListAdapter<String, FavoritesAdapter.FavVi
 
     @Override
     public void onBindViewHolder(@NonNull FavViewHolder holder, int position) {
-        String username = getItem(position);
-        holder.usernameText.setText(username);
+        UserFavoriteModel model = getItem(position);
+        holder.usernameText.setText(model.username);
 
-        holder.removeBtn.setOnClickListener(v -> listener.onRemoveClicked(username));
-        holder.itemView.setOnClickListener(v -> listener.onItemClicked(username));
+        // Title
+        if (model.title != null) {
+            holder.titleText.setText("Title: " + model.title.name());
+            holder.titleText.setVisibility(View.VISIBLE);
+        } else {
+            holder.titleText.setText("Title: --");
+            holder.titleText.setVisibility(View.VISIBLE);
+        }
+
+        // Last online
+        if (model.lastLoginTime != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy");
+            holder.lastOnlineText.setText("Last online: " + model.lastLoginTime.atZone(java.time.ZoneId.systemDefault()).format(formatter));
+            holder.lastOnlineText.setVisibility(View.VISIBLE);
+        } else {
+            holder.lastOnlineText.setText("Last online: Loading...");
+            holder.lastOnlineText.setVisibility(View.VISIBLE);
+        }
+
+        holder.removeBtn.setOnClickListener(v -> listener.onRemoveClicked(model.username));
+        holder.itemView.setOnClickListener(v -> listener.onItemClicked(model.username));
 
         holder.itemView.startAnimation(AnimationUtils.loadAnimation(holder.itemView.getContext(), R.anim.slide_in));
     }
 
-    public void updateData(List<String> newFavorites) {
+    public void updateData(List<UserFavoriteModel> newFavorites) {
         submitList(newFavorites);
     }
 
@@ -65,11 +86,15 @@ public class FavoritesAdapter extends ListAdapter<String, FavoritesAdapter.FavVi
 
     public static class FavViewHolder extends RecyclerView.ViewHolder {
         TextView usernameText;
+        TextView titleText;
+        TextView lastOnlineText;
         MaterialButton removeBtn;
 
         FavViewHolder(View itemView) {
             super(itemView);
             usernameText = itemView.findViewById(R.id.username_text);
+            titleText = itemView.findViewById(R.id.title_text);
+            lastOnlineText = itemView.findViewById(R.id.last_online_text);
             removeBtn = itemView.findViewById(R.id.remove_btn);
         }
     }

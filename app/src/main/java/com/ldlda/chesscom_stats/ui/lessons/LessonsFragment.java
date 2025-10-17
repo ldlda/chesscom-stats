@@ -10,10 +10,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ldlda.chesscom_stats.R;
+import com.ldlda.chesscom_stats.ui.lessons.data.Lesson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +25,10 @@ public class LessonsFragment extends Fragment {
 
     RecyclerView recyclerView;
     List<Lesson> dataList;
-    LessonAdapter adapter;
+    LessonsAdapter adapter;
     SearchView searchView; // This will now correctly be the androidx version
+
+    LessonViewModel viewModel;
 
     @Nullable
     @Override
@@ -53,27 +58,23 @@ public class LessonsFragment extends Fragment {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(requireContext(), 1);
         recyclerView.setLayoutManager(gridLayoutManager);
 
-        dataList = new ArrayList<>();
-        populateData();
+        viewModel = new ViewModelProvider(this).get(LessonViewModel.class);
+        dataList = viewModel.Cuh.getValue();
 
-        adapter = new LessonAdapter(requireContext(), dataList, this::showLessonContent);
+        adapter = new LessonsAdapter(requireContext(), dataList, this::showLessonContent);
         recyclerView.setAdapter(adapter);
 
         return view;
     }
 
-    private void populateData() {
-        dataList.add(new Lesson("Lesson 1", R.string.lesson1_desc, "Beginner", R.drawable.lesson_1));
-        dataList.add(new Lesson("Lesson 2", R.string.lesson2_desc, "Intermidiate", R.drawable.lesson_2));
-        dataList.add(new Lesson("Lesson 3", R.string.lesson3_desc, "Intermidiate", R.drawable.lesson_3));
-        dataList.add(new Lesson("Lesson 4", R.string.lesson4_desc, "Advance", R.drawable.lesson_4));
-        dataList.add(new Lesson("Lesson 5", R.string.lesson5_desc, "Advance", R.drawable.lesson_5));
-    }
+    // why duplicate
+    // this is not the same view WE NEED TO VIEWMODEL AGAIN
+
 
     private void searchList(String text) {
         List<Lesson> dataSearchList = new ArrayList<>();
         for (Lesson data : dataList) {
-            if (data.getDataTitle().toLowerCase().contains(text.toLowerCase())) {
+            if (data.dataTitle.toLowerCase().contains(text.toLowerCase())) {
                 dataSearchList.add(data);
             }
         }
@@ -84,19 +85,11 @@ public class LessonsFragment extends Fragment {
         }
     }
 
-    public void showLessonContent(Bundle args) {
-        var lessonContentFragment = new LessonContentsFragment();
-        lessonContentFragment.setArguments(args);
-        var syfm = requireActivity().getSupportFragmentManager();
-        syfm.beginTransaction()
-                .setCustomAnimations(
-                        R.anim.slide_in_right,
-                        R.anim.slide_out_left,
-                        R.anim.slide_in_left,
-                        R.anim.slide_out_right
-                )
-                .replace(R.id.fragment_container, lessonContentFragment)
-                .addToBackStack("lesson_content_back")
-                .commit();
+    public void showLessonContent(int currentPosition) {
+        // Navigate to lesson pager container using Navigation Component and Safe Args
+        var action = LessonsFragmentDirections.actionLessonsToPager();
+        action.setIndex(currentPosition);
+        NavHostFragment.findNavController(this)
+                .navigate(action);
     }
 }

@@ -9,6 +9,9 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,17 +23,25 @@ import com.ldlda.chesscom_stats.databinding.FragmentClubBinding;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class ClubFragment extends Fragment {
+public class ClubsFragment extends Fragment {
     public static final String TAG = "ClubFragment";
     private static final int BATCH_SIZE = 10;
     private FragmentClubBinding binding;
-    private ClubViewModel viewModel;
+    private ClubsViewModel viewModel;
     private ClubItemAdapter adapter;
+
+    private int ahhSize = 0;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentClubBinding.inflate(inflater, container, false);
-        viewModel = new ViewModelProvider(this).get(ClubViewModel.class);
+        ViewCompat.setOnApplyWindowInsetsListener(container, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), systemBars.bottom);
+            return insets;
+        });
+
+        viewModel = new ViewModelProvider(this).get(ClubsViewModel.class);
 //        requireActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
 
 
@@ -84,6 +95,12 @@ public class ClubFragment extends Fragment {
         viewModel.getClubList().observe(getViewLifecycleOwner(), clubs -> {
             var displayList = new ArrayList<>(clubs);
 
+            if (ahhSize != 0) {
+                int currrent = displayList.size();
+                binding.clubsOverview.setText(String.format("%s of %s loaded", currrent, ahhSize));
+            } else {
+                binding.clubsOverview.setText("not loaded yet");
+            }
             // If loading, add null placeholder at end
             if (Boolean.TRUE.equals(viewModel.isLoadingList().getValue())) {
                 displayList.add(null);
@@ -91,6 +108,8 @@ public class ClubFragment extends Fragment {
 
             adapter.submitList(displayList);
         });
+
+        viewModel.getClubUrls().observe(getViewLifecycleOwner(), l -> ahhSize = l.size());
 
         viewModel.isLoadingUrls().observe(getViewLifecycleOwner(), loading -> {
             binding.progBar.setVisibility(loading ? View.VISIBLE : View.GONE);

@@ -5,6 +5,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 // Sealed class hierarchy for Chess.com API exceptions.
+// the fun thing about sealed class is that you can switch case on it.
 sealed class ChessApiException(message: String?, cause: Throwable?) : Exception(message, cause) {
     class NotFound(message: String?, cause: HttpException) : ChessApiException(message, cause)
     class Gone(message: String?, cause: HttpException) : ChessApiException(message, cause)
