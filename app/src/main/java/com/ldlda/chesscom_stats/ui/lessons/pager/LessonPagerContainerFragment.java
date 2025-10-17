@@ -1,10 +1,15 @@
 package com.ldlda.chesscom_stats.ui.lessons.pager;
 
+import android.animation.ArgbEvaluator;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.animation.ValueAnimator;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +29,9 @@ public class LessonPagerContainerFragment extends Fragment {
     private int startIndex;
 
     private LessonViewModel viewModel;
+    private int currentBackgroundColor = Color.parseColor("#F7F8FC");
+    private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
+
 
     public static LessonPagerContainerFragment newInstance(int startIndex) {
         LessonPagerContainerFragment fragment = new LessonPagerContainerFragment();
@@ -58,6 +66,15 @@ public class LessonPagerContainerFragment extends Fragment {
 
         // Update UI when page changes (swipe or button)
         binding.lessonViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (position < lessonsList.size() - 1) {
+                    int colorCurrent = lessonsList.get(position).getColor();
+                    int colorNext = lessonsList.get(position + 1).getColor();
+                    int blendedColor = (int) new ArgbEvaluator().evaluate(positionOffset, colorCurrent, colorNext);
+                    applyGradientBackground(blendedColor);
+                }
+            }
             @Override
             public void onPageSelected(int position) {
                 updateUI(position);
@@ -116,5 +133,45 @@ public class LessonPagerContainerFragment extends Fragment {
         binding.btnPrevious.setHintTextColor(color);
 
         binding.btnPrevious.setLinkTextColor(color);
+        animateColorTransition(currentBackgroundColor, color);
+        currentBackgroundColor = color;
+    }
+    private void animateColorTransition(int fromColor, int toColor) {
+        ValueAnimator colorAnim = ValueAnimator.ofObject(new ArgbEvaluator(), fromColor, toColor);
+        colorAnim.setDuration(600);
+        colorAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+        colorAnim.addUpdateListener(animator -> {
+            int animatedColor = (int) animator.getAnimatedValue();
+            applyGradientBackground(animatedColor);
+        });
+        colorAnim.start();
+    }
+    private void applyGradientBackground(int baseColor) {
+        int darker = adjustBrightness(baseColor, 0.85f);
+        GradientDrawable gradient = new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[]{baseColor, darker}
+        );
+        gradient.setCornerRadius(0);
+
+        if (binding != null) {
+            // Apply to container
+            binding.getRoot().setBackground(gradient);
+
+            // Apply to the current visible page too
+            View currentPage = binding.lessonViewPager.findViewWithTag("f" + binding.lessonViewPager.getCurrentItem());
+            if (currentPage == null && binding.lessonViewPager.getChildCount() > 0)
+                currentPage = binding.lessonViewPager.getChildAt(0);
+            if (currentPage != null) {
+                currentPage.setBackground(gradient);
+            }
+        }
+    }
+
+    private int adjustBrightness(int color, float factor) {
+        int r = Math.round(Color.red(color) * factor);
+        int g = Math.round(Color.green(color) * factor);
+        int b = Math.round(Color.blue(color) * factor);
+        return Color.rgb(Math.min(r, 255), Math.min(g, 255), Math.min(b, 255));
     }
 }
