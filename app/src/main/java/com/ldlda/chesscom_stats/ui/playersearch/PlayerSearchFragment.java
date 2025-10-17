@@ -28,7 +28,7 @@ import com.ldlda.chesscom_stats.ui.playerdetail.PlayerDetailData;
 
 public class PlayerSearchFragment extends Fragment {
     public static final String TAG = "PlayerSearchFragment";
-    private static final long DEBOUNCE_DELAY = 1000L; // Wait that many milliseconds after user stops typing
+    private static final long DEBOUNCE_DELAY = 500L; // Wait that many milliseconds after user stops typing
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private FragmentBoringBinding binding;
     private SearchViewModel viewModel;
@@ -61,7 +61,7 @@ public class PlayerSearchFragment extends Fragment {
 
                     // Schedule new search after delay
                     searchRunnable = () -> {
-                        Log.i(TAG, "Searching for: " + username);
+                        Log.i(TAG, "Searching for: " + username + ", waited");
                         viewModel.load(username);
                     };
                     searchHandler.postDelayed(searchRunnable, DEBOUNCE_DELAY);
@@ -77,7 +77,7 @@ public class PlayerSearchFragment extends Fragment {
                 }
                 if (query.length() >= 3) {
                     String username = query.toLowerCase().trim();
-                    Log.i(TAG, "Searching for: " + username);
+                    Log.i(TAG, "Searching for: " + username + ", hot");
                     viewModel.load(username);
                 }
                 return true;
