@@ -87,7 +87,6 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
         val defaultOkHttp by lazy {
             OkHttpClient.Builder()
                 //  TODO: This are not enabled for now, enable when ETag caching is fleshed out
-//            .addInterceptor(ChessApiErrorInterceptor())
 //            .addInterceptor(AddIfNoneMatchInterceptor())
 //            .addNetworkInterceptor(CaptureEtagAndServe304FromCacheInterceptor())
                 .build()
