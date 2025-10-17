@@ -163,19 +163,6 @@
 
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/profileURI"
-            android:layout_width="match_parent"
-            android:layout_height="65dp"
-            android:layout_weight="1"
-            android:text="Go to player's profile"
-            android:textColor="@color/transparent_black"
-            android:textSize="24sp"
-            android:backgroundTint="@color/clay_gray"
-            app:icon="@drawable/ic_forward"
-            app:iconSize="50dp"
-            android:layout_alignParentBottom="true"/>
-
     </RelativeLayout>
 
 
