@@ -11,12 +11,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="36dp"
         android:text="The GOATests"
         android:textSize="20sp"
         android:textStyle="bold" />
 
     <LinearLayout
+        android:id="@+id/podium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="bottom|center_horizontal"
@@ -49,10 +50,11 @@
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
-            <View
+            <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="#C0C0C0" />
+                android:layout_height="70dp"
+                android:background="#C0C0C0"
+                android:src="@drawable/ic_second"/>
         </LinearLayout>
 
         <!-- First Place -->
@@ -66,8 +68,8 @@
 
             <ImageView
                 android:id="@+id/avatar_first"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:layout_marginBottom="8dp"
                 android:contentDescription="First Place"
                 android:src="@drawable/ic_person" />
@@ -81,10 +83,11 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <View
+            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:background="#FFD700" />
+                android:background="#FFD700"
+                android:src="@drawable/ic_first"/>
         </LinearLayout>
 
         <!-- Third Place -->
@@ -113,12 +116,21 @@
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
-            <View
+            <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="#CD7F32" />
+                android:layout_height="50dp"
+                android:background="#CD7F32"
+                android:src="@drawable/ic_third"/>
         </LinearLayout>
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/collapse_toggle"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="8dp"
+        app:srcCompat="@drawable/ic_eye_track" />
 
     <androidx.appcompat.widget.SearchView
         android:layout_marginTop="15dp"

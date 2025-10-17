@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,15 +43,17 @@ public class LeaderboardsFragment extends Fragment {
     private FragmentHallOfFameBinding binding;
 
     // Podium views
-    private LinearLayout podiumFirst, podiumSecond, podiumThird;
+    private LinearLayout podium, podiumFirst, podiumSecond, podiumThird;
     private ImageView avatarFirst, avatarSecond, avatarThird;
     private TextView usernameFirst, usernameSecond, usernameThird;
+    private ImageButton collapse_toggle;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHallOfFameBinding.inflate(inflater, container, false);
 
         // Bind podium views
+        podium = binding.podium;
         podiumFirst = binding.podiumFirst;
         podiumSecond = binding.podiumSecond;
         podiumThird = binding.podiumThird;
@@ -60,6 +63,8 @@ public class LeaderboardsFragment extends Fragment {
         usernameFirst = binding.usernameFirst;
         usernameSecond = binding.usernameSecond;
         usernameThird = binding.usernameThird;
+
+        collapse_toggle = binding.collapseToggle;
 
         SwipeRefreshLayout swipeRefreshLayout = binding.leaderboardSwipeRefresh;
         RecyclerView recyclerView = binding.hallOfFameRecycler;
@@ -142,6 +147,12 @@ public class LeaderboardsFragment extends Fragment {
             }
         });
 
+        // Collapse podium
+        collapse_toggle.setOnClickListener(v->{
+            podium.setVisibility(
+                    podium.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE
+            );
+        });
         return binding.getRoot();
     }
 
