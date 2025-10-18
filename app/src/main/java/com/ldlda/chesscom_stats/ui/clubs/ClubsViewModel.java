@@ -17,6 +17,7 @@ import com.ldlda.chesscom_stats.di.RepoProvider;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -66,7 +67,7 @@ public class ClubsViewModel extends AndroidViewModel {
     }
 
     public final void fromCountry(@NonNull String iso) {
-        loadingUrls.postValue(true);
+        loadingUrls.setValue(true); // this line is the problem
         repo.getCountryClubsAsync(iso)
                 .thenApply(httpUrls -> {
                     clubUrls.setValue(httpUrls);
@@ -95,6 +96,7 @@ public class ClubsViewModel extends AndroidViewModel {
     }
 
     public final void loadMoar(int count) {
+        if (Boolean.TRUE.equals(loadingList.getValue())) return;
         List<HttpUrl> urls = clubUrls.getValue();
         List<Club> clubs = clubList.getValue();
 
@@ -119,31 +121,38 @@ public class ClubsViewModel extends AndroidViewModel {
         int total = batch.size();
 
         // Fire all requests, update list as each completes
-        batch.forEach(url -> {
+        CompletableFuture<?>[] c = batch.stream().map(url -> {
             Log.d(TAG, "loadMoar: fetching " + url);
-            repo.getClubAsync(url)
-                .thenAccept(club -> {
-                    Log.d(TAG, "loadMoar: received " + club.getName() + " for " + url);
-                    // Add club immediately when it arrives
-                    List<Club> current = clubList.getValue();
-                    if (current != null) {
-                        List<Club> updated = new ArrayList<>(current);
-                        updated.add(club);
-                        clubList.setValue(updated);
-                    }
-                })
-                .exceptionally(throwable -> {
-                    Log.e(TAG, "loadMoar: fuhhed up cuh", throwable);
-                    if (errorClubs.getValue() != null)
-                        errorClubs.setValue(errorClubs.getValue() + 1);
-                    return null;
-                })
-                .whenComplete((v, ex) -> {
-                    // After LAST one completes, clear loading flag
-                    if (completed.incrementAndGet() == total) {
-                        loadingList.setValue(false);
-                    }
-                });
+            return repo.getClubAsync(url)
+                    .thenAccept(club -> {
+//                        Log.d(TAG, "loadMoar: received " + club.getName() + " for " + url);
+                        // Add club immediately when it arrives
+                        List<Club> current = clubList.getValue();
+                        if (current != null) {
+                            List<Club> updated = new ArrayList<>(current);
+                            updated.add(club);
+                            clubList.setValue(updated);
+                        }
+                    })
+                    .exceptionally(throwable -> {
+                        Log.e(TAG, "loadMoar: fuhhed up cuh", throwable);
+                        if (errorClubs.getValue() != null)
+                            errorClubs.setValue(errorClubs.getValue() + 1);
+                        return null;
+                    })
+                    .whenComplete((v, ex) -> {
+                        // After LAST one completes, clear loading flag
+                        if (completed.incrementAndGet() == total) {
+                            Log.d(TAG, "loadMoar: falsing");
+                            loadingList.setValue(false);
+                        }
+                    });
+        }).toArray(CompletableFuture[]::new);
+        CompletableFuture.allOf(c).handle((unused, throwable) -> {
+            Log.d(TAG, "loadMoar: falsingAGAIN");
+            loadingList.setValue(false);
+            return null;
         });
     }
+
 }
