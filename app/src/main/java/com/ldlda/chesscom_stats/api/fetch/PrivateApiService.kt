@@ -2,6 +2,7 @@ package com.ldlda.chesscom_stats.api.fetch
 
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchRequest
 import com.ldlda.chesscom_stats.api.data.search.autocomplete.SearchResult
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.POST
@@ -14,5 +15,5 @@ interface PrivateApiService {
      * this is not an official endpoint. it can break at any point.
      */
     @POST("https://www.chess.com/service/friends-search/idl/chesscom.friends_search.v1.FriendsSearchService/Autocomplete")
-    suspend fun autocompleteUsername(@Body searchRequest: SearchRequest): SearchResult
+    suspend fun autocompleteUsername(@Body searchRequest: SearchRequest): Response<SearchResult>
 }

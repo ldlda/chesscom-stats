@@ -73,7 +73,7 @@ public class PuzzleFragment extends Fragment {
                 throwable -> {
                     if (throwable.getCause() instanceof HttpException he) {
                         Log.e(TAG, "Puzzle load error-Response code:" + he.code());
-                        Toast.makeText(requireContext(), "Error loading puzzle-Response code:" + he.code(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "Error loading puzzle:" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                     } else {
                         Log.e(TAG, "shit:" + throwable.getMessage());
                         Toast.makeText(requireContext(), "Error getting puzzle: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();

@@ -76,7 +76,9 @@ class ChessRepositoryTimedCache(
 
 
     override suspend fun getPlayer(username: String): Player {
-        return operation(playerCache, { username.normalize() }) { super.getPlayer(it) }
+        return operation(playerCache, { username.normalize() }) {
+            super.getPlayer(it)
+        }
 //        val key = username.normalize()
 //        playerCache.get(key)?.let { return it }
 //        val player = super.getPlayer(key)
@@ -85,7 +87,9 @@ class ChessRepositoryTimedCache(
     }
 
     override suspend fun getPlayerStats(username: String): PlayerStats {
-        return operation(statsCache, { username.normalize() }) { super.getPlayerStats(it) }
+        return operation(statsCache, { username.normalize() }) {
+            super.getPlayerStats(it)
+        }
 //        val key = username.normalize()
 //        statsCache.get(key)?.let { return it }
 //        val stats = super.getPlayerStats(key)
@@ -103,7 +107,7 @@ class ChessRepositoryTimedCache(
 
 
     override suspend fun getCountry(countryUrl: HttpUrl): CountryInfo {
-        return operation(countryCache, HttpUrl::toString) { super.getCountry(countryUrl) }
+        return operation(countryCache, { countryUrl.toString() }) { super.getCountry(countryUrl) }
 //        val url = countryUrl.toString()
 //        countryCache.get(url)?.let { return it }
 //        val info = super.getCountry(countryUrl)
@@ -117,7 +121,14 @@ class ChessRepositoryTimedCache(
         }
 
     override suspend fun getClub(url: HttpUrl): Club {
-        return operation(clubsCache, HttpUrl::toString) { super.getClub(url) }
+        return operation(clubsCache, { url.toString() }) { super.getClub(url) }
+    }
+
+    override suspend fun getClub(nameId: String): Club {
+        return operation(
+            clubsCache,
+            { nameId },
+            { _, c -> c.id.toString() }) { super.getClub(nameId) }
     }
 
     override suspend fun getMonthlyArchives(

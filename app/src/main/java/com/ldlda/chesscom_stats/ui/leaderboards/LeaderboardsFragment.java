@@ -81,6 +81,7 @@ public class LeaderboardsFragment extends Fragment {
             if (now - lastRefreshAt < MIN_REFRESH_INTERVAL_MS) {
                 // Too soon; just cancel the spinner quickly.
                 swipeRefreshLayout.setRefreshing(false);
+                // ANR source: we dont care
                 if (tooSoonToast != null)
                     tooSoonToast.cancel();
                 tooSoonToast = Toast.makeText(getContext(), R.string.refresh_too_soon, Toast.LENGTH_SHORT);
@@ -161,7 +162,14 @@ public class LeaderboardsFragment extends Fragment {
                     : new ArrayList<>();
             adapter.submitList(new ArrayList<>(rest));
         } else {
-            adapter.submitList(new ArrayList<>(allPlayers));
+            adapter.submitList(new ArrayList<>(allPlayers), () -> {
+                // Scroll to top after adapter has finished drawing
+                var lm = (LinearLayoutManager) binding.hallOfFameRecycler.getLayoutManager();
+                if (lm == null) return;
+                if (lm.findFirstCompletelyVisibleItemPosition() <= 4) {
+                    binding.hallOfFameRecycler.scrollToPosition(0);
+                }
+            });
         }
     }
 

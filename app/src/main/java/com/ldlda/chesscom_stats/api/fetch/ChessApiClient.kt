@@ -1,6 +1,7 @@
 package com.ldlda.chesscom_stats.api.fetch
 
 import androidx.annotation.WorkerThread
+import com.ldlda.chesscom_stats.api.data.PubApiError
 import com.ldlda.chesscom_stats.api.data.club.Club
 import com.ldlda.chesscom_stats.api.data.country.CountryInfo
 import com.ldlda.chesscom_stats.api.data.leaderboards.Leaderboards
@@ -18,13 +19,16 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.create
+import java.io.IOException
 import java.util.concurrent.CompletableFuture
 
 /*
@@ -35,11 +39,47 @@ import java.util.concurrent.CompletableFuture
 class ChessApiClient : ChessRepository, JavaChessRepository {
     companion object {
         @Throws(ChessApiException::class)
-        suspend fun <T, U> U.callApi(get: suspend (U) -> T): T {
+        suspend fun <T, U> U.callApi(get: suspend (U) -> Response<T>): T {
             try {
-                return get(this)
+                val response = get(this)
+
+                // Success - return the body
+                if (response.isSuccessful) {
+                    return response.body() ?: throw ChessApiException.Other(
+                        "Empty response body",
+                        null
+                    )
+                }
+
+                // Error - parse error body for better messages
+                val errorMessage = try {
+                    val errorBody = response.errorBody()?.string()
+                    if (errorBody != null) {
+                        val pubApiError = json.decodeFromString<PubApiError>(errorBody)
+                        pubApiError.message ?: response.message()
+                    } else {
+                        response.message()
+                    }
+                } catch (_: SerializationException) {
+                    response.message()
+                }
+
+                // Throw typed exception based on status code
+                throw when (response.code()) {
+                    404 -> ChessApiException.NotFound(errorMessage, null)
+                    410 -> ChessApiException.Gone(errorMessage, null)
+                    429 -> ChessApiException.TooManyRequests(errorMessage, null)
+                    in 300..399 -> ChessApiException.Redirected(errorMessage, null)
+                    else -> ChessApiException.Internal(response.code(), errorMessage, null)
+                }
+            } catch (e: ChessApiException) {
+                throw e // Already wrapped
+            } catch (e: IOException) {
+                throw ChessApiException.Network(e.message, e)
+            } catch (e: SerializationException) {
+                throw ChessApiException.Serialization(e.message, e)
             } catch (e: Exception) {
-                throw ChessApiException.build(e)
+                throw ChessApiException.Other(e.message, e)
             }
         }
 
@@ -139,14 +179,14 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
 
     @Deprecated("use ChessRepositoryImpl")
     override suspend fun searchPlayers(prefix: String): List<SearchItem> =
-        privateService.callApi { it.autocompleteUsername(SearchRequest(prefix)).suggestions }
+        privateService.callApi { it.autocompleteUsername(SearchRequest(prefix)) }.suggestions
 
     override suspend fun searchPlayers(request: SearchRequest): List<SearchItem> =
-        privateService.callApi { it.autocompleteUsername(request).suggestions }
+        privateService.callApi { it.autocompleteUsername(request) }.suggestions
 
     @Deprecated("use ChessRepositoryImpl")
     override suspend fun getMonthlyArchivesList(username: String): List<HttpUrl> =
-        publicService.callApi { it.monthlyArchivesList(username).archives }
+        publicService.callApi { it.monthlyArchivesList(username) }.archives
 
     @Deprecated("use ChessRepositoryImpl")
     override suspend fun getMonthlyArchives(
@@ -161,25 +201,22 @@ class ChessApiClient : ChessRepository, JavaChessRepository {
                 username,
                 "%04d".format(year),
                 "%02d".format(month),
-            ).games
-        }
+            )
+        }.games
     }
 
     @Deprecated("use ChessRepositoryImpl")
     override suspend fun getMonthlyArchives(url: HttpUrl) =
-        publicService.callApi { it.monthlyArchives(url).games }
+        publicService.callApi { it.monthlyArchives(url) }.games
 
-    override suspend fun getCountryClubs(code: String): List<HttpUrl> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun getCountryClubs(code: String): List<HttpUrl> =
+        publicService.callApi { it.countryClubs(code) }.clubURLs
 
-    override suspend fun getClub(url: HttpUrl): Club {
-        TODO("Not yet implemented")
-    }
+    override suspend fun getClub(url: HttpUrl): Club =
+        publicService.callApi { it.club(url) }
 
-    override suspend fun getClub(nameId: String): Club {
-        TODO("Not yet implemented")
-    }
+    override suspend fun getClub(nameId: String): Club =
+        publicService.callApi { it.club(nameId) }
 
     override suspend fun getDailyPuzzle(): Puzzle {
         TODO("Not yet implemented")
