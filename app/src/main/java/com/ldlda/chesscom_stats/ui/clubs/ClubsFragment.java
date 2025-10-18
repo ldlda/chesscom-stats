@@ -18,10 +18,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ldlda.chesscom_stats.R;
+import com.ldlda.chesscom_stats.api.data.club.Club;
 import com.ldlda.chesscom_stats.databinding.FragmentClubBinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class ClubsFragment extends Fragment {
     public static final String TAG = "ClubFragment";
@@ -94,7 +96,7 @@ public class ClubsFragment extends Fragment {
     private void observeViewModel() {
         viewModel.getClubList().observe(getViewLifecycleOwner(), clubs -> {
             var displayList = new ArrayList<>(clubs);
-
+            Log.d(TAG, "observeViewModel: got an update");
             if (ahhSize != 0) {
                 int currrent = displayList.size();
                 binding.clubsOverview.setText(String.format("%s of %s loaded (%s error)", currrent, ahhSize, viewModel.getErrorClubs().getValue()));
@@ -105,32 +107,31 @@ public class ClubsFragment extends Fragment {
             if (Boolean.TRUE.equals(viewModel.isLoadingList().getValue())) {
                 displayList.add(null);
             }
-
             adapter.submitList(displayList);
         });
 
         viewModel.getClubUrls().observe(getViewLifecycleOwner(), l -> ahhSize = l.size());
 
         viewModel.isLoadingUrls().observe(getViewLifecycleOwner(), loading -> {
+            Log.d(TAG, "observeViewModel: loadingg:" + loading);
             binding.progBar.setVisibility(loading ? View.VISIBLE : View.GONE);
-            adapter.submitList(Collections.emptyList());
+            if (loading) adapter.submitList(Collections.emptyList());
+            else {
+                var i = viewModel.getClubList().getValue();
+                if (i == null) return;
+                adapter.submitList(new ArrayList<>(i));
+            }
         });
 
         viewModel.isLoadingList().observe(getViewLifecycleOwner(), loading -> {
-/* Dont run ts
-            if (loading) {
-                var list = new ArrayList<>(adapter.getCurrentList());
-                list.add(null);
-                adapter.submitList(list);
-            }
-*/
-            var l = new ArrayList<>(adapter.getCurrentList());
-            int i = l.size() - 1;
-            Log.d(TAG, "observeViewModel: i = " + i);
-            if (!loading && i != -1 && l.get(i) == null) {
-                l.remove(i);
-                adapter.submitList(l);
-            }
+            Log.d(TAG, "observeViewModel: loadingl: " + loading);
+
+            if (loading) return;
+            List<Club> value = viewModel.getClubList().getValue();
+            if (value == null) return;
+            var l = new ArrayList<>(value);
+            adapter.submitList(l);
+
         });
 
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
